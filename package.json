@@ -16,9 +16,6 @@
         "url": "https://github.com/Pageworks/djinnjs/issues"
     },
     "homepage": "https://github.com/Pageworks/djinnjs#readme",
-    "dependencies": {
-        "@codewithkyle/notifyjs": "^1.0.0"
-    },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^2.11.0",
         "@typescript-eslint/parser": "^2.11.0",
@@ -28,5 +25,8 @@
         "prettier": "1.19.1",
         "rollup": "^1.27.13",
         "typescript": "^3.7.3"
+    },
+    "dependencies": {
+        "@codewithkyle/notifyjs": "^1.0.0"
     }
 }
