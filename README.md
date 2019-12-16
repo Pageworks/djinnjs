@@ -1,4 +1,4 @@
-# Djinn.js
+# DjinnJS
 
 Djinn.js is a web component based JavaScript framework designed to assist developers in building performance-focused websites and web applications.
 
