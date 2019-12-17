@@ -1,4 +1,4 @@
-import './messages';
+/// <reference path="./messages.d.ts" />
 
 import { uuid } from './env';
 

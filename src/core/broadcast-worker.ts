@@ -1,4 +1,4 @@
-import './messages';
+/// <reference path="./messages.d.ts" />
 
 type InboxData = {
     name: string;

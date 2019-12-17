@@ -9,5 +9,6 @@ module.exports = {
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',
+        '@typescript-eslint/triple-slash-reference': 'off',
     },
 };
