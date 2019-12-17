@@ -6,7 +6,7 @@
         "compile": "tsc",
         "prettier": "prettier --write \"src/**/*.ts\"",
         "eslint": "eslint -c .eslintrc.js src/**/*.ts",
-        "predeploy": "npm run prettier && npm run eslint && npm run compile"
+        "prerelease": "npm run prettier && npm run eslint && npm run compile"
     },
     "repository": {
         "type": "git",
