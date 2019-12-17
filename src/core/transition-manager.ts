@@ -17,29 +17,29 @@ import { noneAuto } from '../transitions/none';
  * @param transitionData - a custom data object or value that can be used to modify the transition
  */
 export function transitionManager(selector: string, newHTML: string, transition: string | null, transitionData: string | null): Promise<{}> {
-	return new Promise(resolve => {
-		/** Pjax doesn't load on 2g, however, network conditions can change. Do not touch. */
-		if (env.connection === '2g' || env.connection === 'slow-2g') {
-			noneAuto(newHTML).then(() => {
-				resolve();
-			});
-		} else {
-			/**
-			 * Add custom transitions to the switch statement.
-			 * Transitions must return a promise.
-			 */
-			switch (transition) {
-				case 'slide':
-					slide(selector, newHTML, transitionData).then(() => {
-						resolve();
-					});
-					break;
-				default:
-					fade(selector, newHTML, transitionData).then(() => {
-						resolve();
-					});
-					break;
-			}
-		}
-	});
+    return new Promise(resolve => {
+        /** Pjax doesn't load on 2g, however, network conditions can change. Do not touch. */
+        if (env.connection === '2g' || env.connection === 'slow-2g') {
+            noneAuto(newHTML).then(() => {
+                resolve();
+            });
+        } else {
+            /**
+             * Add custom transitions to the switch statement.
+             * Transitions must return a promise.
+             */
+            switch (transition) {
+                case 'slide':
+                    slide(selector, newHTML, transitionData).then(() => {
+                        resolve();
+                    });
+                    break;
+                default:
+                    fade(selector, newHTML, transitionData).then(() => {
+                        resolve();
+                    });
+                    break;
+            }
+        }
+    });
 }
