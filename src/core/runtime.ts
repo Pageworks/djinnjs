@@ -1,5 +1,7 @@
 import { env, debug } from './env';
 import { broadcaster } from './broadcaster';
+import { fetchCSS } from './fetch-css';
+import { fetchJS } from './fetch-js';
 
 interface PjaxResources {
 	eager: Array<string>;
@@ -49,7 +51,7 @@ class Runtime {
 		const { type } = data;
 		switch (type) {
 			case 'load':
-				this.fetchCSS(data.resources);
+				fetchCSS(data.resources);
 				break;
 			case 'mount-components':
 				this.handleWebComponents();
@@ -76,7 +78,7 @@ class Runtime {
 				if (env.domState === 'hard-loading') {
 					this._loadingMessage.innerHTML = `Loading resource: <resource-counter>0</resource-counter<span class="-slash">/</span><resource-total>${response.files.length}</resource-total>`;
 				}
-				this.fetchCSS(response.files).then(() => {
+				fetchCSS(response.files).then(() => {
 					env.setDOMState('idling');
 					this._bodyParserWorker.postMessage({
 						type: 'lazy',
@@ -86,19 +88,21 @@ class Runtime {
 				break;
 			case 'lazy':
 				const ticket = env.startLoading();
-				this.fetchCSS(response.files).then(() => {
+				fetchCSS(response.files).then(() => {
 					env.stopLoading(ticket);
 					this.handleWebComponents();
-					import(`${window.location.origin}/assets/pjax.js`).then(() => {
-						broadcaster.message(
-							'pjax',
-							{
-								type: 'init',
-							},
-							'TCP',
-							Infinity
-						);
-					});
+					if (env.connection !== '2g' && env.connection !== 'slow-2g') {
+						fetchJS('pjax').then(() => {
+							broadcaster.message(
+								'pjax',
+								{
+									type: 'init',
+								},
+								'TCP',
+								Infinity
+							);
+						});
+					}
 				});
 				break;
 			case 'parse':
@@ -112,13 +116,13 @@ class Runtime {
 
 	private fetchPjaxResources(data: PjaxResources, requestUid: string): void {
 		/** Fetch the requested eager CSS files */
-		this.fetchCSS(data.eager).then(() => {
+		fetchCSS(data.eager).then(() => {
 			/** Tell the Pjax class that the eager CSS files have been loaded */
 			broadcaster.message('pjax', {
 				type: 'css-ready',
 				requestUid: requestUid,
 			});
-			this.fetchCSS(data.lazy);
+			fetchCSS(data.lazy);
 		});
 	}
 
@@ -143,14 +147,9 @@ class Runtime {
 	 * @see https://v8.dev/features/dynamic-import
 	 */
 	private upgradeToWebComponent(customElementTagName: string, customElement: Element): void {
-		let el = document.head.querySelector(`link[file="${customElementTagName}.js"]`) as HTMLScriptElement;
-		if (!el) {
-			el = document.createElement('script');
-			el.setAttribute('file', `${customElementTagName}.js`);
-			el.setAttribute('type', 'module');
-			document.head.append(el);
-			el.src = `${window.location.origin}/assets/${customElementTagName}.js`;
-		}
+		fetchJS(customElementTagName).then(() => {
+			customElement.setAttribute('component-state', 'mounted');
+		});
 	}
 
 	/**
@@ -165,7 +164,7 @@ class Runtime {
 				if (customElements.get(customElement) === undefined) {
 					this.upgradeToWebComponent(customElement, entries[i].target);
 				} else {
-					entries[i].target.setAttribute('state', 'mounted');
+					entries[i].target.setAttribute('component-state', 'mounted');
 				}
 			}
 		}
@@ -173,63 +172,12 @@ class Runtime {
 	private intersectionCallback: IntersectionObserverCallback = this.handleIntersection.bind(this);
 
 	/**
-	 * Appends resources to the documents head if it hasn't already been loaded.
-	 * @param resourceList - an array of `string` CSS filenames (excluding the filetype)
-	 */
-	private fetchCSS(resourceList: Array<string>): Promise<{}> {
-		return new Promise(resolve => {
-			if (resourceList.length === 0) {
-				resolve();
-			}
-
-			let loaded = 0;
-			for (let i = 0; i < resourceList.length; i++) {
-				const filename = resourceList[i];
-				let el = document.head.querySelector(`link[file="${filename}.css"]`) as HTMLLinkElement;
-				if (!el) {
-					el = document.createElement('link');
-					el.setAttribute('file', `${filename}.css`);
-					document.head.append(el);
-					el.setAttribute('rel', 'stylesheet');
-					el.href = `${window.location.origin}/assets/${filename}.css`;
-					el.addEventListener('load', () => {
-						loaded++;
-						if (env.domState === 'hard-loading') {
-							this._loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
-						}
-						if (loaded === resourceList.length) {
-							resolve();
-						}
-					});
-					el.addEventListener('error', () => {
-						loaded++;
-						if (env.domState === 'hard-loading') {
-							this._loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
-						}
-						if (loaded === resourceList.length) {
-							resolve();
-						}
-					});
-				} else {
-					loaded++;
-					if (env.domState === 'hard-loading') {
-						this._loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
-					}
-					if (loaded === resourceList.length) {
-						resolve();
-					}
-				}
-			}
-		});
-	}
-
-	/**
 	 * Collect all custom elements tagged with a `web-component` attribute that have not already been tracked.
 	 * If the custom element is tagged with `loading="eager"` upgrade the custom element otherwise track the
 	 * custom element with the `IntersectionObserver` API.
 	 */
 	private handleWebComponents(): void {
-		const customElements = Array.from(document.body.querySelectorAll('[web-component]:not([state])'));
+		const customElements = Array.from(document.body.querySelectorAll('[web-component]:not([component-state])'));
 		for (let i = 0; i < customElements.length; i++) {
 			const element = customElements[i];
 			const loadType = element.getAttribute('loading') as WebComponentLoad;
@@ -237,7 +185,7 @@ class Runtime {
 				const customElement = element.tagName.toLowerCase().trim();
 				this.upgradeToWebComponent(customElement, element);
 			} else {
-				element.setAttribute('state', 'unseen');
+				element.setAttribute('component-state', 'unseen');
 				this._io.observe(customElements[i]);
 			}
 		}

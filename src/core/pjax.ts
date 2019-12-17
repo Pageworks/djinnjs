@@ -2,8 +2,7 @@ import { broadcaster } from './broadcaster';
 import { debug, env, uuid } from './env';
 import { notify } from '../packages/notify.js';
 import { sendPageView, setupGoogleAnalytics } from './gtags.js';
-import { fade } from '../transitions/fade';
-import { noneAuto } from '../transitions/none';
+import { transitionManager } from './transition-manager';
 
 interface PjaxState {
 	activeRequestUid: string;
@@ -15,6 +14,9 @@ interface NavigaitonRequest {
 	url: string;
 	history: 'push' | 'replace';
 	requestUid: string;
+	transition: string | null;
+	transitionData: string | null;
+	target: string;
 }
 
 class Pjax {
@@ -102,7 +104,7 @@ class Pjax {
 				this.collectLinks();
 				break;
 			case 'load':
-				this.navigate(data.url, data?.history);
+				this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.target);
 				break;
 			case 'finalize-pjax':
 				this.updateHistory(data.title, data.url, data.history);
@@ -216,9 +218,12 @@ class Pjax {
 	/**
 	 * Creates and sends a navigation request to the Pjax web worker and queues navigation request.
 	 * @param url - the URL of the requested page
+	 * @param transition - the name of the desired transition effect
+	 * @param transitionData - optional data that could modify the transition
 	 * @param history - how Pjax should handle the windows history manipulation
+	 * @param targetEl - the `pjax-id` attribute value
 	 */
-	private navigate(url: string, history: 'push' | 'replace' = 'push'): void {
+	private navigate(url: string, transition: string = null, transitionData: string = null, history: 'push' | 'replace' = 'push', targetEl: string = null): void {
 		env.startPageTransition();
 		const requestUid = uuid();
 		this.state.activeRequestUid = requestUid;
@@ -226,6 +231,9 @@ class Pjax {
 			url: url,
 			history: history,
 			requestUid: requestUid,
+			transition: transition,
+			transitionData: transitionData,
+			target: targetEl,
 		};
 		this.navigationRequestQueue.push(navigationRequest);
 		this.worker.postMessage({
@@ -291,6 +299,9 @@ class Pjax {
 		broadcaster.message('pjax', {
 			type: 'load',
 			url: target.href,
+			transition: target.getAttribute('pjax-transition'),
+			transitionData: target.getAttribute('pjax-transition-data'),
+			target: target.getAttribute('pjax-view-id'),
 		});
 	}
 	private handleLinkClick: EventListener = this.hijackRequest.bind(this);
@@ -327,8 +338,15 @@ class Pjax {
 			if (status === 'ok') {
 				const tempDocument: HTMLDocument = document.implementation.createHTMLDocument('pjax-temp-document');
 				tempDocument.documentElement.innerHTML = body;
-				const currentMain = document.body.querySelector('main');
-				const main = tempDocument.querySelector(`main[data-id="${currentMain.dataset.id}"]`);
+
+				let selector = 'main';
+				if (request.target !== null) {
+					selector = `[pjax-id="${request.target}"]`;
+				}
+
+				const currentMain = document.body.querySelector(selector);
+				const main = tempDocument.querySelector(selector);
+
 				if (main && currentMain) {
 					/** Tells the runtime class to parse the incoming HTML for any new CSS files */
 					broadcaster.message('runtime', {
@@ -366,33 +384,24 @@ class Pjax {
 		const request = this.getNavigaitonRequest(requestUid);
 		if (request.requestUid === this.state.activeRequestUid) {
 			env.endPageTransition();
-			if (env.connection === '2g' || env.connection === 'slow-2g') {
-				noneAuto(request.body).then(() => {
-					document.title = request.title;
-					broadcaster.message('pjax', {
-						type: 'finalize-pjax',
-						url: request.url,
-						title: request.title,
-						history: request.history,
-					});
-					broadcaster.message('runtime', {
-						type: 'mount-components',
-					});
-				});
-			} else {
-				fade(request.body).then(() => {
-					document.title = request.title;
-					broadcaster.message('pjax', {
-						type: 'finalize-pjax',
-						url: request.url,
-						title: request.title,
-						history: request.history,
-					});
-					broadcaster.message('runtime', {
-						type: 'mount-components',
-					});
-				});
+
+			let selector = 'main';
+			if (request.target !== null) {
+				selector = `[pjax-id="${request.target}"]`;
 			}
+
+			transitionManager(selector, request.body, request.transition, request.transitionData).then(() => {
+				document.title = request.title;
+				broadcaster.message('pjax', {
+					type: 'finalize-pjax',
+					url: request.url,
+					title: request.title,
+					history: request.history,
+				});
+				broadcaster.message('runtime', {
+					type: 'mount-components',
+				});
+			});
 		}
 		this.removeNavigationRequest(request.requestUid);
 	}

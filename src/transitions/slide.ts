@@ -1,5 +1,7 @@
-export function slide(newHTML: string): Promise<{}> {
+export function slide(selector: string, newHTML: string, transitionData: string | null): Promise<{}> {
 	return new Promise(resolve => {
+		const data = JSON.parse(transitionData) ?? { direction: 1 };
+
 		window.scroll({
 			top: 0,
 			left: 0,
@@ -7,11 +9,11 @@ export function slide(newHTML: string): Promise<{}> {
 		});
 
 		/** Prepare for update */
-		const currentMain = document.body.querySelector('main');
-		const newMain = document.createElement('main');
+		const currentMain = document.body.querySelector(selector) as HTMLElement;
+		const newMain = document.createElement(selector) as HTMLElement;
 		newMain.innerHTML = newHTML;
 		newMain.dataset.id = currentMain.dataset.id;
-		newMain.style.transform = 'translateX(-100vw)';
+		newMain.style.transform = `translateX(${100 * -data.direction}vw)`;
 		currentMain.before(newMain);
 
 		/** Transition reset */
@@ -25,7 +27,7 @@ export function slide(newHTML: string): Promise<{}> {
 		setTimeout(() => {
 			/** Transition */
 			currentMain.style.transition = 'transform 600ms ease-in-out';
-			currentMain.style.transform = 'translateX(100vw)';
+			currentMain.style.transform = `translateX(${100 * data.direction}vw)`;
 			newMain.style.transition = 'transform 600ms ease-in-out';
 			newMain.style.transform = 'translateX(0)';
 

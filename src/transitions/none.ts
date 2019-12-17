@@ -10,7 +10,7 @@ export function noneAuto(newHTML: string): Promise<{}> {
 		resolve();
 	});
 }
-export function noneSmoothScroll(newHTML: string): Promise<{}> {
+export function noneScroll(newHTML: string): Promise<{}> {
 	return new Promise(resolve => {
 		window.scroll({
 			top: 0,
