@@ -1,34 +1,50 @@
 {
     "name": "djinnjs",
-    "version": "0.1.0",
-    "description": "DjinnJS is a web component based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
-    "scripts": {
-        "compile": "tsc",
-        "prettier": "prettier --write \"src/**/*.ts\"",
-        "eslint": "eslint -c .eslintrc.js src/**/*.ts",
-        "prerelease": "npm run prettier && npm run eslint && npm run compile"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Pageworks/djinnjs.git"
-    },
+    "version": "0.0.1",
+    "description": "DjinnJS is an ES Module and Web Component based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
     "author": "Pageworks",
     "license": "GPL-3.0",
     "bugs": {
         "url": "https://github.com/Pageworks/djinnjs/issues"
     },
     "homepage": "https://github.com/Pageworks/djinnjs#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Pageworks/djinnjs.git"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/"
+    },
+    "bin": {
+        "build": "./tooling/cli.js"
+    },
+    "engines": {
+        "node": ">=10.16.0"
+    },
+    "main": "tooling/cli.js",
+    "files": [
+        "tooling",
+        "src"
+    ],
+    "scripts": {
+        "prettier": "prettier --write \"src/**/*.ts\"",
+        "eslint": "eslint -c .eslintrc.js src/**/*.ts",
+        "prerelease": "npm run prettier && npm run eslint && tsc",
+        "build": "node ./tooling/cli.js"
+    },
     "devDependencies": {
+        "prettier": "1.19.1",
+        "rollup": "^1.27.13"
+    },
+    "dependencies": {
+        "@codewithkyle/notifyjs": "^1.0.0",
         "@typescript-eslint/eslint-plugin": "^2.11.0",
         "@typescript-eslint/parser": "^2.11.0",
         "eslint": "^6.7.2",
         "eslint-config-prettier": "^6.7.0",
         "eslint-plugin-prettier": "^3.1.2",
-        "prettier": "1.19.1",
-        "rollup": "^1.27.13",
-        "typescript": "^3.7.3"
-    },
-    "dependencies": {
-        "@codewithkyle/notifyjs": "^1.0.0"
+        "semver": "^7.1.1",
+        "typescript": "^3.7.3",
+        "update-notifier": "^4.0.0"
     }
 }
