@@ -34,7 +34,8 @@ if (!fs.existsSync(cfgPath)) {
 
 const config = require(cfgPath);
 const rimraf = require('rimraf');
-const scrubber = require('./scrubber');
+const scrub = require('./scrubber');
+const minify = require('./minifier');
 
 class DjinnJS {
     constructor(config) {
@@ -54,6 +55,7 @@ class DjinnJS {
             console.log('Scrubbing JavaScript imports');
             await this.scrubScripts();
             console.log('Minifying JavaScript');
+            await this.minifyScript();
             // await this.cleanup();
         } catch (error) {
             console.log(error);
@@ -62,14 +64,32 @@ class DjinnJS {
         }
     }
 
+    minifyScript() {
+        return new Promise((resolve, reject) => {
+            let sitesCompleted = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
+                minify(handle, this.sites[i].outDir)
+                    .then(() => {
+                        sitesCompleted++;
+                        if (sitesCompleted === this.sites.length) {
+                            resolve();
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            }
+        });
+    }
+
     scrubScripts() {
         return new Promise((resolve, reject) => {
-            const ScriptScrubber = new scrubber();
             let scrubbed = 0;
             for (let i = 0; i < this.sites.length; i++) {
                 const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
                 const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                ScriptScrubber.scrub(sources, handle)
+                scrub(sources, handle)
                     .then(() => {
                         scrubbed++;
                         if (scrubbed === this.sites.length) {
