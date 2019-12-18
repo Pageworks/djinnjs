@@ -34,22 +34,118 @@ if (!fs.existsSync(cfgPath)) {
 
 const config = require(cfgPath);
 const rimraf = require('rimraf');
+const scrubber = require('./scrubber');
 
 class DjinnJS {
     constructor(config) {
         this.config = config;
+        this.sites = [];
         this.main();
     }
 
     async main() {
         try {
+            console.log('Running DjinnJS');
             await this.preflightCheck();
             await this.createTempDirectory();
-            await this.cleanup();
+            await this.parseSites();
+            await this.resetOutputDirectories();
+            await this.createOutputDirectories();
+            console.log('Scrubbing JavaScript imports');
+            await this.scrubScripts();
+            console.log('Minifying JavaScript');
+            // await this.cleanup();
         } catch (error) {
             console.log(error);
+            console.log('Visit https://djinnjs.com/docs/getting-started for more information.');
             process.exit(1);
         }
+    }
+
+    scrubScripts() {
+        return new Promise((resolve, reject) => {
+            const ScriptScrubber = new scrubber();
+            let scrubbed = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
+                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
+                ScriptScrubber.scrub(sources, handle)
+                    .then(() => {
+                        scrubbed++;
+                        if (scrubbed === this.sites.length) {
+                            resolve();
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            }
+        });
+    }
+
+    createOutputDirectories() {
+        return new Promise((resolve, reject) => {
+            let created = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const outDir = path.resolve(pkgPath, this.sites[i].outDir);
+                if (!fs.existsSync(outDir)) {
+                    fs.mkdir(outDir, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        resolve();
+                    });
+                } else {
+                    created++;
+                    if (created === this.sites.length) {
+                        resolve();
+                    }
+                }
+            }
+        });
+    }
+
+    resetOutputDirectories() {
+        return new Promise((resolve, reject) => {
+            let purged = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const outDir = path.resolve(pkgPath, this.sites[i].outDir);
+                if (fs.existsSync(outDir)) {
+                    rimraf(outDir, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        purged++;
+                        if (purged === this.sites.length) {
+                            resolve();
+                        }
+                    });
+                } else {
+                    purged++;
+                    if (purged === this.sites.length) {
+                        resolve();
+                    }
+                }
+            }
+        });
+    }
+
+    parseSites() {
+        return new Promise((resolve, reject) => {
+            if (this.config.site instanceof Array) {
+                this.sites = this.config.site;
+            } else {
+                this.sites = [this.config.site];
+            }
+            for (let i = 0; i < this.sites.length; i++) {
+                if (this.sites[i].outDir === undefined) {
+                    reject('Invalid DjinnJS site configuration. A site requires an output directory.');
+                } else if (this.sites[i].src === undefined) {
+                    reject('Invalid DjinnJS site configuration. A site requires a source directory.');
+                }
+            }
+            resolve();
+        });
     }
 
     cleanup() {
