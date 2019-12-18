@@ -36,6 +36,7 @@ const config = require(cfgPath);
 const rimraf = require('rimraf');
 const scrub = require('./scrubber');
 const minify = require('./minifier');
+const moveCSS = require('./css');
 
 class DjinnJS {
     constructor(config) {
@@ -49,19 +50,40 @@ class DjinnJS {
             console.log('Running DjinnJS');
             await this.preflightCheck();
             await this.createTempDirectory();
-            await this.parseSites();
+            await this.parseAndValidateSites();
             await this.resetOutputDirectories();
             await this.createOutputDirectories();
             console.log('Scrubbing JavaScript imports');
             await this.scrubScripts();
             console.log('Minifying JavaScript');
             await this.minifyScript();
-            // await this.cleanup();
+            console.log('Relocating CSS files');
+            await this.relocateCSS();
+            await this.cleanup();
         } catch (error) {
             console.log(error);
             console.log('Visit https://djinnjs.com/docs/getting-started for more information.');
             process.exit(1);
         }
+    }
+
+    relocateCSS() {
+        return new Promise((resolve, reject) => {
+            let sitesCompleted = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
+                moveCSS(sources, this.sites[i].outDir)
+                    .then(() => {
+                        sitesCompleted++;
+                        if (sitesCompleted === this.sites.length) {
+                            resolve();
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            }
+        });
     }
 
     minifyScript() {
@@ -150,7 +172,7 @@ class DjinnJS {
         });
     }
 
-    parseSites() {
+    parseAndValidateSites() {
         return new Promise((resolve, reject) => {
             if (this.config.site instanceof Array) {
                 this.sites = this.config.site;
@@ -162,6 +184,8 @@ class DjinnJS {
                     reject('Invalid DjinnJS site configuration. A site requires an output directory.');
                 } else if (this.sites[i].src === undefined) {
                     reject('Invalid DjinnJS site configuration. A site requires a source directory.');
+                } else if (this.sites.length > 1 && this.sites[i].handle === undefined) {
+                    reject('Invalid DjinnJS site configuration. Sites require a handle when running DjinnJS in multisite mode.');
                 }
             }
             resolve();
