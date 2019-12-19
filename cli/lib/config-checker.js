@@ -25,6 +25,12 @@ function checkSite(site, multisite = false) {
         } else if (!site.outDir instanceof String) {
             reject(`Invalid DjinnJS configuration. The outDir value must be a string.`);
         }
+
+        if (site.disableServiceWorker === undefined) {
+            site.disableServiceWorker = false;
+        } else if (!site.disableServiceWorker instanceof Boolean) {
+            reject(`Invalid DjinnJS configuration. The disableServiceWorker value must be a boolean.`);
+        }
         resolve(site);
     });
 }

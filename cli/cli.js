@@ -123,12 +123,22 @@ class DjinnJS {
             for (let i = 0; i < this.sites.length; i++) {
                 const publicPath = path.resolve(cwd, this.sites[i].publicDir);
                 const assetPath = path.resolve(publicPath, this.sites[i].outDir);
-                fs.rename(`${assetPath}/service-worker.js`, `${publicPath}/service-worker.js`, error => {
-                    if (error) {
-                        reject(error);
-                    }
-                    resolve();
-                });
+                console.log(this.sites[i].disableServiceWorker);
+                if (this.sites[i].disableServiceWorker) {
+                    fs.unlink(`${assetPath}/service-worker.js`, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        resolve();
+                    });
+                } else {
+                    fs.rename(`${assetPath}/service-worker.js`, `${publicPath}/service-worker.js`, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        resolve();
+                    });
+                }
             }
         });
     }
@@ -249,6 +259,7 @@ class DjinnJS {
                     src: this.config.src,
                     publicDir: this.config.publicDir,
                     outDir: this.config.outDir,
+                    disableServiceWorker: this.config.disableServiceWorker,
                 };
                 configChecker(site)
                     .then(validSite => {
