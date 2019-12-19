@@ -24,8 +24,8 @@ if (!semver.satisfies(process.version, version)) {
 const path = require('path');
 const fs = require('fs');
 
-const pkgPath = process.cwd();
-const cfgPath = path.join(pkgPath, 'djinn.js');
+const cwd = process.cwd();
+const cfgPath = path.join(cwd, 'djinn.js');
 
 if (!fs.existsSync(cfgPath)) {
     console.log('Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.');
@@ -74,7 +74,7 @@ class DjinnJS {
             let sitesCompleted = 0;
             for (let i = 0; i < this.sites.length; i++) {
                 const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
-                moveCSS(sources, this.sites[i].outDir)
+                moveCSS(sources, this.sites[i].publicDir, this.sites[i].outDir)
                     .then(() => {
                         sitesCompleted++;
                         if (sitesCompleted === this.sites.length) {
@@ -93,7 +93,7 @@ class DjinnJS {
             let sitesCompleted = 0;
             for (let i = 0; i < this.sites.length; i++) {
                 const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                minify(handle, this.sites[i].outDir)
+                minify(handle, this.sites[i].publicDir, this.sites[i].outDir)
                     .then(() => {
                         sitesCompleted++;
                         if (sitesCompleted === this.sites.length) {
@@ -131,7 +131,7 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let created = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const outDir = path.resolve(pkgPath, this.sites[i].outDir);
+                const outDir = path.resolve(cwd, this.sites[i].publicDir, this.sites[i].outDir);
                 if (!fs.existsSync(outDir)) {
                     fs.mkdir(outDir, error => {
                         if (error) {
@@ -153,7 +153,7 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let purged = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const outDir = path.resolve(pkgPath, this.sites[i].outDir);
+                const outDir = path.resolve(cwd, this.sites[i].publicDir, this.sites[i].outDir);
                 if (fs.existsSync(outDir)) {
                     rimraf(outDir, error => {
                         if (error) {
@@ -198,7 +198,7 @@ class DjinnJS {
                     publicDir: this.config.publicDir,
                     outDir: this.config.outDir,
                 };
-                configChecker(site, true)
+                configChecker(site)
                     .then(validSite => {
                         this.sites = [validSite];
                         resolve();
