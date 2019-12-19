@@ -2,6 +2,7 @@ type djinnjsConfig = {
     src?: string | Array<string>;
     publicDir?: string = './public';
     outDir?: string = 'assets';
+    noCachePattern?: RegExp;
     sites?: Array<{
         handle: string;
         publicDir: string;
