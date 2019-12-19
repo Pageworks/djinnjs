@@ -16,14 +16,14 @@
         "registry": "https://npm.pkg.github.com/"
     },
     "bin": {
-        "djinnjs": "./tooling/cli.js"
+        "djinnjs": "./cli/cli.js"
     },
     "engines": {
         "node": ">=10.16.0"
     },
-    "main": "tooling/cli.js",
+    "main": "cli/cli.js",
     "files": [
-        "tooling",
+        "cli",
         "dist"
     ],
     "scripts": {

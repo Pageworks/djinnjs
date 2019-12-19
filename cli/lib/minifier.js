@@ -42,7 +42,7 @@ function minifyFiles(files, publicDir, relativeOutDir) {
 
 function getFiles(handle) {
     return new Promise((resolve, reject) => {
-        const tempDir = path.join(__dirname, 'temp', handle);
+        const tempDir = path.resolve(__dirname, `../temp/${handle}`);
         glob(`${tempDir}/*.js`, (error, files) => {
             if (error) {
                 reject(error);

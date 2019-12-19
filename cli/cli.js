@@ -34,15 +34,16 @@ if (!fs.existsSync(cfgPath)) {
 
 const config = require(cfgPath);
 const rimraf = require('rimraf');
-const scrub = require('./scrubber');
-const minify = require('./minifier');
-const moveCSS = require('./css');
-const configChecker = require('./config-checker');
+const scrub = require('./lib/scrubber');
+const minify = require('./lib/minifier');
+const moveCSS = require('./lib/css');
+const configChecker = require('./lib/config-checker');
 
 class DjinnJS {
     constructor(config) {
         this.config = config;
         this.sites = [];
+        this.debug = config.debug === undefined ? false : config.debug;
         this.main();
     }
 
@@ -54,14 +55,23 @@ class DjinnJS {
             await this.parseAndValidateSites();
             await this.resetOutputDirectories();
             await this.createOutputDirectories();
-            console.log('Scrubbing JavaScript imports');
+            if (this.debug) {
+                console.log('Scrubbing JavaScript imports');
+            }
             await this.scrubScripts();
             await this.injectOutputDir();
-            console.log('Minifying JavaScript');
+            if (this.debug) {
+                console.log('Minifying JavaScript');
+            }
             await this.minifyScript();
-            console.log('Relocating CSS files');
+            await this.relocateServiceWorker();
+            if (this.debug) {
+                console.log('Relocating CSS files');
+            }
             await this.relocateCSS();
-            console.log('Cleaning up DjinnJS temporary files');
+            if (this.debug) {
+                console.log('Cleaning up DjinnJS temporary files');
+            }
             await this.cleanup();
         } catch (error) {
             console.log(error);
@@ -104,6 +114,21 @@ class DjinnJS {
                     .catch(error => {
                         reject(error);
                     });
+            }
+        });
+    }
+
+    relocateServiceWorker() {
+        return new Promise((resolve, reject) => {
+            for (let i = 0; i < this.sites.length; i++) {
+                const publicPath = path.resolve(cwd, this.sites[i].publicDir);
+                const assetPath = path.resolve(publicPath, this.sites[i].outDir);
+                fs.rename(`${assetPath}/service-worker.js`, `${publicPath}/service-worker.js`, error => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve();
+                });
             }
         });
     }

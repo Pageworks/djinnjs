@@ -18,7 +18,7 @@ async function scrubber(sources, outDir) {
 function scrubFiles(files, handle) {
     return new Promise((resolve, reject) => {
         let scrubbed = 0;
-        const outDir = path.join(__dirname, 'temp', handle);
+        const outDir = path.resolve(__dirname, `../temp/${handle}`);
         for (let i = 0; i < files.length; i++) {
             const filePath = files[i];
             const filename = filePath.replace(/.*[\/\\]/g, '');
@@ -57,7 +57,7 @@ function scrubFiles(files, handle) {
 
 function createTempDirectory(outDir) {
     return new Promise((resolve, reject) => {
-        const dir = path.join(__dirname, 'temp', outDir);
+        const dir = path.resolve(__dirname, `../temp/${outDir}`);
         if (!fs.existsSync(dir)) {
             fs.mkdir(dir, error => {
                 if (error) {
@@ -71,7 +71,7 @@ function createTempDirectory(outDir) {
 
 function getCoreFiles() {
     return new Promise((resolve, reject) => {
-        const distDir = path.resolve(__dirname, '../dist');
+        const distDir = path.resolve(__dirname, '../../dist');
         glob(`${distDir}/**/*.js`, (error, files) => {
             if (error) {
                 reject(error);
