@@ -147,7 +147,6 @@ class DjinnJS {
             for (let i = 0; i < this.sites.length; i++) {
                 const publicPath = path.resolve(cwd, this.sites[i].publicDir);
                 const assetPath = path.resolve(publicPath, this.sites[i].outDir);
-                console.log(this.sites[i].disableServiceWorker);
                 if (this.sites[i].disableServiceWorker) {
                     fs.unlink(`${assetPath}/service-worker.js`, error => {
                         if (error) {
@@ -160,7 +159,18 @@ class DjinnJS {
                         if (error) {
                             reject(error);
                         }
-                        resolve();
+                        fs.readFile(`${publicPath}/service-worker.js`, (error, buffer) => {
+                            if (error) {
+                                reject(error);
+                            }
+                            let data = buffer.toString().replace('REPLACE_WITH_NO_CACHE_PATTERN', this.config.noCachePattern);
+                            fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
+                                if (error) {
+                                    reject(error);
+                                }
+                                resolve();
+                            });
+                        });
                     });
                 }
             }
@@ -262,6 +272,12 @@ class DjinnJS {
 
     parseAndValidateSites() {
         return new Promise((resolve, reject) => {
+            if (this.config.noCachePattern === undefined) {
+                this.config.noCachePattern = /(\.json)$||(cachebust\.js)/gi;
+            } else if (!this.config.noCachePattern instanceof RegExp) {
+                reject(`Invalid DjinnJS configuration. The noCachePattern value must be a regular expression pattern.`);
+            }
+
             if (this.config.site instanceof Array) {
                 this.sites = this.config.sites;
                 let validated = 0;
