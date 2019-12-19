@@ -38,6 +38,7 @@ const scrub = require('./lib/scrubber');
 const minify = require('./lib/minifier');
 const moveCSS = require('./lib/css');
 const configChecker = require('./lib/config-checker');
+const noscript = require('./lib/noscript');
 
 class DjinnJS {
     constructor(config) {
@@ -70,6 +71,10 @@ class DjinnJS {
             }
             await this.relocateCSS();
             if (this.debug) {
+                console.log('Generating noscript CSS file');
+            }
+            await this.generateNoScriptCSS();
+            if (this.debug) {
                 console.log('Cleaning up DjinnJS temporary files');
             }
             await this.cleanup();
@@ -78,6 +83,25 @@ class DjinnJS {
             console.log('Visit https://djinnjs.com/docs for more information.');
             process.exit(1);
         }
+    }
+
+    generateNoScriptCSS() {
+        return new Promise((resolve, reject) => {
+            let sitesCompleted = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
+                noscript(sources, this.sites[i].publicDir, this.sites[i].outDir)
+                    .then(() => {
+                        sitesCompleted++;
+                        if (sitesCompleted === this.sites.length) {
+                            resolve();
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            }
+        });
     }
 
     relocateCSS() {

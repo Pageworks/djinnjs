@@ -24,32 +24,39 @@ function getFiles(sources) {
     });
 }
 
-function relocate(files, publicDir, relativeOutDir) {
+function merge(files, publicDir, relativeOutDir) {
     return new Promise((resolve, reject) => {
-        let relocated = 0;
+        let merged = 0;
+        let data = '';
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
-            const filename = files[i].replace(/.*[\/\\]/g, '');
-            fs.copyFile(files[i], `${outDir}/${filename}`, error => {
+            fs.readFile(files[i], (error, buffer) => {
                 if (error) {
                     reject(error);
                 }
-                relocated++;
-                if (relocated === files.length) {
-                    resolve();
+                data += buffer.toString();
+                merged++;
+                if (merged === files.length) {
+                    fs.writeFile(`${outDir}/noscript.css`, data, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        resolve();
+                    });
                 }
             });
         }
     });
 }
 
-async function move(sources, publicDir, outDir) {
+async function noscript(sources, publicDir, outDir) {
     try {
         const files = await getFiles(sources);
-        await relocate(files, publicDir, outDir);
+        await merge(files, publicDir, outDir);
         return;
     } catch (error) {
         throw error;
     }
 }
-module.exports = move;
+
+module.exports = noscript;
