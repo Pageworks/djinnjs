@@ -1,3 +1,5 @@
+import { isDebug, environment } from './config';
+
 type DOMState = 'soft-loading' | 'hard-loading' | 'idling' | 'page-loading' | 'page-loading-complete';
 type NetworkType = '4g' | '3g' | '2g' | 'slow-2g';
 
@@ -16,8 +18,8 @@ class Env {
         this.memory = 4;
         this.cpu = window.navigator.hardwareConcurrency;
         this.connection = '4g';
-        this.isDebug = document.documentElement.getAttribute('debug') ? true : false;
-        this.isProduciton = document.documentElement.dataset.environment === 'production';
+        this.isDebug = isDebug;
+        this.isProduciton = environment === 'production';
         this.domState = 'hard-loading';
         this.dataSaver = false;
 

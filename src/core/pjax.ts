@@ -3,7 +3,7 @@ import { debug, env, uuid } from './env';
 import { notify } from '../packages/notify.js';
 import { sendPageView, setupGoogleAnalytics } from './gtags.js';
 import { transitionManager } from './transition-manager';
-import { djinnjsOutDir } from './config';
+import { djinnjsOutDir, gaId } from './config';
 
 interface PjaxState {
     activeRequestUid: string;
@@ -55,7 +55,7 @@ class Pjax {
         broadcaster.hookup('pjax', this.inbox.bind(this));
 
         /** Prepare Google Analytics */
-        setupGoogleAnalytics(document.documentElement.dataset.gaId);
+        setupGoogleAnalytics(gaId);
 
         /** Prepare the Pjax Web Worker */
         this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.js`);
@@ -111,7 +111,7 @@ class Pjax {
                 this.updateHistory(data.title, data.url, data.history);
                 this.collectLinks();
                 this.checkPageRevision();
-                sendPageView(window.location.pathname, document.documentElement.dataset.gaId);
+                sendPageView(window.location.pathname, gaId);
                 this.prefetchLinks();
                 break;
             case 'css-ready':
