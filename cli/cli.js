@@ -148,7 +148,7 @@ class DjinnJS {
             let completed = 0;
             for (let i = 0; i < this.sites.length; i++) {
                 const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                const runtimeFile = path.join(__dirname, 'temp', handle, 'runtime.js');
+                const runtimeFile = path.join(__dirname, 'temp', handle, 'config.js');
                 fs.readFile(runtimeFile, (error, buffer) => {
                     if (error) {
                         reject(error);

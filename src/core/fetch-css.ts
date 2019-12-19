@@ -1,4 +1,5 @@
 import { env } from './env';
+import { djinnjsOutDir } from './config';
 
 /**
  * Appends resources to the documents head if it hasn't already been loaded.

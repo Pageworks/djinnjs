@@ -3,6 +3,7 @@ import { debug, env, uuid } from './env';
 import { notify } from '../packages/notify.js';
 import { sendPageView, setupGoogleAnalytics } from './gtags.js';
 import { transitionManager } from './transition-manager';
+import { djinnjsOutDir } from './config';
 
 interface PjaxState {
     activeRequestUid: string;

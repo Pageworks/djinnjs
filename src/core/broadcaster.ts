@@ -1,6 +1,7 @@
 /// <reference path="./messages.d.ts" />
 
 import { uuid } from './env';
+import { djinnjsOutDir } from './config';
 
 type Inbox = {
     callback: Function;

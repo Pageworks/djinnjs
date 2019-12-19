@@ -2,6 +2,7 @@ import { env, debug } from './env';
 import { broadcaster } from './broadcaster';
 import { fetchCSS } from './fetch-css';
 import { fetchJS } from './fetch-js';
+import { djinnjsOutDir } from './config';
 
 interface PjaxResources {
     eager: Array<string>;
@@ -16,9 +17,6 @@ interface WorkerResponse {
 }
 
 type WebComponentLoad = null | 'lazy' | 'eager';
-
-// @ts-ignore
-window.djinnjsOutDir = 'REPLACE_WITH_OUTPUT_DIR_NAME';
 
 class Runtime {
     private _bodyParserWorker: Worker;
