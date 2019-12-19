@@ -37,6 +37,7 @@ const rimraf = require('rimraf');
 const scrub = require('./scrubber');
 const minify = require('./minifier');
 const moveCSS = require('./css');
+const configChecker = require('./config-checker');
 
 class DjinnJS {
     constructor(config) {
@@ -59,10 +60,11 @@ class DjinnJS {
             await this.minifyScript();
             console.log('Relocating CSS files');
             await this.relocateCSS();
+            console.log('Cleaning up DjinnJS temporary files');
             await this.cleanup();
         } catch (error) {
             console.log(error);
-            console.log('Visit https://djinnjs.com/docs/getting-started for more information.');
+            console.log('Visit https://djinnjs.com/docs for more information.');
             process.exit(1);
         }
     }
@@ -175,20 +177,36 @@ class DjinnJS {
     parseAndValidateSites() {
         return new Promise((resolve, reject) => {
             if (this.config.site instanceof Array) {
-                this.sites = this.config.site;
-            } else {
-                this.sites = [this.config.site];
-            }
-            for (let i = 0; i < this.sites.length; i++) {
-                if (this.sites[i].outDir === undefined) {
-                    reject('Invalid DjinnJS site configuration. A site requires an output directory.');
-                } else if (this.sites[i].src === undefined) {
-                    reject('Invalid DjinnJS site configuration. A site requires a source directory.');
-                } else if (this.sites.length > 1 && this.sites[i].handle === undefined) {
-                    reject('Invalid DjinnJS site configuration. Sites require a handle when running DjinnJS in multisite mode.');
+                this.sites = this.config.sites;
+                let validated = 0;
+                for (let i = 0; i < this.sites.length; i++) {
+                    configChecker(this.sites[i], true)
+                        .then(site => {
+                            this.sites[i] = site;
+                            validated++;
+                            if (validated === this.sites.length) {
+                                resolve();
+                            }
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
                 }
+            } else {
+                const site = {
+                    src: this.config.src,
+                    publicDir: this.config.publicDir,
+                    outDir: this.config.outDir,
+                };
+                configChecker(site, true)
+                    .then(validSite => {
+                        this.sites = [validSite];
+                        resolve();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
             }
-            resolve();
         });
     }
 

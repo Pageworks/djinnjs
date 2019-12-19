@@ -1,7 +1,7 @@
 {
     "name": "djinnjs",
     "version": "0.0.1",
-    "description": "DjinnJS is an ES Module and Web Component based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
+    "description": "DjinnJS is an ES Module based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
     "author": "Pageworks",
     "license": "GPL-3.0",
     "bugs": {
@@ -29,8 +29,7 @@
     "scripts": {
         "prettier": "prettier --write \"src/**/*.ts\"",
         "eslint": "eslint -c .eslintrc.js src/**/*.ts",
-        "prerelease": "npm run prettier && npm run eslint && tsc",
-        "build": "node ./tooling/cli.js"
+        "prerelease": "npm run prettier && npm run eslint && tsc"
     },
     "devDependencies": {
         "prettier": "1.19.1",
