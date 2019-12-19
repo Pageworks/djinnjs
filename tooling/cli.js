@@ -56,6 +56,7 @@ class DjinnJS {
             await this.createOutputDirectories();
             console.log('Scrubbing JavaScript imports');
             await this.scrubScripts();
+            await this.injectOutputDir();
             console.log('Minifying JavaScript');
             await this.minifyScript();
             console.log('Relocating CSS files');
@@ -103,6 +104,32 @@ class DjinnJS {
                     .catch(error => {
                         reject(error);
                     });
+            }
+        });
+    }
+
+    injectOutputDir() {
+        return new Promise((resolve, reject) => {
+            let completed = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
+                const runtimeFile = path.join(__dirname, 'temp', handle, 'runtime.js');
+                fs.readFile(runtimeFile, (error, buffer) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    let data = buffer.toString();
+                    data = data.replace('REPLACE_WITH_OUTPUT_DIR_NAME', this.sites[i].outDir);
+                    fs.writeFile(runtimeFile, data, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        completed++;
+                        if (completed === this.sites.length) {
+                            resolve();
+                        }
+                    });
+                });
             }
         });
     }

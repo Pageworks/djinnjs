@@ -17,13 +17,16 @@ interface WorkerResponse {
 
 type WebComponentLoad = null | 'lazy' | 'eager';
 
+// @ts-ignore
+window.djinnjsOutDir = 'REPLACE_WITH_OUTPUT_DIR_NAME';
+
 class Runtime {
     private _bodyParserWorker: Worker;
     private _io: IntersectionObserver;
     private _loadingMessage: HTMLElement;
 
     constructor() {
-        this._bodyParserWorker = new Worker(`${window.location.origin}/assets/runtime-worker.js`);
+        this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.js`);
         this._loadingMessage = document.body.querySelector('page-loading span');
         window.addEventListener('load', this.handleLoadEvent);
     }

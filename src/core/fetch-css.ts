@@ -25,7 +25,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 }
                 el.rel = 'stylesheet';
                 if (local) {
-                    el.href = `${window.location.origin}/assets/${filename}.css`;
+                    el.href = `${window.location.origin}/${djinnjsOutDir}/${filename}.css`;
                 } else {
                     el.href = filename;
                 }

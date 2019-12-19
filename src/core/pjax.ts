@@ -57,7 +57,7 @@ class Pjax {
         setupGoogleAnalytics(document.documentElement.dataset.gaId);
 
         /** Prepare the Pjax Web Worker */
-        this.worker = new Worker(`${window.location.origin}/assets/pjax-worker.js`);
+        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.js`);
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
 
         /** Attempt to register a service worker */
