@@ -5,6 +5,7 @@ type djinnjsConfig = {
     noCachePattern?: RegExp;
     cachebustURL?: string = `/cachebust.json`;
     disableServiceWorker?: boolean = false;
+    silent?: boolean = true;
     sites?: Array<{
         handle: string;
         publicDir: string;

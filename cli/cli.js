@@ -44,38 +44,38 @@ class DjinnJS {
     constructor(config) {
         this.config = config;
         this.sites = [];
-        this.debug = config.debug === undefined ? false : config.debug;
+        this.silent = config.silent === undefined ? true : config.silent;
         this.main();
     }
 
     async main() {
         try {
-            console.log('Running DjinnJS');
+            console.log('DjinnJS');
             await this.preflightCheck();
             await this.createTempDirectory();
             await this.validateSettings();
             await this.resetOutputDirectories();
             await this.createOutputDirectories();
-            if (this.debug) {
+            if (!this.silent) {
                 console.log('Scrubbing JavaScript imports');
             }
             await this.scrubScripts();
             await this.injectOutputDir();
             await this.injectCachebustURL();
-            if (this.debug) {
+            if (!this.silent) {
                 console.log('Minifying JavaScript');
             }
             await this.minifyScript();
             await this.relocateServiceWorker();
-            if (this.debug) {
+            if (!this.silent) {
                 console.log('Relocating CSS files');
             }
             await this.relocateCSS();
-            if (this.debug) {
+            if (!this.silent) {
                 console.log('Generating noscript CSS file');
             }
             await this.generateNoScriptCSS();
-            if (this.debug) {
+            if (!this.silent) {
                 console.log('Cleaning up DjinnJS temporary files');
             }
             await this.cleanup();
