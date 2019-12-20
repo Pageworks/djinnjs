@@ -38,6 +38,12 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The disableServiceWorker value must be a boolean.`);
         }
 
+        if (site.gtagId === undefined) {
+            site.gtagId = '';
+        } else if (!site.gtagId instanceof String) {
+            reject(`Invalid DjinnJS configuration. The gtagId value must be a string.`);
+        }
+
         let env = site.env || yargs.e || yargs.env;
         if (!env) {
             env = 'production';

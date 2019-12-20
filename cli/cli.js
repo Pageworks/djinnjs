@@ -284,6 +284,7 @@ class DjinnJS {
                     let data = buffer.toString();
                     data = data.replace('REPLACE_WITH_OUTPUT_DIR_NAME', this.sites[i].outDir);
                     data = data.replace('REPLACE_WITH_ENVIRONMENT', this.sites[i].env);
+                    data = data.replace('REPLACE_WITH_GTAG_ID', this.sites[i].gtagId);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -402,6 +403,7 @@ class DjinnJS {
                     outDir: this.config.outDir,
                     disableServiceWorker: this.config.disableServiceWorker,
                     env: this.config.env,
+                    gtagId: this.config.gtagId,
                 };
                 configChecker(site)
                     .then(validSite => {

@@ -7,6 +7,7 @@ type djinnjsConfig = {
     disableServiceWorker?: boolean = false;
     silent?: boolean = true;
     env?: string = 'production';
+    gtagId?: string = '';
     sites?: Array<{
         handle: string;
         publicDir: string;
@@ -14,6 +15,7 @@ type djinnjsConfig = {
         src: string | Array<string>;
         disableServiceWorker?: boolean = false;
         env?: string = 'production';
+        gtagId?: string = '';
     }>;
     transitions?: Array<{
         handle: string;
