@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-let resourcesCacheId = 'resouces-initial';
+let resourcesCacheId = 'resources-initial';
 let contentCacheId = 'content-initial';
 
 self.addEventListener('fetch', event => {
@@ -42,7 +42,7 @@ self.addEventListener('message', event => {
     const { type } = event.data;
     switch (type) {
         case 'cachebust':
-            cachebust(event.data.url, event.data.contentCache);
+            cachebust(event.data.url);
             break;
         case 'page-refresh':
             updatePageCache(event.data.url, event.data.network);
@@ -68,42 +68,65 @@ function clearContentCache() {
     });
 }
 
-async function cachebust(url, cachebust) {
-    const request = await fetch(`/pwa/cachebust`, {
+function cachebust(url) {
+    fetch(`/resources-cachebust.json`, {
         cache: 'no-cache',
         credentials: 'include',
         headers: new Headers({
             Accept: 'application/json',
         }),
-    });
-    if (request.ok) {
-        const response = await request.json();
-        if (response.success) {
-            resourcesCacheId = `resources-${response.resourcesCache}`;
-            contentCacheId = `content-${response.contentCache}`;
+    })
+        .then(request => request.json())
+        .then(response => {
+            resourcesCacheId = `resources-${response.cacheTimestamp}`;
             caches.keys().then(cacheNames => {
                 return Promise.all(
                     cacheNames.map(cacheName => {
-                        if (cacheName !== resourcesCacheId && cacheName !== contentCacheId) {
+                        if (new RegExp(/resources/i).test(cacheName) && cacheName !== resourcesCacheId) {
                             return caches.delete(cacheName);
                         }
                     })
                 );
             });
-            const clients = await self.clients.matchAll();
-            clients.map(client => {
-                if (client.visibilityState === 'visible' && client.url === url) {
-                    client.postMessage({
-                        type: 'cachebust',
-                        max: parseInt(response.maximumContentPrompts),
-                        contentCacheExpires: parseInt(response.contentCacheDuration),
-                    });
-                }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    fetch('REPLACE_WITH_CACHEBUST_URL', {
+        cache: 'no-cache',
+        credentials: 'include',
+        headers: new Headers({
+            Accept: 'application/json',
+        }),
+    })
+        .then(request => request.json())
+        .then(response => {
+            contentCacheId = `content-${response.cacheTimestamp}`;
+            caches.keys().then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
             });
-        } else {
-            console.error(response.error);
-        }
-    }
+            clients = self.clients.matchAll().then(clients => {
+                clients.map(client => {
+                    if (client.visibilityState === 'visible' && client.url === url) {
+                        client.postMessage({
+                            type: 'cachebust',
+                            max: parseInt(response.maximumContentPrompts),
+                            contentCacheExpires: parseInt(response.contentCacheDuration),
+                        });
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 async function updatePageCache(url, network) {

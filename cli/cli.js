@@ -53,7 +53,7 @@ class DjinnJS {
             console.log('Running DjinnJS');
             await this.preflightCheck();
             await this.createTempDirectory();
-            await this.parseAndValidateSites();
+            await this.validateSettings();
             await this.resetOutputDirectories();
             await this.createOutputDirectories();
             if (this.debug) {
@@ -61,6 +61,7 @@ class DjinnJS {
             }
             await this.scrubScripts();
             await this.injectOutputDir();
+            await this.injectCachebustURL();
             if (this.debug) {
                 console.log('Minifying JavaScript');
             }
@@ -78,11 +79,48 @@ class DjinnJS {
                 console.log('Cleaning up DjinnJS temporary files');
             }
             await this.cleanup();
+            await this.cachebust();
         } catch (error) {
             console.log(error);
             console.log('Visit https://djinnjs.com/docs for more information.');
             process.exit(1);
         }
+    }
+
+    cachebust() {
+        return new Promise((resolve, reject) => {
+            let sitesBusted = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const output = path.resolve(cwd, this.sites[i].publicDir, 'resources-cachebust.json');
+                if (fs.existsSync(output)) {
+                    fs.unlinkSync(output);
+                }
+
+                if (!this.sites[i].disableServiceWorker) {
+                    const cachebustFile = path.join(__dirname, 'resources-cachebust.json');
+                    fs.readFile(cachebustFile, (errror, buffer) => {
+                        if (errror) {
+                            reject(errror);
+                        }
+                        let data = buffer.toString().replace('REPLACE_WITH_TIMESTAMP', `${Date.now()}`);
+                        fs.writeFile(output, data, errror => {
+                            if (errror) {
+                                reject(errror);
+                            }
+                            sitesBusted++;
+                            if (sitesBusted === this.sites.length) {
+                                resolve();
+                            }
+                        });
+                    });
+                } else {
+                    sitesBusted++;
+                    if (sitesBusted === this.sites.length) {
+                        resolve();
+                    }
+                }
+            }
+        });
     }
 
     generateNoScriptCSS() {
@@ -173,6 +211,32 @@ class DjinnJS {
                         });
                     });
                 }
+            }
+        });
+    }
+
+    injectCachebustURL() {
+        return new Promise((resolve, reject) => {
+            let completed = 0;
+            for (let i = 0; i < this.sites.length; i++) {
+                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
+                const serviceWorker = path.join(__dirname, 'temp', handle, 'service-worker.js');
+                fs.readFile(serviceWorker, (error, buffer) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    let data = buffer.toString();
+                    data = data.replace('REPLACE_WITH_CACHEBUST_URL', this.config.cachebustURL);
+                    fs.writeFile(serviceWorker, data, error => {
+                        if (error) {
+                            reject(error);
+                        }
+                        completed++;
+                        if (completed === this.sites.length) {
+                            resolve();
+                        }
+                    });
+                });
             }
         });
     }
@@ -270,12 +334,18 @@ class DjinnJS {
         });
     }
 
-    parseAndValidateSites() {
+    validateSettings() {
         return new Promise((resolve, reject) => {
             if (this.config.noCachePattern === undefined) {
                 this.config.noCachePattern = /(\.json)$||(cachebust\.js)/gi;
             } else if (!this.config.noCachePattern instanceof RegExp) {
                 reject(`Invalid DjinnJS configuration. The noCachePattern value must be a regular expression pattern.`);
+            }
+
+            if (this.config.cachebustURL === undefined) {
+                this.config.cachebustURL = '/cachebust.json';
+            } else if (!this.config.cachebustURL instanceof String) {
+                reject(`Invalid DjinnJS configuration. The cachebustURL value must be a string.`);
             }
 
             if (this.config.site instanceof Array) {
