@@ -23,22 +23,32 @@ if (!semver.satisfies(process.version, version)) {
 
 const path = require('path');
 const fs = require('fs');
+const yargs = require('yargs').argv;
 
 const cwd = process.cwd();
-let cfgPath = path.join(cwd, 'djinn.js');
+const configFile = yargs.c || yargs.config;
 
-if (!fs.existsSync(cfgPath)) {
-    cfgPath = path.join(cwd, 'djinnjs.config.js');
+let cfgPath;
+if (configFile) {
+    cfgPath = path.join(cwd, configFile);
     if (!fs.existsSync(cfgPath)) {
-        console.log('Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.');
+        console.log(`Missing the ${configFile} config file. Did you remove the file without removing the --config flag?`);
         process.exit(1);
+    }
+} else {
+    cfgPath = path.join(cwd, 'djinn.js');
+    if (!fs.existsSync(cfgPath)) {
+        cfgPath = path.join(cwd, 'djinnjs.config.js');
+        if (!fs.existsSync(cfgPath)) {
+            console.log('Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.');
+            process.exit(1);
+        }
     }
 }
 
 const config = require(cfgPath);
 
 const rimraf = require('rimraf');
-const yargs = require('yargs').argv;
 
 const scrub = require('./lib/scrubber');
 const minify = require('./lib/minifier');
