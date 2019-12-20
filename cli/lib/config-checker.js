@@ -1,3 +1,5 @@
+const yargs = require('yargs').argv;
+
 function checkSite(site, multisite = false) {
     return new Promise((resolve, reject) => {
         if (multisite) {
@@ -31,6 +33,9 @@ function checkSite(site, multisite = false) {
         } else if (!site.disableServiceWorker instanceof Boolean) {
             reject(`Invalid DjinnJS configuration. The disableServiceWorker value must be a boolean.`);
         }
+
+        const env = yargs.e || yargs.env || 'production';
+        site.env = env;
         resolve(site);
     });
 }

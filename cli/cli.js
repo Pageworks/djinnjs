@@ -33,9 +33,13 @@ if (!fs.existsSync(cfgPath)) {
 }
 
 const config = require(cfgPath);
+
 const rimraf = require('rimraf');
+const yargs = require('yargs').argv;
+
 const scrub = require('./lib/scrubber');
 const minify = require('./lib/minifier');
+const relocator = require('./lib/relocator');
 const moveCSS = require('./lib/css');
 const configChecker = require('./lib/config-checker');
 const noscript = require('./lib/noscript');
@@ -166,16 +170,29 @@ class DjinnJS {
             let sitesCompleted = 0;
             for (let i = 0; i < this.sites.length; i++) {
                 const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                minify(handle, this.sites[i].publicDir, this.sites[i].outDir)
-                    .then(() => {
-                        sitesCompleted++;
-                        if (sitesCompleted === this.sites.length) {
-                            resolve();
-                        }
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
+                if (this.sites[i].env === 'production') {
+                    minify(handle, this.sites[i].publicDir, this.sites[i].outDir)
+                        .then(() => {
+                            sitesCompleted++;
+                            if (sitesCompleted === this.sites.length) {
+                                resolve();
+                            }
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
+                } else {
+                    relocator(handle, this.sites[i].publicDir, this.sites[i].outDir, 'js')
+                        .then(() => {
+                            sitesCompleted++;
+                            if (sitesCompleted === this.sites.length) {
+                                resolve();
+                            }
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
+                }
             }
         });
     }
