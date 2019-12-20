@@ -29,6 +29,7 @@
     "scripts": {
         "prettier": "prettier --write \"src/**/*.ts\"",
         "eslint": "eslint -c .eslintrc.js src/**/*.ts",
+        "lint": "npm run prettier && npm run eslint",
         "compile": "rm -rf ./dist && tsc",
         "prerelease": "npm run prettier && npm run eslint && tsc"
     },

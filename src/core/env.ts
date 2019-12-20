@@ -18,9 +18,9 @@ class Env {
         this.memory = 4;
         this.cpu = window.navigator.hardwareConcurrency;
         this.connection = '4g';
-        this.isDebug = false;
         // @ts-ignore
         this.isProduciton = environment === 'production';
+        this.isDebug = !this.isProduciton;
         this.domState = 'hard-loading';
         this.dataSaver = false;
 
@@ -42,6 +42,16 @@ class Env {
         if ('deviceMemory' in navigator) {
             // @ts-ignore
             this.memory = window.navigator.deviceMemory;
+        }
+
+        if (document.documentElement.getAttribute('debug')) {
+            this.isDebug = true;
+        }
+
+        if (window.location.search) {
+            if (new URL(window.location.href).searchParams.get('debug')) {
+                this.isDebug = true;
+            }
         }
     }
 
