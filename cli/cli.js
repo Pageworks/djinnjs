@@ -25,11 +25,14 @@ const path = require('path');
 const fs = require('fs');
 
 const cwd = process.cwd();
-const cfgPath = path.join(cwd, 'djinn.js');
+let cfgPath = path.join(cwd, 'djinn.js');
 
 if (!fs.existsSync(cfgPath)) {
-    console.log('Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.');
-    process.exit(1);
+    cfgPath = path.join(cwd, 'djinnjs.config.js');
+    if (!fs.existsSync(cfgPath)) {
+        console.log('Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.');
+        process.exit(1);
+    }
 }
 
 const config = require(cfgPath);
