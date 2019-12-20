@@ -77,7 +77,7 @@ class DjinnJS {
                 console.log('Scrubbing JavaScript imports');
             }
             await this.scrubScripts();
-            await this.injectOutputDir();
+            await this.injectConfigScriptVariables();
             await this.injectCachebustURL();
             if (!this.silent) {
                 console.log('Minifying JavaScript');
@@ -271,7 +271,7 @@ class DjinnJS {
         });
     }
 
-    injectOutputDir() {
+    injectConfigScriptVariables() {
         return new Promise((resolve, reject) => {
             let completed = 0;
             for (let i = 0; i < this.sites.length; i++) {
@@ -283,6 +283,7 @@ class DjinnJS {
                     }
                     let data = buffer.toString();
                     data = data.replace('REPLACE_WITH_OUTPUT_DIR_NAME', this.sites[i].outDir);
+                    data = data.replace('REPLACE_WITH_ENVIRONMENT', this.sites[i].env);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -400,6 +401,7 @@ class DjinnJS {
                     publicDir: this.config.publicDir,
                     outDir: this.config.outDir,
                     disableServiceWorker: this.config.disableServiceWorker,
+                    env: this.config.env,
                 };
                 configChecker(site)
                     .then(validSite => {

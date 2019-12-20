@@ -20,12 +20,16 @@ function checkSite(site, multisite = false) {
             site.publicDir = './public';
         } else if (!site.publicDir instanceof String) {
             reject(`Invalid DjinnJS configuration. The publicDir value must be a string.`);
+        } else {
+            site.publicDir = site.publicDir.trim();
         }
 
         if (site.outDir === undefined) {
             site.outDir = 'assets';
         } else if (!site.outDir instanceof String) {
             reject(`Invalid DjinnJS configuration. The outDir value must be a string.`);
+        } else {
+            site.outDir = site.outDir.toLowerCase().trim();
         }
 
         if (site.disableServiceWorker === undefined) {
@@ -34,8 +38,14 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The disableServiceWorker value must be a boolean.`);
         }
 
-        const env = yargs.e || yargs.env || 'production';
-        site.env = env;
+        let env = site.env || yargs.e || yargs.env;
+        if (!env) {
+            env = 'production';
+        }
+        if (!env instanceof String) {
+            reject(`Invalid DjinnJS configuration. The env value must be a string.`);
+        }
+        site.env = env.toLowerCase().trim();
         resolve(site);
     });
 }
