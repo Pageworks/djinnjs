@@ -50,6 +50,7 @@ if (configFile) {
 const config = require(cfgPath);
 
 const rimraf = require('rimraf');
+const ora = require('ora');
 
 const scrub = require('./lib/scrubber');
 const minify = require('./lib/minifier');
@@ -68,9 +69,9 @@ class DjinnJS {
     }
 
     async main() {
+        const spinner = ora('DjinnJS').start();
         try {
             /** TODO: Add chalk and spinner packages */
-            console.log('DjinnJS');
             await this.preflightCheck();
             await this.createTempDirectory();
             await this.validateSettings();
@@ -78,39 +79,39 @@ class DjinnJS {
             await this.createOutputDirectories();
 
             if (!this.silent) {
-                console.log('Scrubbing JavaScript imports');
+                spinner.text = 'Scrubbing JavaScript imports';
             }
             await this.scrubScripts();
             await this.injectConfigScriptVariables();
             await this.injectCachebustURL();
 
             if (!this.silent) {
-                console.log('Minifying JavaScript');
+                spinner.text = 'Minifying JavaScript';
             }
             await this.minifyScript();
             await this.relocateServiceWorker();
 
             if (!this.silent) {
-                console.log('Relocating CSS files');
+                spinner.text = 'Relocating CSS files';
             }
             await this.relocateCSS();
 
             if (!this.silent) {
-                console.log('Generating noscript CSS file');
+                spinner.text = 'Generating noscript CSS file';
             }
             await this.generateNoScriptCSS();
 
             if (!this.silent) {
-                console.log('Cleaning up DjinnJS temporary files');
+                spinner.text = 'Cleaning up DjinnJS temporary files';
             }
             await this.cleanup();
             await this.cachebust();
 
             /** Exit the process when everything runs successfully */
+            spinner.succeed('DjinnJS');
             process.exit(0);
         } catch (error) {
-            console.log(error);
-            console.log('Visit https://djinnjs.com/docs for help.');
+            spinner.fail(error, 'Visit https://djinnjs.com/docs for help.');
             process.exit(1);
         }
     }
