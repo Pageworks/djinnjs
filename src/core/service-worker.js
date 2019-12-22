@@ -68,6 +68,20 @@ function clearContentCache() {
     });
 }
 
+function informClientOfCachebustValues(maximumContentPrompts, contentCacheDuration, url) {
+    clients = self.clients.matchAll().then(clients => {
+        clients.map(client => {
+            if (client.visibilityState === 'visible' && client.url === url) {
+                client.postMessage({
+                    type: 'cachebust',
+                    max: parseInt(maximumContentPrompts),
+                    contentCacheExpires: parseInt(contentCacheDuration),
+                });
+            }
+        });
+    });
+}
+
 function cachebust(url) {
     fetch(`/resources-cachebust.json`, {
         cache: 'no-cache',
@@ -112,20 +126,23 @@ function cachebust(url) {
                     })
                 );
             });
-            clients = self.clients.matchAll().then(clients => {
-                clients.map(client => {
-                    if (client.visibilityState === 'visible' && client.url === url) {
-                        client.postMessage({
-                            type: 'cachebust',
-                            max: parseInt(response.maximumContentPrompts),
-                            contentCacheExpires: parseInt(response.contentCacheDuration),
-                        });
-                    }
-                });
-            });
+            informClientOfCachebustValues(response.maximumContentPrompts, response.contentCacheDuration, url);
         })
         .catch(error => {
             console.error(error);
+            if (contentCacheId === 'content-initial') {
+                contentCacheId = `content-${Date().now()}`;
+            }
+            caches.keys().then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            });
+            informClientOfCachebustValues(4, 7, url);
         });
 }
 
