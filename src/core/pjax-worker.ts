@@ -1,5 +1,3 @@
-import { debug } from './env';
-
 /** The Pjax Web Worker class. Used to handle page revision checking & navigation requests. */
 class PjaxWorker {
     private prefetchQueue: Array<string>;
@@ -30,9 +28,7 @@ class PjaxWorker {
                 }
                 break;
             default:
-                if (debug) {
-                    console.error(`Unknown Pjax Worker message type: ${type}`);
-                }
+                console.error(`Unknown Pjax Worker message type: ${type}`);
                 break;
         }
     }
