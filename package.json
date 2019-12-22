@@ -12,9 +12,6 @@
         "type": "git",
         "url": "git+https://github.com/Pageworks/djinnjs.git"
     },
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/"
-    },
     "bin": {
         "djinnjs": "./cli/cli.js"
     },
