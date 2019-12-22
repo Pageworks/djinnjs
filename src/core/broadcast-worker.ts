@@ -1,7 +1,5 @@
 /// <reference path="./messages.d.ts" />
 
-import { debug } from './env';
-
 type InboxData = {
     name: string;
     address: number;
@@ -91,9 +89,7 @@ class BroadcastHelper {
                 this.handleUserDeviceInfo(data as UserDeviceInfoMessage);
                 break;
             default:
-                if (debug) {
-                    console.warn(`Unknown broadcast-worker message type: ${data.type}`);
-                }
+                console.warn(`Unknown broadcast-worker message type: ${data.type}`);
                 break;
         }
     }
@@ -179,9 +175,7 @@ class BroadcastHelper {
                 }
             }
         } catch (error) {
-            if (debug) {
-                console.error(error);
-            }
+            console.error(error);
         }
     }
 
