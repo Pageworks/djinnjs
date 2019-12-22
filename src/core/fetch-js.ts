@@ -1,3 +1,5 @@
+import { djinnjsOutDir } from './config';
+
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
  * @param filenames - a filename `sting` or an array of `string` JS filenames or a URL -- exclude the file path and extension if local
@@ -21,7 +23,7 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
                 }
                 el.type = 'module';
                 if (local) {
-                    el.src = `${window.location.origin}/assets/${filename}.js`;
+                    el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}.js`;
                 } else {
                     el.src = filename;
                 }

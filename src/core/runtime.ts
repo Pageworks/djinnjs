@@ -2,6 +2,7 @@ import { env, debug } from './env';
 import { broadcaster } from './broadcaster';
 import { fetchCSS } from './fetch-css';
 import { fetchJS } from './fetch-js';
+import { djinnjsOutDir } from './config';
 
 interface PjaxResources {
     eager: Array<string>;
@@ -23,7 +24,7 @@ class Runtime {
     private _loadingMessage: HTMLElement;
 
     constructor() {
-        this._bodyParserWorker = new Worker(`${window.location.origin}/assets/runtime-worker.js`);
+        this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.js`);
         this._loadingMessage = document.body.querySelector('page-loading span');
         window.addEventListener('load', this.handleLoadEvent);
     }
@@ -98,7 +99,7 @@ class Runtime {
                                 {
                                     type: 'init',
                                 },
-                                'TCP',
+                                'Guaranteed',
                                 Infinity
                             );
                         });
@@ -109,7 +110,9 @@ class Runtime {
                 this.fetchPjaxResources(response.pjaxFiles, response.requestUid);
                 break;
             default:
-                console.warn(`Unknown response type from Body Parser worker: ${response.type}`);
+                if (debug) {
+                    console.warn(`Unknown response type from Body Parser worker: ${response.type}`);
+                }
                 break;
         }
     }

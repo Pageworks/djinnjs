@@ -1,6 +1,7 @@
 /// <reference path="./messages.d.ts" />
 
-import { uuid } from './env';
+import { uuid, debug } from './env';
+import { djinnjsOutDir } from './config';
 
 type Inbox = {
     callback: Function;
@@ -17,7 +18,7 @@ class Broadcaster {
     };
 
     constructor() {
-        this.worker = new Worker(`${window.location.origin}/assets/broadcast-worker.js`);
+        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/broadcast-worker.js`);
         this.worker.onmessage = this.handleMessage.bind(this);
         this.inboxes = [];
         this.messageQueue = [];
@@ -69,7 +70,7 @@ class Broadcaster {
         const workerMessage: BroadcastWorkerMessage = {
             recipient: 'broadcast-worker',
             messageId: null,
-            protocol: 'UDP',
+            protocol: 'Once',
             data: {
                 type: 'init',
                 memory: deviceMemory,
@@ -95,7 +96,9 @@ class Broadcaster {
             case 'ping':
                 break;
             default:
-                console.warn(`Unknown broadcaster message type: ${data.type}`);
+                if (debug) {
+                    console.warn(`Unknown broadcaster message type: ${data.type}`);
+                }
                 break;
         }
     }
@@ -104,17 +107,17 @@ class Broadcaster {
      * Sends a message to an inbox.
      * @param recipient - the name of the inboxes you want to send a message to
      * @param data - the `MessageData` object that will be sent to the inboxes
-     * @param protocol - `UDP` will attempt to send the message but will not guarantee it arrives, `TCP` will attempt to deliver the message until the `maxAttempts` have been exceeded
-     * @param maxAttempts - the maximum number of attempts before the `TCP` message is dropped
+     * @param protocol - `Once` will attempt to send the message but will not guarantee it arrives, `Guaranteed` will attempt to deliver the message until the `maxAttempts` have been exceeded
+     * @param maxAttempts - the maximum number of attempts before the `Guaranteed` message is dropped, can be set to `Infinity`
      */
-    public message(recipient: string, data: MessageData, protocol: 'UDP' | 'TCP' = 'UDP', maxAttempts = 100): void {
+    public message(recipient: string, data: MessageData, protocol: 'Once' | 'Guaranteed' = 'Once', maxAttempts = 100): void {
         const workerMessage: BroadcastWorkerMessage = {
             recipient: recipient,
             data: data,
             messageId: uuid(),
             protocol: protocol,
         };
-        if (protocol === 'TCP') {
+        if (protocol === 'Guaranteed') {
             workerMessage.maxAttempts = maxAttempts;
         }
         this.postMessageToWorker(workerMessage);
@@ -136,7 +139,7 @@ class Broadcaster {
         const workerMessage: BroadcastWorkerMessage = {
             recipient: 'broadcast-worker',
             messageId: null,
-            protocol: 'UDP',
+            protocol: 'Once',
             data: {
                 type: 'hookup',
                 name: name,
@@ -178,7 +181,7 @@ class Broadcaster {
         const workerMessage: BroadcastWorkerMessage = {
             recipient: 'broadcast-worker',
             messageId: null,
-            protocol: 'UDP',
+            protocol: 'Once',
             data: {
                 type: 'update-addresses',
                 addresses: updatedAddresses,
@@ -207,7 +210,7 @@ class Broadcaster {
         const workerMessage: BroadcastWorkerMessage = {
             recipient: 'broadcast-worker',
             messageId: null,
-            protocol: 'UDP',
+            protocol: 'Once',
             data: {
                 type: 'disconnect',
                 inboxAddress: index,

@@ -1,4 +1,5 @@
 import { env } from './env';
+import { djinnjsOutDir } from './config';
 
 /**
  * Appends resources to the documents head if it hasn't already been loaded.
@@ -25,7 +26,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 }
                 el.rel = 'stylesheet';
                 if (local) {
-                    el.href = `${window.location.origin}/assets/${filename}.css`;
+                    el.href = `${window.location.origin}/${djinnjsOutDir}/${filename}.css`;
                 } else {
                     el.href = filename;
                 }

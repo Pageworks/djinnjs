@@ -1,3 +1,5 @@
+import { environment } from './config';
+
 type DOMState = 'soft-loading' | 'hard-loading' | 'idling' | 'page-loading' | 'page-loading-complete';
 type NetworkType = '4g' | '3g' | '2g' | 'slow-2g';
 
@@ -16,8 +18,9 @@ class Env {
         this.memory = 4;
         this.cpu = window.navigator.hardwareConcurrency;
         this.connection = '4g';
-        this.isDebug = document.documentElement.getAttribute('debug') ? true : false;
-        this.isProduciton = document.documentElement.dataset.environment === 'production';
+        // @ts-ignore
+        this.isProduciton = environment === 'production';
+        this.isDebug = !this.isProduciton;
         this.domState = 'hard-loading';
         this.dataSaver = false;
 
@@ -40,6 +43,16 @@ class Env {
             // @ts-ignore
             this.memory = window.navigator.deviceMemory;
         }
+
+        if (document.documentElement.getAttribute('debug')) {
+            this.isDebug = true;
+        }
+
+        if (window.location.search) {
+            if (new URL(window.location.href).searchParams.get('debug')) {
+                this.isDebug = true;
+            }
+        }
     }
 
     private handleNetworkChange: EventListener = () => {
@@ -52,7 +65,7 @@ class Env {
      * @param ticket - the `string` the was provided by the `startLoading()` method.
      */
     public stopLoading(ticket: string): void {
-        if (!ticket || typeof ticket !== 'string') {
+        if ((!ticket && this.isDebug) || (typeof ticket !== 'string' && this.isDebug)) {
             console.error(`A ticket with the typeof 'string' is required to end the loading state.`);
             return;
         }

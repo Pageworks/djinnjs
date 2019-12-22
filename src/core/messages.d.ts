@@ -11,7 +11,7 @@ type MessageData = {
 
 interface BroadcastWorkerMessage extends Message {
     messageId: string;
-    protocol: 'UDP' | 'TCP';
+    protocol: 'Once' | 'Guaranteed';
     maxAttempts?: number;
     attempts?: number;
 }
