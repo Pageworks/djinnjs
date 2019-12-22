@@ -161,7 +161,7 @@ class BroadcastHelper {
                     data: data,
                     inboxIndexes: inboxAddressIndexes,
                 });
-            } else if (protocol === 'TCP' && message.messageId !== null) {
+            } else if (protocol === 'Guaranteed' && message.messageId !== null) {
                 if (message?.attempts < message.maxAttempts) {
                     message.attempts += 1;
                 } else if (message?.attempts === message.maxAttempts) {

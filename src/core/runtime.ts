@@ -99,7 +99,7 @@ class Runtime {
                                 {
                                     type: 'init',
                                 },
-                                'TCP',
+                                'Guaranteed',
                                 Infinity
                             );
                         });

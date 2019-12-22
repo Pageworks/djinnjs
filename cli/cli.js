@@ -21,6 +21,7 @@ if (!semver.satisfies(process.version, version)) {
     process.exit(1);
 }
 
+/** TODO: Move config file logic into separate file */
 const path = require('path');
 const fs = require('fs');
 const yargs = require('yargs').argv;
@@ -67,39 +68,48 @@ class DjinnJS {
 
     async main() {
         try {
+            /** TODO: Add chalk and spinner packages */
             console.log('DjinnJS');
             await this.preflightCheck();
             await this.createTempDirectory();
             await this.validateSettings();
             await this.resetOutputDirectories();
             await this.createOutputDirectories();
+
             if (!this.silent) {
                 console.log('Scrubbing JavaScript imports');
             }
             await this.scrubScripts();
             await this.injectConfigScriptVariables();
             await this.injectCachebustURL();
+
             if (!this.silent) {
                 console.log('Minifying JavaScript');
             }
             await this.minifyScript();
             await this.relocateServiceWorker();
+
             if (!this.silent) {
                 console.log('Relocating CSS files');
             }
             await this.relocateCSS();
+
             if (!this.silent) {
                 console.log('Generating noscript CSS file');
             }
             await this.generateNoScriptCSS();
+
             if (!this.silent) {
                 console.log('Cleaning up DjinnJS temporary files');
             }
             await this.cleanup();
             await this.cachebust();
+
+            /** Exit the process when everything runs successfully */
+            process.exit(0);
         } catch (error) {
             console.log(error);
-            console.log('Visit https://djinnjs.com/docs for more information.');
+            console.log('Visit https://djinnjs.com/docs for help.');
             process.exit(1);
         }
     }
