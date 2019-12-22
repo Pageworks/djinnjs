@@ -1,3 +1,16 @@
 node_modules
-dist
 cli/temp
+dist
+
+env.js
+env.d.ts
+actor.js
+actor.d.ts
+broadcaster.js
+broadcaster.d.ts
+fetch-css.js
+fetch-css.d.ts
+fetch-js.js
+fetch-js.d.ts
+notify.js
+notify.d.ts
