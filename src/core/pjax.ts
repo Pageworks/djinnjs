@@ -82,7 +82,9 @@ class Pjax {
                     }
                 })
                 .catch(error => {
-                    console.error('Registration failed with ' + error);
+                    if (debug) {
+                        console.error('Registration failed with ' + error);
+                    }
                 });
         }
         /** Add event listeners */

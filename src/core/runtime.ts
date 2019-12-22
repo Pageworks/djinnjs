@@ -110,7 +110,9 @@ class Runtime {
                 this.fetchPjaxResources(response.pjaxFiles, response.requestUid);
                 break;
             default:
-                console.warn(`Unknown response type from Body Parser worker: ${response.type}`);
+                if (debug) {
+                    console.warn(`Unknown response type from Body Parser worker: ${response.type}`);
+                }
                 break;
         }
     }

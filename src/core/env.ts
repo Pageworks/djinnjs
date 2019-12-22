@@ -65,7 +65,7 @@ class Env {
      * @param ticket - the `string` the was provided by the `startLoading()` method.
      */
     public stopLoading(ticket: string): void {
-        if (!ticket || typeof ticket !== 'string') {
+        if ((!ticket && this.isDebug) || (typeof ticket !== 'string' && this.isDebug)) {
             console.error(`A ticket with the typeof 'string' is required to end the loading state.`);
             return;
         }

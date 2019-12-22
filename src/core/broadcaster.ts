@@ -1,6 +1,6 @@
 /// <reference path="./messages.d.ts" />
 
-import { uuid } from './env';
+import { uuid, debug } from './env';
 import { djinnjsOutDir } from './config';
 
 type Inbox = {
@@ -96,7 +96,9 @@ class Broadcaster {
             case 'ping':
                 break;
             default:
-                console.warn(`Unknown broadcaster message type: ${data.type}`);
+                if (debug) {
+                    console.warn(`Unknown broadcaster message type: ${data.type}`);
+                }
                 break;
         }
     }
