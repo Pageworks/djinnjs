@@ -63,6 +63,7 @@ class DjinnJS {
         this.config = config;
         this.sites = [];
         this.silent = config.silent === undefined ? true : config.silent;
+        this.handle = null;
         this.main();
     }
 
@@ -390,8 +391,28 @@ class DjinnJS {
                 reject(`Invalid DjinnJS configuration. The cachebustURL value must be a string.`);
             }
 
-            if (this.config.site instanceof Array) {
+            if (this.config.sites !== undefined) {
+                this.handle = yargs.h || yargs.handle || null;
+            }
+
+            if (this.config.sites instanceof Array) {
                 this.sites = this.config.sites;
+
+                if (this.handle) {
+                    const singleSite = [];
+                    for (let i = 0; i < this.sites.length; i++) {
+                        if (this.sites[i].handle !== undefined && this.sites[i].handle === this.handle) {
+                            singleSite.push(this.sites[i]);
+                            break;
+                        }
+                    }
+                    if (singleSite.length) {
+                        this.sites = singleSite;
+                    } else {
+                        reject(`Invalid DjinnJS configuration. The handle flag value of ${this.handle} did not match any of the sites handles.`);
+                    }
+                }
+
                 let validated = 0;
                 for (let i = 0; i < this.sites.length; i++) {
                     configChecker(this.sites[i], true)
