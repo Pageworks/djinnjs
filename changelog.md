@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Removes all relocated `*.js` and `*.d.ts` files when the `cleanup.js` script runs
 -   Adds `.DS_Store` to the `.gitignore` file
 -   Pjax ignores HTML Anchor Elements with a `prevent-pjax` attribute or a `no-transition` class
+-   Adds `keywords` section to the `package.json`
 
 ### Fixed
 

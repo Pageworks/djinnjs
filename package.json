@@ -4,6 +4,13 @@
     "description": "DjinnJS is an ES Module based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
     "author": "Pageworks",
     "license": "GPL-3.0",
+    "keywords": [
+        "offline-first",
+        "progressive-enhancement",
+        "pjax",
+        "es-modules",
+        "javascript-framework"
+    ],
     "bugs": {
         "url": "https://github.com/Pageworks/djinnjs/issues"
     },
