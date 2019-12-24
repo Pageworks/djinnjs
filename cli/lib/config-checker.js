@@ -11,7 +11,7 @@ function checkSite(site, multisite = false) {
         }
 
         if (site.src === undefined) {
-            reject(`Invalid DjinnJS configuration. No sources provided.`);
+            site.src = './src';
         } else if (!site.src instanceof String && !site.src instanceof Array) {
             reject(`Invalid DjinnJS configuration. The src value must be a string or an array of strings.`);
         }
