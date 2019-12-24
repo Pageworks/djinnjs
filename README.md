@@ -68,15 +68,7 @@ djinnjs
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chromium Edge                                                                                                                                                                                     | last 2 versions                                                                                                                                                                                       | last 2 versions                                                                                                                                                                                    | last 2 versions                                                                                                                                                                                    | last 2 versions                                                                                                                                                                                 | last 2 versions                                                                                                                                                                                          |
 
-## Contributing
-
-We welcome all contributions. Please read our [contributing guide](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md) first. You can submit any ideas as [pull requests](https://github.com/Pageworks/djinnjs/pulls) or as [GitHub issues](https://github.com/Pageworks/djinnjs/issues). If you'd like to fix bugs or add new features, check out the [developer guide](https://djinnjs.com/developer-guide).
-
-If you are a collaborator, please follow our [Pull Request](https://djinnjs.com/contributing#branch-organization) principle to create a Pull Request by collaborator template.
-
----
-
-## Links
+## Documentation
 
 -   [Overview](https://djinnjs.com/)
 -   [Configuration](https://djinnjs.com/configuration)
@@ -86,6 +78,12 @@ If you are a collaborator, please follow our [Pull Request](https://djinnjs.com/
 -   [Code of Conduct](https://djinnjs.com/code-of-conduct)
 -   [Contributing](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md)
 -   [Developer Guide](https://djinnjs.com/developer-guide)
+
+## Contributing
+
+We welcome all contributions. Please read our [contributing guide](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md) first. You can submit any ideas as [pull requests](https://github.com/Pageworks/djinnjs/pulls) or as [GitHub issues](https://github.com/Pageworks/djinnjs/issues). If you'd like to fix bugs or add new features, check out the [developer guide](https://djinnjs.com/developer-guide).
+
+If you are a collaborator, please follow our [Pull Request](https://djinnjs.com/contributing#branch-organization) principle to create a Pull Request by collaborator template.
 
 ## References
 
