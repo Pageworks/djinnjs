@@ -455,14 +455,14 @@ class Pjax {
         const urls: Array<string> = [];
 
         /** Header links */
-        const headerLinks = Array.from(document.body.querySelectorAll('header a[href]:not([target]):not([pjax-prefetched])'));
+        const headerLinks = Array.from(document.body.querySelectorAll('header a[href]:not([target]):not([pjax-prefetched]):not(prevent-pjax):not(no-transition)'));
         headerLinks.map((link: HTMLAnchorElement) => {
             link.setAttribute('pjax-prefetched', 'true');
             urls.push(link.href);
         });
 
         /** All other navigation links */
-        const navLinks = Array.from(document.body.querySelectorAll('nav a[href]:not([pjax-prefetched])'));
+        const navLinks = Array.from(document.body.querySelectorAll('nav a[href]:not([target]):not([pjax-prefetched]):not(prevent-pjax):not(no-transition)'));
         navLinks.map((link: HTMLAnchorElement) => {
             link.setAttribute('pjax-prefetched', 'true');
             urls.push(link.href);
@@ -479,7 +479,7 @@ class Pjax {
             return;
         }
 
-        const allLinks = Array.from(document.body.querySelectorAll('a[href]:not([pjax-prefetched]):not([target])'));
+        const allLinks = Array.from(document.body.querySelectorAll('a[href]:not([target]):not([pjax-prefetched]):not(prevent-pjax):not(no-transition)'));
         allLinks.map((link: HTMLAnchorElement) => {
             link.setAttribute('pjax-prefetched', 'true');
             this.io.observe(link);

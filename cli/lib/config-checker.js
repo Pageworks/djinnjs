@@ -11,7 +11,7 @@ function checkSite(site, multisite = false) {
         }
 
         if (site.src === undefined) {
-            reject(`Invalid DjinnJS configuration. No sources provided.`);
+            site.src = './src';
         } else if (!site.src instanceof String && !site.src instanceof Array) {
             reject(`Invalid DjinnJS configuration. The src value must be a string or an array of strings.`);
         }
@@ -42,6 +42,12 @@ function checkSite(site, multisite = false) {
             site.gtagId = '';
         } else if (!site.gtagId instanceof String) {
             reject(`Invalid DjinnJS configuration. The gtagId value must be a string.`);
+        }
+
+        if (site.defaultTransition === undefined) {
+            site.defaultTransition = 'fade';
+        } else if (!site.defaultTransition instanceof String) {
+            reject(`Invalid DjinnJS configuration. The defaultTransition value must be a string.`);
         }
 
         let env = site.env || yargs.e || yargs.env;

@@ -26,6 +26,9 @@ function getFiles(sources) {
 
 function merge(files, publicDir, relativeOutDir) {
     return new Promise((resolve, reject) => {
+        if (files.length === 0) {
+            resolve();
+        }
         let merged = 0;
         let data = '';
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);

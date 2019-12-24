@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2019-12-24
+
+### Added
+
+-   Updated readme to match [djinnjs.com](https://djinnjs.com/) homepage
+-   Removes all relocated `*.js` and `*.d.ts` files when the `cleanup.js` script runs
+-   Adds `.DS_Store` to the `.gitignore` file
+-   Pjax ignores HTML Anchor Elements with a `prevent-pjax` attribute or a `no-transition` class
+-   Adds `keywords` section to the `package.json`
+-   Config defaults `src` to `./src`
+-   Adds `defaultTransition` value to the config file and defaults to `fade`
+
+### Fixed
+
+-   Updated `homepage` value in the `package.json`
+-   Updated `scripts` in the `package.json`
+-   Updated `none` transition to use the provided selector and transition date
+-   Merged `noneAuto` and `noneSmooth` into one `none` transition function
+-   New `none` transition function accepts `smooth` string as transition data to trigger a smooth scroll behavior
+-   Fixed issue where DjinnJS stalled when no JavaScript or CSS files were provided in the `src` directory
+
 ## [0.0.4] - 2019-12-22
 
 ### Fixed
@@ -45,7 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.2...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/pageworks/djinnjs/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/pageworks/djinnjs/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/pageworks/djinnjs/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/pageworks/djinnjs/compare/v0.0.1...v0.0.2

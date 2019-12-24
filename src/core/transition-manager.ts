@@ -1,12 +1,13 @@
-import { env } from './env';
+import { env, debug } from './env';
+import { defaultTransition } from './config';
 
 /** Import transitions */
 import { fade } from '../transitions/fade';
 import { slide } from '../transitions/slide';
-import { noneAuto } from '../transitions/none';
+import { none } from '../transitions/none';
 
 /**
- * The transition manager is used to manager Pjax page transitions. There must always be a `default` page transition, even if it's `noneAuto` or `noneScroll`.
+ * The transition manager is used to manager Pjax page transitions. There must always be a `default` page transition, even if it's `none`
  * The page transition is set using the `pjax-transition` attribute on the element that riggered the transition.
  * Page transition data is set using the `pjax-transition-data` attribute on the element that riggered the transition.
  * Page transition data is a `string` by default, typically it's a stringified JSON object.
@@ -20,22 +21,32 @@ export function transitionManager(selector: string, newHTML: string, transition:
     return new Promise(resolve => {
         /** Pjax doesn't load on 2g, however, network conditions can change. Do not touch. */
         if (env.connection === '2g' || env.connection === 'slow-2g') {
-            noneAuto(newHTML).then(() => {
+            none(selector, newHTML, transitionData).then(() => {
                 resolve();
             });
         } else {
-            /**
-             * Add custom transitions to the switch statement.
-             * Transitions must return a promise.
-             */
-            switch (transition) {
+            const transitionEffect = transition || defaultTransition;
+            switch (transitionEffect) {
                 case 'slide':
                     slide(selector, newHTML, transitionData).then(() => {
                         resolve();
                     });
                     break;
-                default:
+                case 'fade':
                     fade(selector, newHTML, transitionData).then(() => {
+                        resolve();
+                    });
+                    break;
+                case 'none':
+                    none(selector, newHTML, transitionData).then(() => {
+                        resolve();
+                    });
+                    break;
+                default:
+                    if (debug) {
+                        console.error(`Undefined transition handle: ${transition}`);
+                    }
+                    none(selector, newHTML, transitionData).then(() => {
                         resolve();
                     });
                     break;

@@ -6,6 +6,9 @@ const cwd = process.cwd();
 
 function copyFiles(files, publicDir, relativeOutDir) {
     return new Promise((resolve, reject) => {
+        if (files.length === 0) {
+            resolve();
+        }
         let minified = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
