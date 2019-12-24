@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Updated readme to match [djinnjs.com](https://djinnjs.com/) homepage
+-   Removes all relocated `*.js` and `*.d.ts` files when the `cleanup.js` script runs
+-   Adds `.DS_Store` to the `.gitignore` file
+-   Pjax ignores HTML Anchor Elements with a `prevent-pjax` attribute or a `no-transition` class
+
+### Fixed
+
+-   Updated `homepage` value in the `package.json`
+-   Updated `scripts` in the `package.json`
+
 ## [0.0.4] - 2019-12-22
 
 ### Fixed
