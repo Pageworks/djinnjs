@@ -297,6 +297,7 @@ class DjinnJS {
                     data = data.replace('REPLACE_WITH_OUTPUT_DIR_NAME', this.sites[i].outDir);
                     data = data.replace('REPLACE_WITH_ENVIRONMENT', this.sites[i].env);
                     data = data.replace('REPLACE_WITH_GTAG_ID', this.sites[i].gtagId);
+                    data = data.replace('REPLACE_WITH_DEFAULT_TRANSITION', this.sites[i].defaultTransition);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -436,6 +437,7 @@ class DjinnJS {
                     disableServiceWorker: this.config.disableServiceWorker,
                     env: this.config.env,
                     gtagId: this.config.gtagId,
+                    defaultTransition: this.config.defaultTransition,
                 };
                 configChecker(site)
                     .then(validSite => {

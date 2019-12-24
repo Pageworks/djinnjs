@@ -8,6 +8,7 @@ type djinnjsConfig = {
     silent?: boolean = true;
     env?: string = 'production';
     gtagId?: string = '';
+    defaultTransition?: string = 'fade';
     sites?: Array<{
         handle: string;
         publicDir: string;
@@ -16,6 +17,7 @@ type djinnjsConfig = {
         disableServiceWorker?: boolean = false;
         env?: string = 'production';
         gtagId?: string = '';
+        defaultTransition?: string = 'fade';
     }>;
     transitions?: Array<{
         handle: string;

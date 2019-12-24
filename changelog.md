@@ -15,11 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Pjax ignores HTML Anchor Elements with a `prevent-pjax` attribute or a `no-transition` class
 -   Adds `keywords` section to the `package.json`
 -   Config defaults `src` to `./src`
+-   Adds `defaultTransition` value to the config file and defaults to `fade`
 
 ### Fixed
 
 -   Updated `homepage` value in the `package.json`
 -   Updated `scripts` in the `package.json`
+-   Updated `none` transition to use the provided selector and transition date
+-   Merged `noneAuto` and `noneSmooth` into one `none` transition function
+-   New `none` transition function accepts `smooth` string as transition data to trigger a smooth scroll behavior
 
 ## [0.0.4] - 2019-12-22
 

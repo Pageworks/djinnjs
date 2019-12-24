@@ -44,6 +44,12 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The gtagId value must be a string.`);
         }
 
+        if (site.defaultTransition === undefined) {
+            site.defaultTransition = 'fade';
+        } else if (!site.defaultTransition instanceof String) {
+            reject(`Invalid DjinnJS configuration. The defaultTransition value must be a string.`);
+        }
+
         let env = site.env || yargs.e || yargs.env;
         if (!env) {
             env = 'production';
