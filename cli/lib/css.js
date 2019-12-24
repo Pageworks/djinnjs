@@ -26,6 +26,9 @@ function getFiles(sources) {
 
 function relocate(files, publicDir, relativeOutDir) {
     return new Promise((resolve, reject) => {
+        if (files.length === 0) {
+            resolve();
+        }
         let relocated = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {

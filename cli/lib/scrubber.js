@@ -17,6 +17,9 @@ async function scrubber(sources, outDir) {
 
 function scrubFiles(files, handle) {
     return new Promise((resolve, reject) => {
+        if (files.length === 0) {
+            resolve();
+        }
         let scrubbed = 0;
         const outDir = path.resolve(__dirname, `../temp/${handle}`);
         for (let i = 0; i < files.length; i++) {

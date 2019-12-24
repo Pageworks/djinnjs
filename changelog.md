@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated `none` transition to use the provided selector and transition date
 -   Merged `noneAuto` and `noneSmooth` into one `none` transition function
 -   New `none` transition function accepts `smooth` string as transition data to trigger a smooth scroll behavior
+-   Fixed issue where DjinnJS stalled when no JavaScript or CSS files were provided in the `src` directory
 
 ## [0.0.4] - 2019-12-22
 
@@ -63,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.2...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.4...HEAD
 [0.0.4]: https://github.com/pageworks/djinnjs/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/pageworks/djinnjs/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/pageworks/djinnjs/compare/v0.0.1...v0.0.2
