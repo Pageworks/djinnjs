@@ -82,68 +82,63 @@ function informClientOfCachebustValues(maximumContentPrompts, contentCacheDurati
     });
 }
 
-function cachebust(url) {
-    fetch(`/resources-cachebust.json`, {
+async function cachebust(url) {
+    const request = await fetch(`/resources-cachebust.json`, {
         cache: 'no-cache',
         credentials: 'include',
         headers: new Headers({
             Accept: 'application/json',
         }),
-    })
-        .then(request => request.json())
-        .then(response => {
-            resourcesCacheId = `resources-${response.cacheTimestamp}`;
-            caches.keys().then(cacheNames => {
-                return Promise.all(
-                    cacheNames.map(cacheName => {
-                        if (new RegExp(/resources/i).test(cacheName) && cacheName !== resourcesCacheId) {
-                            return caches.delete(cacheName);
-                        }
-                    })
-                );
-            });
-        })
-        .catch(error => {
-            console.error(error);
+    });
+    if (request.ok) {
+        const response = await request.json();
+        resourcesCacheId = `resources-${response.cacheTimestamp}`;
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (new RegExp(/resources/i).test(cacheName) && cacheName !== resourcesCacheId) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
         });
+    }
 
-    fetch('REPLACE_WITH_CACHEBUST_URL', {
+    const request2 = await fetch('REPLACE_WITH_CACHEBUST_URL', {
         cache: 'no-cache',
         credentials: 'include',
         headers: new Headers({
             Accept: 'application/json',
         }),
-    })
-        .then(request => request.json())
-        .then(response => {
-            contentCacheId = `content-${response.cacheTimestamp}`;
-            caches.keys().then(cacheNames => {
-                return Promise.all(
-                    cacheNames.map(cacheName => {
-                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
-                            return caches.delete(cacheName);
-                        }
-                    })
-                );
-            });
-            informClientOfCachebustValues(response.maximumContentPrompts, response.contentCacheDuration, url);
-        })
-        .catch(error => {
-            console.error(error);
-            if (contentCacheId === 'content-initial') {
-                contentCacheId = `content-${Date.now()}`;
-            }
-            caches.keys().then(cacheNames => {
-                return Promise.all(
-                    cacheNames.map(cacheName => {
-                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
-                            return caches.delete(cacheName);
-                        }
-                    })
-                );
-            });
-            informClientOfCachebustValues(4, 7, url);
+    });
+    if (request2.ok) {
+        const response = await request.json();
+        contentCacheId = `content-${response.cacheTimestamp}`;
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
         });
+        informClientOfCachebustValues(response.maximumContentPrompts, response.contentCacheDuration, url);
+    } else {
+        if (contentCacheId === 'content-initial') {
+            contentCacheId = `content-${Date.now()}`;
+            caches.keys().then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            });
+        }
+        informClientOfCachebustValues(4, 7, url);
+    }
 }
 
 async function updatePageCache(url, network) {

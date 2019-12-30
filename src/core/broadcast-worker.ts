@@ -1,4 +1,8 @@
-/// <reference path="./messages.d.ts" />
+type MessageData = {
+    type: string;
+    // eslint-disable-next-line
+    [key: string]: any;
+};
 
 type InboxData = {
     name: string;
