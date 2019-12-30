@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Service Worker issue [#7](https://github.com/Pageworks/djinnjs/issues/7)
+
 ## [0.0.5] - 2019-12-24
 
 ### Added

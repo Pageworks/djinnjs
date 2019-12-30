@@ -131,7 +131,7 @@ function cachebust(url) {
         .catch(error => {
             console.error(error);
             if (contentCacheId === 'content-initial') {
-                contentCacheId = `content-${Date().now()}`;
+                contentCacheId = `content-${Date.now()}`;
             }
             caches.keys().then(cacheNames => {
                 return Promise.all(
