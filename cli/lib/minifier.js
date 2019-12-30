@@ -1,5 +1,5 @@
 const glob = require('glob');
-const mini = require('minify');
+const mini = require('terser');
 const fs = require('fs');
 const path = require('path');
 
@@ -24,21 +24,34 @@ function minifyFiles(files, publicDir, relativeOutDir) {
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
             const filename = files[i].replace(/.*[\/\\]/g, '');
-            mini(files[i])
-                .then(data => {
-                    fs.writeFile(`${outDir}/${filename}`, data, error => {
-                        if (error) {
-                            reject(error);
-                        }
-                        minified++;
-                        if (minified === files.length) {
-                            resolve();
-                        }
-                    });
-                })
-                .catch(error => {
+            fs.readFile(files[i], (error, buffer) => {
+                if (error) {
                     reject(error);
+                }
+                const result = mini.minify(buffer.toString(), {
+                    compress: {
+                        drop_console: true,
+                        ecma: 6,
+                        keep_infinity: true,
+                        module: true,
+                    },
+                    mangle: {
+                        module: true,
+                    },
                 });
+                if (result.error) {
+                    reject(error);
+                }
+                fs.writeFile(`${outDir}/${filename}`, result.code, error => {
+                    if (error) {
+                        reject(error);
+                    }
+                    minified++;
+                    if (minified === files.length) {
+                        resolve();
+                    }
+                });
+            });
         }
     });
 }

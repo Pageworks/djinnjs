@@ -111,7 +111,8 @@ class DjinnJS {
             spinner.succeed('DjinnJS');
             process.exit(0);
         } catch (error) {
-            spinner.fail(error, 'Visit https://djinnjs.com/docs for help.');
+            spinner.fail('Visit https://djinnjs.com/docs for help.');
+            console.log(error);
             process.exit(1);
         }
     }
@@ -382,7 +383,7 @@ class DjinnJS {
     validateSettings() {
         return new Promise((resolve, reject) => {
             if (this.config.noCachePattern === undefined) {
-                this.config.noCachePattern = /(\.json)$||(cachebust\.js)/gi;
+                this.config.noCachePattern = /(\.json)$|(cachebust\.js)/gi;
             } else if (!this.config.noCachePattern instanceof RegExp) {
                 reject(`Invalid DjinnJS configuration. The noCachePattern value must be a regular expression pattern.`);
             }
