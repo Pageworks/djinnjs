@@ -1,6 +1,6 @@
 # DjinnJS
 
-DjinnJS is a ES Module framework designed to assist developers in building performance-focused websites and web applications. Checkout the project on [GitHub](https://github.com/Pageworks/djinnjs) or [NPM](https://www.npmjs.com/package/djinnjs).
+DjinnJS is an ES Module framework designed to assist developers in building performance-focused websites and web applications. Check out the project on [GitHub](https://github.com/Pageworks/djinnjs) or [NPM](https://www.npmjs.com/package/djinnjs).
 
 ## Features
 
@@ -8,9 +8,9 @@ DjinnJS is a ES Module framework designed to assist developers in building perfo
 -   Offline First Content Strategy
 -   Pjax Navigation
 -   ES Module Imports
--   Persistant State with Server Side Rendering
--   Context Specific Progressive Enhancements
--   Actor Model based Messaging System
+-   Persistent State with Server Side Rendering
+-   Context-Specific Progressive Enhancements
+-   An Actor Model based Messaging System
 
 ## Installation
 
@@ -44,6 +44,16 @@ Inlcude the noscript CSS file:
 </noscript>
 ```
 
+Include the Web Component polyfill:
+
+```html
+<script>
+    if (typeof CustomElementRegistry === 'undefined') {
+        document.write('<script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-bundle.js"><\/script>');
+    }
+</script>
+```
+
 Run the DjinnJS command:
 
 ```sh
@@ -68,22 +78,21 @@ djinnjs
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Chromium Edge                                                                                                                                                                                     | last 2 versions                                                                                                                                                                                       | last 2 versions                                                                                                                                                                                    | last 2 versions                                                                                                                                                                                    | last 2 versions                                                                                                                                                                                 | last 2 versions                                                                                                                                                                                          |
 
-## Documentation
+## Contributing
+
+We welcome all contributions. Please read our [contributing guideline](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md) first. You can submit any changes as [pull requests](https://github.com/Pageworks/djinnjs/pulls) or as [GitHub issues](https://github.com/Pageworks/djinnjs/issues). If you'd like to fix bugs or add new features, check out the [developer guide](https://djinnjs.com/developer-guide) and please follow our [Pull Request](https://djinnjs.com/contributing#branch-organization) principle.
+
+## Links
 
 -   [Overview](https://djinnjs.com/)
 -   [Configuration](https://djinnjs.com/configuration)
+-   [Getting Started](https://djinnjs.com/getting-started)
 -   [Pjax](https://djinnjs.com/pjax)
 -   [Messaging System](https://djinnjs.com/messaging)
 -   [Transitions](https://djinnjs.com/transitions)
 -   [Code of Conduct](https://djinnjs.com/code-of-conduct)
 -   [Contributing](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md)
 -   [Developer Guide](https://djinnjs.com/developer-guide)
-
-## Contributing
-
-We welcome all contributions. Please read our [contributing guide](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md) first. You can submit any ideas as [pull requests](https://github.com/Pageworks/djinnjs/pulls) or as [GitHub issues](https://github.com/Pageworks/djinnjs/issues). If you'd like to fix bugs or add new features, check out the [developer guide](https://djinnjs.com/developer-guide).
-
-If you are a collaborator, please follow our [Pull Request](https://djinnjs.com/contributing#branch-organization) principle to create a Pull Request by collaborator template.
 
 ## References
 
