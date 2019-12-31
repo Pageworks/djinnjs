@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Pjax was alerting the users and caching non-200 status responses during the background revision checks
+-   `resources-cachebust.json` will still be generated even when the default Service Worker is disabled
 
 ## [0.0.7] - 2019-12-30
 
