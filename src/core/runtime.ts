@@ -2,7 +2,7 @@ import { env, debug } from './env';
 import { broadcaster } from './broadcaster';
 import { fetchCSS } from './fetch-css';
 import { fetchJS } from './fetch-js';
-import { djinnjsOutDir } from './config';
+import { djinnjsOutDir, disablePjax } from './config';
 
 interface PjaxResources {
     eager: Array<string>;
@@ -92,7 +92,7 @@ class Runtime {
                 fetchCSS(response.files).then(() => {
                     env.stopLoading(ticket);
                     this.handleWebComponents();
-                    if (env.connection !== '2g' && env.connection !== 'slow-2g') {
+                    if (env.connection !== '2g' && env.connection !== 'slow-2g' && !disablePjax) {
                         fetchJS('pjax').then(() => {
                             broadcaster.message(
                                 'pjax',

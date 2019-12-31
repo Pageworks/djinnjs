@@ -3,7 +3,7 @@ import { debug, env, uuid } from './env';
 import { notify } from '../packages/notify.js';
 import { sendPageView, setupGoogleAnalytics } from './gtags.js';
 import { transitionManager } from './transition-manager';
-import { djinnjsOutDir, gaId } from './config';
+import { djinnjsOutDir, gaId, disablePrefetching } from './config';
 
 interface PjaxState {
     activeRequestUid: string;
@@ -114,13 +114,17 @@ class Pjax {
                 this.collectLinks();
                 this.checkPageRevision();
                 sendPageView(window.location.pathname, gaId);
-                this.prefetchLinks();
+                if (!disablePrefetching) {
+                    this.prefetchLinks();
+                }
                 break;
             case 'css-ready':
                 this.swapPjaxContent(data.requestUid);
                 break;
             case 'prefetch':
-                this.prefetchLinks();
+                if (!disablePrefetching) {
+                    this.prefetchLinks();
+                }
                 break;
             case 'init':
                 /** Tell Pjax to hijack all viable links */

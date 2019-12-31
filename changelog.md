@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `disablePjax` setting prevents Pjax from loading
+-   `disablePrefetching` setting prevents Pjax from prefetching pages
+
 ### Fixed
 
 -   Pjax was alerting the users and caching non-200 status responses during the background revision checks
