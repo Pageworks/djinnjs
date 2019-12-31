@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Pjax was alerting the users and caching non-200 status responses during the background revision checks
+
 ## [0.0.7] - 2019-12-30
 
 ### Added
