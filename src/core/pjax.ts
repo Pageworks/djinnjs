@@ -117,6 +117,9 @@ class Pjax {
                 if (!disablePrefetching) {
                     this.prefetchLinks();
                 }
+                broadcaster.message('pjax', {
+                    type: 'completed',
+                });
                 break;
             case 'css-ready':
                 this.swapPjaxContent(data.requestUid);
@@ -135,10 +138,7 @@ class Pjax {
                 });
                 break;
             default:
-                if (debug) {
-                    console.warn(`Undefined Pjax message type: ${type}`);
-                }
-                break;
+                return;
         }
     }
 

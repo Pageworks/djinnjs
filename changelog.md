@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `disablePjax` setting prevents Pjax from loading
 -   `disablePrefetching` setting prevents Pjax from prefetching pages
+-   `completed` message is sent to all `pjax` inboxes after Pjax has finished a successful page transition
 
 ### Fixed
 
