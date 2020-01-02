@@ -11,6 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-   Moved `fetchCSS` and `fetchJS` into one file
+-   Both fetch functions create their own loading animation tickets
+
+### Fixed
+
+-   `fetchCSS()` removes `.css` from the filename before fetching
+-   `fetchJS()` removes `.js` from the filesname before fetching
+
+### Deprecated
+
+-   `fetchCSS()` from `fetch-css`
+-   `fetchJS()` from `fetch-js`
+
+### Added
+
 -   `disablePjax` setting prevents Pjax from loading
 -   `disablePrefetching` setting prevents Pjax from prefetching pages
 -   `completed` message is sent to all `pjax` inboxes after Pjax has finished a successful page transition
