@@ -65,11 +65,11 @@ export function fetchCSS(filenames) {
             resolve();
         }
         const ticket = env.startLoading();
-        const loadingMessage = document.body.querySelector('page-loading span');
+        const loadingMessage = document.body.querySelector('page-loading-message') || null;
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
             const filename = resourceList[i].replace(/(\.css)$/gi, '');
-            const isUrl = new RegExp(/^(http)/i).test(filename);
+            const isUrl = new RegExp(/^(http)/gi).test(filename);
             let el = document.head.querySelector(`link[file="${filename}.css"]`) || document.head.querySelector(`link[href="${filename}"]`) || null;
             if (!el) {
                 el = document.createElement('link');
@@ -85,7 +85,7 @@ export function fetchCSS(filenames) {
                 }
                 el.addEventListener('load', () => {
                     loaded++;
-                    if (env.domState === 'hard-loading') {
+                    if (env.domState === 'hard-loading' && loadingMessage) {
                         loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                     }
                     if (loaded === resourceList.length) {
@@ -95,7 +95,7 @@ export function fetchCSS(filenames) {
                 });
                 el.addEventListener('error', () => {
                     loaded++;
-                    if (env.domState === 'hard-loading') {
+                    if (env.domState === 'hard-loading' && loadingMessage) {
                         loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                     }
                     if (loaded === resourceList.length) {
@@ -107,7 +107,7 @@ export function fetchCSS(filenames) {
             }
             else {
                 loaded++;
-                if (env.domState === 'hard-loading') {
+                if (env.domState === 'hard-loading' && loadingMessage) {
                     loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                 }
                 if (loaded === resourceList.length) {
