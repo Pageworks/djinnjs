@@ -3,7 +3,7 @@ import { djinnjsOutDir } from './config';
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
  * @param filenames - a filename `sting` or an array of `string` JS filenames or a URL -- exclude the file path and extension if local
- * @deprecated - slated for removal in v1.0.0
+ * @deprecated - slated for removal in v0.1.0
  */
 export function fetchJS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {

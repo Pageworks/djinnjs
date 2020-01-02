@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `fetchCSS()` removes `.css` from the filename before fetching
 -   `fetchJS()` removes `.js` from the filesname before fetching
--   `fetchCSS` undefined `<page-loading-message>` element issue
+-   `fetchCSS` undefined `<page-loading-message>` or `<page-loading> <span>` element bug
 
 ### Deprecated
 
