@@ -104,16 +104,16 @@ class Runtime {
                             );
                         });
                     }
+                    broadcaster.message('runtime', {
+                        type: 'completed',
+                    });
                 });
                 break;
             case 'parse':
                 this.fetchPjaxResources(response.pjaxFiles, response.requestUid);
                 break;
             default:
-                if (debug) {
-                    console.warn(`Unknown response type from Body Parser worker: ${response.type}`);
-                }
-                break;
+                return;
         }
     }
 

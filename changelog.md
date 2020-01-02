@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Moved `fetchCSS` and `fetchJS` into one file [#10](https://github.com/Pageworks/djinnjs/issues/10)
 -   Both fetch functions create their own loading animation tickets
+-   a `completed` hook to the `runtime` inbox that fires after eager/lazy CSS has loaded and web components have mounted
 
 ### Fixed
 
