@@ -3,7 +3,7 @@ import { djinnjsOutDir } from './config';
 
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
- * @param filenames - a filename `sting` or an array of `string` JS filenames or a URL -- exclude the file path and extension if local
+ * @param filenames - a filename `sting` or an array of `string` JS filenames or a URL -- exclude the extension
  */
 export function fetchJS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {
@@ -28,7 +28,7 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
                 if (!isUrl) {
                     el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}.js`;
                 } else {
-                    el.src = filename;
+                    el.src = `${filename}.js`;
                 }
                 el.addEventListener('load', () => {
                     loaded++;
@@ -58,7 +58,7 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
 
 /**
  * Appends resources to the documents head if it hasn't already been loaded.
- * @param filenames - a filename `sting` or an array of `string` CSS filenames or a URL -- exclude the file path and extension if local
+ * @param filenames - a filename `sting` or an array of `string` CSS filenames or a URL -- exclude the extension
  */
 export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {
@@ -84,7 +84,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 if (!isUrl) {
                     el.href = `${window.location.origin}/${djinnjsOutDir}/${filename}.css`;
                 } else {
-                    el.href = filename;
+                    el.href = `${filename}.css`;
                 }
                 el.addEventListener('load', () => {
                     loaded++;
