@@ -13,5 +13,7 @@ fetch-css.js
 fetch-css.d.ts
 fetch-js.js
 fetch-js.d.ts
+fetch.js
+fetch.d.ts
 notify.js
 notify.d.ts
