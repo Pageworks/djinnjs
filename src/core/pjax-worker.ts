@@ -123,7 +123,11 @@ class PjaxWorker {
                 cache: 'no-cache',
             })
                 .then(request => {
-                    resolve(request.headers.get('ETag'));
+                    if (request.ok) {
+                        resolve(request.headers.get('ETag'));
+                    }
+
+                    resolve(null);
                 })
                 .catch(() => {
                     reject();
@@ -144,7 +148,11 @@ class PjaxWorker {
                 credentials: 'include',
             })
                 .then(request => {
-                    resolve(request.headers.get('ETag'));
+                    if (request.ok) {
+                        resolve(request.headers.get('ETag'));
+                    }
+
+                    resolve(null);
                 })
                 .catch(() => {
                     reject();
@@ -165,6 +173,9 @@ class PjaxWorker {
      * @param cachedTag - `ETag` header from the service workers cached response.
      */
     private checkETags(newTag: string, cachedTag: string, url: string) {
+        if (!newTag || !cachedTag) {
+            return;
+        }
         if (newTag !== cachedTag) {
             // @ts-ignore
             self.postMessage({

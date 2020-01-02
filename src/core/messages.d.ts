@@ -3,12 +3,6 @@ type Message = {
     data: MessageData;
 };
 
-type MessageData = {
-    type: string;
-    // eslint-disable-next-line
-    [key: string]: any;
-};
-
 interface BroadcastWorkerMessage extends Message {
     messageId: string;
     protocol: 'Once' | 'Guaranteed';

@@ -111,7 +111,8 @@ class DjinnJS {
             spinner.succeed('DjinnJS');
             process.exit(0);
         } catch (error) {
-            spinner.fail(error, 'Visit https://djinnjs.com/docs for help.');
+            spinner.fail('Visit https://djinnjs.com/docs for help.');
+            console.log(error);
             process.exit(1);
         }
     }
@@ -125,29 +126,22 @@ class DjinnJS {
                     fs.unlinkSync(output);
                 }
 
-                if (!this.sites[i].disableServiceWorker) {
-                    const cachebustFile = path.join(__dirname, 'resources-cachebust.json');
-                    fs.readFile(cachebustFile, (errror, buffer) => {
+                const cachebustFile = path.join(__dirname, 'resources-cachebust.json');
+                fs.readFile(cachebustFile, (errror, buffer) => {
+                    if (errror) {
+                        reject(errror);
+                    }
+                    let data = buffer.toString().replace('REPLACE_WITH_TIMESTAMP', `${Date.now()}`);
+                    fs.writeFile(output, data, errror => {
                         if (errror) {
                             reject(errror);
                         }
-                        let data = buffer.toString().replace('REPLACE_WITH_TIMESTAMP', `${Date.now()}`);
-                        fs.writeFile(output, data, errror => {
-                            if (errror) {
-                                reject(errror);
-                            }
-                            sitesBusted++;
-                            if (sitesBusted === this.sites.length) {
-                                resolve();
-                            }
-                        });
+                        sitesBusted++;
+                        if (sitesBusted === this.sites.length) {
+                            resolve();
+                        }
                     });
-                } else {
-                    sitesBusted++;
-                    if (sitesBusted === this.sites.length) {
-                        resolve();
-                    }
-                }
+                });
             }
         });
     }
@@ -298,6 +292,8 @@ class DjinnJS {
                     data = data.replace('REPLACE_WITH_ENVIRONMENT', this.sites[i].env);
                     data = data.replace('REPLACE_WITH_GTAG_ID', this.sites[i].gtagId);
                     data = data.replace('REPLACE_WITH_DEFAULT_TRANSITION', this.sites[i].defaultTransition);
+                    data = data.replace("'REPLACE_WITH_PJAX_STATUS'", this.sites[i].disablePjax);
+                    data = data.replace("'REPLACE_WITH_PREFETCH_STATUS'", this.sites[i].disablePrefetching);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -382,7 +378,7 @@ class DjinnJS {
     validateSettings() {
         return new Promise((resolve, reject) => {
             if (this.config.noCachePattern === undefined) {
-                this.config.noCachePattern = /(\.json)$||(cachebust\.js)/gi;
+                this.config.noCachePattern = /(\.json)$|(cachebust\.js)/gi;
             } else if (!this.config.noCachePattern instanceof RegExp) {
                 reject(`Invalid DjinnJS configuration. The noCachePattern value must be a regular expression pattern.`);
             }
@@ -438,6 +434,8 @@ class DjinnJS {
                     env: this.config.env,
                     gtagId: this.config.gtagId,
                     defaultTransition: this.config.defaultTransition,
+                    disablePjax: this.config.disablePjax,
+                    disablePrefetching: this.config.disablePrefetching,
                 };
                 configChecker(site)
                     .then(validSite => {

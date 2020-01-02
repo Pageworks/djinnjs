@@ -50,6 +50,18 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The defaultTransition value must be a string.`);
         }
 
+        if (site.disablePjax === undefined) {
+            site.disablePjax = false;
+        } else if (!site.disablePjax instanceof Boolean) {
+            reject(`Invalid DjinnJS configuration. The disablePjax value must be a boolean.`);
+        }
+
+        if (site.disablePrefetching === undefined) {
+            site.disablePrefetching = false;
+        } else if (!site.disablePrefetching instanceof Boolean) {
+            reject(`Invalid DjinnJS configuration. The disablePrefetching value must be a boolean.`);
+        }
+
         let env = site.env || yargs.e || yargs.env;
         if (!env) {
             env = 'production';
