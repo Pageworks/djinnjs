@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Both fetch functions create their own loading animation tickets
 -   a `completed` hook to the `runtime` inbox that fires after eager/lazy CSS has loaded and web components have mounted
 -   Updated Runtime to use the new fetch functions
+-   new `file-loading-value` replaces `page-loading span`
 
 ### Fixed
 
@@ -24,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `fetchCSS()` from `fetch-css`
 -   `fetchJS()` from `fetch-js`
+
+### Removed
+
+-   `fetchCSS()` no longer queries for `page-loading span`
+-   `fetchCSS()` no longer injects "Loading Resources:" into the `file-loading-value` element
 
 ## [0.0.8] - 2020-01-02
 

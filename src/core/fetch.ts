@@ -68,7 +68,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
         }
 
         const ticket = env.startLoading();
-        const loadingMessage = document.body.querySelector('page-loading-message') || document.body.querySelector('page-loading span') || null;
+        const loadingMessage = document.body.querySelector('file-loading-value') || null;
 
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
@@ -89,7 +89,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 el.addEventListener('load', () => {
                     loaded++;
                     if (env.domState === 'hard-loading' && loadingMessage) {
-                        loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                     }
                     if (loaded === resourceList.length) {
                         env.stopLoading(ticket);
@@ -99,7 +99,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 el.addEventListener('error', () => {
                     loaded++;
                     if (env.domState === 'hard-loading' && loadingMessage) {
-                        loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                     }
                     if (loaded === resourceList.length) {
                         env.stopLoading(ticket);
@@ -110,7 +110,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
             } else {
                 loaded++;
                 if (env.domState === 'hard-loading' && loadingMessage) {
-                    loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                    loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                 }
                 if (loaded === resourceList.length) {
                     env.stopLoading(ticket);
