@@ -7,13 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.8] - 2020-01-02
-
 ### Added
 
 -   Moved `fetchCSS` and `fetchJS` into one file [#10](https://github.com/Pageworks/djinnjs/issues/10)
 -   Both fetch functions create their own loading animation tickets
 -   a `completed` hook to the `runtime` inbox that fires after eager/lazy CSS has loaded and web components have mounted
+-   Updated Runtime to use the new fetch functions
 
 ### Fixed
 
@@ -25,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `fetchCSS()` from `fetch-css`
 -   `fetchJS()` from `fetch-js`
+
+## [0.0.8] - 2020-01-02
 
 ### Added
 

@@ -1,7 +1,6 @@
 import { env, debug } from './env';
 import { broadcaster } from './broadcaster';
-import { fetchCSS } from './fetch-css';
-import { fetchJS } from './fetch-js';
+import { fetchCSS, fetchJS } from './fetch';
 import { djinnjsOutDir, disablePjax } from './config';
 
 interface PjaxResources {
