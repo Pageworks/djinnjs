@@ -111,8 +111,9 @@ class DjinnJS {
             spinner.succeed('DjinnJS');
             process.exit(0);
         } catch (error) {
-            spinner.fail('Visit https://djinnjs.com/docs for help.');
+            spinner.fail('Visit https://djinnjs.com/configuration for help.');
             console.log(error);
+            console.log('\n');
             process.exit(1);
         }
     }
@@ -294,6 +295,7 @@ class DjinnJS {
                     data = data.replace('REPLACE_WITH_DEFAULT_TRANSITION', this.sites[i].defaultTransition);
                     data = data.replace("'REPLACE_WITH_PJAX_STATUS'", this.sites[i].disablePjax);
                     data = data.replace("'REPLACE_WITH_PREFETCH_STATUS'", this.sites[i].disablePrefetching);
+                    data = data.replace("'REPLACE_WITH_USE_PERCENTAGE'", this.sites[i].usePercentage);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -385,7 +387,7 @@ class DjinnJS {
 
             if (this.config.cachebustURL === undefined) {
                 this.config.cachebustURL = '/cachebust.json';
-            } else if (!this.config.cachebustURL instanceof String) {
+            } else if (typeof this.config.cachebustURL !== 'string') {
                 reject(`Invalid DjinnJS configuration. The cachebustURL value must be a string.`);
             }
 
@@ -436,6 +438,7 @@ class DjinnJS {
                     defaultTransition: this.config.defaultTransition,
                     disablePjax: this.config.disablePjax,
                     disablePrefetching: this.config.disablePrefetching,
+                    usePercentage: this.config.usePercentage,
                 };
                 configChecker(site)
                     .then(validSite => {

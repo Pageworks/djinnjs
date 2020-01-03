@@ -40,6 +40,13 @@ if (fs.existsSync('./fetch-js.d.ts')) {
     fs.unlinkSync('./fetch-js.d.ts');
 }
 
+if (fs.existsSync('./fetch.js')) {
+    fs.unlinkSync('./fetch.js');
+}
+if (fs.existsSync('./fetch.d.ts')) {
+    fs.unlinkSync('./fetch.d.ts');
+}
+
 if (fs.existsSync('./notify.js')) {
     fs.unlinkSync('./notify.js');
 }

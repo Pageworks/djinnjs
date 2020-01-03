@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.9] - 2020-01-03
+
+### Added
+
+-   Moved `fetchCSS` and `fetchJS` into one file [#10](https://github.com/Pageworks/djinnjs/issues/10)
+-   Both fetch functions create their own loading animation tickets
+-   a `completed` hook to the `runtime` inbox that fires after eager/lazy CSS has loaded and web components have mounted
+-   Updated Runtime to use the new fetch functions
+-   new `file-loading-value` replaces `page-loading span`
+-   new `usePercentage` config value allowing X/Y or X% style for the `file-loading-value` element
+-   `file-loading-value` elements state is dynamically set to `'enabled'` during `fetchCSS()`
+-   new `file-loading-message` value replaces `page-loading span`
+-   `file-loading-message` elements state attribute is dynamically set to `'1' || '2' || '3'`
+
+### Fixed
+
+-   `fetchCSS()` removes `.css` from the filename before fetching
+-   `fetchJS()` removes `.js` from the filesname before fetching
+-   `fetchCSS` undefined `<page-loading-message>` or `<page-loading> <span>` element bug
+-   Fixed an issue where `instanceof` wasn't working as expected when validating config files
+-   Fixed an issue where `env.stopLoading()` could stop the `hard-loading` animation
+
+### Deprecated
+
+-   `fetchCSS()` from `fetch-css`
+-   `fetchJS()` from `fetch-js`
+
+### Removed
+
+-   `fetchCSS()` no longer queries for `page-loading span`
+-   `fetchCSS()` no longer injects `Loading Resources:` into the `file-loading-value` element
+
 ## [0.0.8] - 2020-01-02
 
 ### Added
@@ -102,7 +134,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.8...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.9...HEAD
+[0.0.9]: https://github.com/pageworks/djinnjs/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/pageworks/djinnjs/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/pageworks/djinnjs/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/pageworks/djinnjs/compare/v0.0.5...v0.0.6
