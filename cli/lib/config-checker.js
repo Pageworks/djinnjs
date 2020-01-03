@@ -62,6 +62,12 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The disablePrefetching value must be a boolean.`);
         }
 
+        if (site.usePercentage === undefined) {
+            site.usePercentage = false;
+        } else if (!site.usePercentage instanceof Boolean) {
+            reject(`Invalid DjinnJS configuration. The usePercentage value must be a boolean.`);
+        }
+
         let env = site.env || yargs.e || yargs.env;
         if (!env) {
             env = 'production';

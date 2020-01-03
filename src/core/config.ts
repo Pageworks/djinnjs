@@ -4,3 +4,4 @@ export const environment = 'REPLACE_WITH_ENVIRONMENT';
 export const defaultTransition = 'REPLACE_WITH_DEFAULT_TRANSITION';
 export const disablePjax = 'REPLACE_WITH_PJAX_STATUS';
 export const disablePrefetching = 'REPLACE_WITH_PREFETCH_STATUS';
+export const usePercentage = 'REPLACE_WITH_USE_PERCENTAGE';

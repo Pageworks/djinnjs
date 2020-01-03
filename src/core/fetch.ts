@@ -1,5 +1,5 @@
 import { env } from './env';
-import { djinnjsOutDir } from './config';
+import { djinnjsOutDir, usePercentage } from './config';
 
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
@@ -89,7 +89,11 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 el.addEventListener('load', () => {
                     loaded++;
                     if (env.domState === 'hard-loading' && loadingMessage) {
-                        loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        if (usePercentage) {
+                            loadingMessage.innerHTML = `<resource-counter>${Math.round((loaded / resourceList.length) * 100)}</resource-counter>`;
+                        } else {
+                            loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        }
                     }
                     if (loaded === resourceList.length) {
                         env.stopLoading(ticket);
@@ -99,7 +103,11 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 el.addEventListener('error', () => {
                     loaded++;
                     if (env.domState === 'hard-loading' && loadingMessage) {
-                        loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        if (usePercentage) {
+                            loadingMessage.innerHTML = `<resource-counter>${Math.round((loaded / resourceList.length) * 100)}</resource-counter>`;
+                        } else {
+                            loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        }
                     }
                     if (loaded === resourceList.length) {
                         env.stopLoading(ticket);
@@ -110,7 +118,11 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
             } else {
                 loaded++;
                 if (env.domState === 'hard-loading' && loadingMessage) {
-                    loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                    if (usePercentage) {
+                        loadingMessage.innerHTML = `<resource-counter>${Math.round((loaded / resourceList.length) * 100)}</resource-counter>`;
+                    } else {
+                        loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                    }
                 }
                 if (loaded === resourceList.length) {
                     env.stopLoading(ticket);

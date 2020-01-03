@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   a `completed` hook to the `runtime` inbox that fires after eager/lazy CSS has loaded and web components have mounted
 -   Updated Runtime to use the new fetch functions
 -   new `file-loading-value` replaces `page-loading span`
+-   new `usePercentage` config value allowing X/Y or X% style for the `file-loading-value` element
 
 ### Fixed
 
