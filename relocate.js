@@ -55,6 +55,17 @@ fs.copyFile('./dist/core/fetch-js.d.ts', './fetch-js.d.ts', error => {
     }
 });
 
+fs.copyFile('./dist/core/fetch.js', './fetch.js', error => {
+    if (error) {
+        console.log(error);
+    }
+});
+fs.copyFile('./dist/core/fetch.d.ts', './fetch.d.ts', error => {
+    if (error) {
+        console.log(error);
+    }
+});
+
 fs.copyFile('./dist/packages/notify.js', './notify.js', error => {
     if (error) {
         console.log(error);
