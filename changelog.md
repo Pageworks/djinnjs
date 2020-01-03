@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `fetchCSS()` removes `.css` from the filename before fetching
 -   `fetchJS()` removes `.js` from the filesname before fetching
 -   `fetchCSS` undefined `<page-loading-message>` or `<page-loading> <span>` element bug
+-   Fixed an issue where `instanceof` wasn't working as expected when validating config files
+-   Fixed an issue where `env.stopLoading()` could stop the `hard-loading` animation
 
 ### Deprecated
 
@@ -30,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 -   `fetchCSS()` no longer queries for `page-loading span`
--   `fetchCSS()` no longer injects "Loading Resources:" into the `file-loading-value` element
+-   `fetchCSS()` no longer injects `Loading Resources:` into the `file-loading-value` element
 
 ## [0.0.8] - 2020-01-02
 

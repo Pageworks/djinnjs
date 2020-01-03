@@ -70,6 +70,8 @@ class Env {
             return;
         }
 
+        console.log(ticket, this._tickets);
+
         for (let i = 0; i < this._tickets.length; i++) {
             if (this._tickets[i] === ticket) {
                 this._tickets.splice(i, 1);
@@ -77,7 +79,7 @@ class Env {
             }
         }
 
-        if (this._tickets.length === 0) {
+        if (this._tickets.length === 0 && this.domState !== 'hard-loading') {
             this.domState = 'idling';
             document.documentElement.setAttribute('state', this.domState);
         }
@@ -88,8 +90,10 @@ class Env {
      * @returns a ticket `string` that is required to stop the loading state.
      */
     public startLoading(): string {
-        this.domState = 'soft-loading';
-        document.documentElement.setAttribute('state', this.domState);
+        if (this.domState !== 'hard-loading') {
+            this.domState = 'soft-loading';
+            document.documentElement.setAttribute('state', this.domState);
+        }
         const ticket = this.uuid();
         this._tickets.push(ticket);
         return ticket;

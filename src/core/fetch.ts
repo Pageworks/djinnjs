@@ -7,12 +7,12 @@ import { djinnjsOutDir, usePercentage } from './config';
  */
 export function fetchJS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {
+        const ticket = env.startLoading();
         const resourceList = filenames instanceof Array ? filenames : [filenames];
         if (resourceList.length === 0) {
+            env.stopLoading(ticket);
             resolve();
         }
-
-        const ticket = env.startLoading();
 
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
@@ -62,12 +62,14 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
  */
 export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {
+        const ticket = env.startLoading();
         const resourceList = filenames instanceof Array ? filenames : [filenames];
         if (resourceList.length === 0) {
+            env.stopLoading(ticket);
             resolve();
         }
 
-        const ticket = env.startLoading();
+        console.log('Fetch CSS Created:', ticket);
         const loadingMessage = document.body.querySelector('file-loading-value') || null;
 
         let loaded = 0;
@@ -96,6 +98,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                         }
                     }
                     if (loaded === resourceList.length) {
+                        console.log('Fetch CSS:', ticket);
                         env.stopLoading(ticket);
                         resolve();
                     }
@@ -110,6 +113,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                         }
                     }
                     if (loaded === resourceList.length) {
+                        console.log('Fetch CSS:', ticket);
                         env.stopLoading(ticket);
                         resolve();
                     }
@@ -125,6 +129,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                     }
                 }
                 if (loaded === resourceList.length) {
+                    console.log('Fetch CSS:', ticket);
                     env.stopLoading(ticket);
                     resolve();
                 }

@@ -60,9 +60,6 @@ class Runtime {
                 this.parseHTML(data.body, data.requestUid);
                 break;
             default:
-                if (debug) {
-                    console.warn(`Undefined runtime message type: ${type}`);
-                }
                 return;
         }
     }
@@ -75,9 +72,9 @@ class Runtime {
         const response: WorkerResponse = e.data;
         switch (response.type) {
             case 'eager':
-                if (env.domState === 'hard-loading') {
-                    this._loadingMessage.innerHTML = `Loading resource: <resource-counter>0</resource-counter<span class="-slash">/</span><resource-total>${response.files.length}</resource-total>`;
-                }
+                // if (env.domState === 'hard-loading') {
+                //     this._loadingMessage.innerHTML = `Loading resource: <resource-counter>0</resource-counter<span class="-slash">/</span><resource-total>${response.files.length}</resource-total>`;
+                // }
                 fetchCSS(response.files).then(() => {
                     env.setDOMState('idling');
                     this._bodyParserWorker.postMessage({
@@ -87,9 +84,7 @@ class Runtime {
                 });
                 break;
             case 'lazy':
-                const ticket = env.startLoading();
                 fetchCSS(response.files).then(() => {
-                    env.stopLoading(ticket);
                     this.handleWebComponents();
                     if (env.connection !== '2g' && env.connection !== 'slow-2g' && !disablePjax) {
                         fetchJS('pjax').then(() => {
