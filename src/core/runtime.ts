@@ -1,7 +1,7 @@
-import { env, debug } from './env';
+import { env } from './env';
 import { broadcaster } from './broadcaster';
 import { fetchCSS, fetchJS } from './fetch';
-import { djinnjsOutDir, disablePjax } from './config';
+import { djinnjsOutDir, disablePjax, usePercentage } from './config';
 
 interface PjaxResources {
     eager: Array<string>;
@@ -24,7 +24,10 @@ class Runtime {
 
     constructor() {
         this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.js`);
-        this._loadingMessage = document.body.querySelector('page-loading span');
+        this._loadingMessage = document.body.querySelector('file-loading-message') || null;
+        if (this._loadingMessage) {
+            this._loadingMessage.setAttribute('state', '1');
+        }
         window.addEventListener('load', this.handleLoadEvent);
     }
 
@@ -32,7 +35,10 @@ class Runtime {
      * Initializes the Runtime class.
      */
     private init(): void {
-        this._loadingMessage.innerHTML = 'Collecting resources';
+        if (this._loadingMessage) {
+            this._loadingMessage.innerHTML = 'Collecting resources';
+            this._loadingMessage.setAttribute('state', '2');
+        }
         broadcaster.hookup('runtime', this.inbox.bind(this));
         this._bodyParserWorker.postMessage({
             type: 'eager',
@@ -72,9 +78,18 @@ class Runtime {
         const response: WorkerResponse = e.data;
         switch (response.type) {
             case 'eager':
-                // if (env.domState === 'hard-loading') {
-                //     this._loadingMessage.innerHTML = `Loading resource: <resource-counter>0</resource-counter<span class="-slash">/</span><resource-total>${response.files.length}</resource-total>`;
-                // }
+                const loadingMessage = document.body.querySelector('file-loading-value') || null;
+                if (env.domState === 'hard-loading' && this._loadingMessage) {
+                    this._loadingMessage.setAttribute('state', '3');
+                    this._loadingMessage.innerHTML = `Loading resources:`;
+                    if (loadingMessage && usePercentage) {
+                        loadingMessage.innerHTML = `0%`;
+                        loadingMessage.setAttribute('state', 'enabled');
+                    } else if (loadingMessage) {
+                        loadingMessage.innerHTML = `0/${response.files.length}`;
+                        loadingMessage.setAttribute('state', 'enabled');
+                    }
+                }
                 fetchCSS(response.files).then(() => {
                     env.setDOMState('idling');
                     this._bodyParserWorker.postMessage({

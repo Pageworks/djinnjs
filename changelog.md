@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated Runtime to use the new fetch functions
 -   new `file-loading-value` replaces `page-loading span`
 -   new `usePercentage` config value allowing X/Y or X% style for the `file-loading-value` element
+-   `file-loading-value` elements state is dynamically set to `'enabled'` during `fetchCSS()`
+-   new `file-loading-message` value replaces `page-loading span`
+-   `file-loading-message` elements state attribute is dynamically set to `'1' || '2' || '3'`
 
 ### Fixed
 

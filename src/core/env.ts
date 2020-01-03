@@ -70,8 +70,6 @@ class Env {
             return;
         }
 
-        console.log(ticket, this._tickets);
-
         for (let i = 0; i < this._tickets.length; i++) {
             if (this._tickets[i] === ticket) {
                 this._tickets.splice(i, 1);

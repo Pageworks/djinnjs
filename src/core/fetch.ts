@@ -69,7 +69,6 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
             resolve();
         }
 
-        console.log('Fetch CSS Created:', ticket);
         const loadingMessage = document.body.querySelector('file-loading-value') || null;
 
         let loaded = 0;
@@ -92,13 +91,12 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                     loaded++;
                     if (env.domState === 'hard-loading' && loadingMessage) {
                         if (usePercentage) {
-                            loadingMessage.innerHTML = `<resource-counter>${Math.round((loaded / resourceList.length) * 100)}</resource-counter>`;
+                            loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
                         } else {
-                            loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                            loadingMessage.innerHTML = `${loaded}/${resourceList.length}`;
                         }
                     }
                     if (loaded === resourceList.length) {
-                        console.log('Fetch CSS:', ticket);
                         env.stopLoading(ticket);
                         resolve();
                     }
@@ -107,13 +105,12 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                     loaded++;
                     if (env.domState === 'hard-loading' && loadingMessage) {
                         if (usePercentage) {
-                            loadingMessage.innerHTML = `<resource-counter>${Math.round((loaded / resourceList.length) * 100)}</resource-counter>`;
+                            loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
                         } else {
-                            loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                            loadingMessage.innerHTML = `${loaded}/${resourceList.length}`;
                         }
                     }
                     if (loaded === resourceList.length) {
-                        console.log('Fetch CSS:', ticket);
                         env.stopLoading(ticket);
                         resolve();
                     }
@@ -123,13 +120,12 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 loaded++;
                 if (env.domState === 'hard-loading' && loadingMessage) {
                     if (usePercentage) {
-                        loadingMessage.innerHTML = `<resource-counter>${Math.round((loaded / resourceList.length) * 100)}</resource-counter>`;
+                        loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
                     } else {
-                        loadingMessage.innerHTML = `<resource-counter>${loaded}</resource-counter><span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
+                        loadingMessage.innerHTML = `${loaded}/${resourceList.length}`;
                     }
                 }
                 if (loaded === resourceList.length) {
-                    console.log('Fetch CSS:', ticket);
                     env.stopLoading(ticket);
                     resolve();
                 }
