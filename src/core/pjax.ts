@@ -111,6 +111,9 @@ class Pjax {
                 break;
             case 'finalize-pjax':
                 this.updateHistory(data.title, data.url, data.history);
+                if (new RegExp('#').test(data.url)) {
+                    this.scrollToAnchor(data.url);
+                }
                 this.collectLinks();
                 this.checkPageRevision();
                 sendPageView(window.location.pathname, gaId);
@@ -222,6 +225,13 @@ class Pjax {
         }
     }
 
+    private scrollToAnchor(url: string): void {
+        const anchor = document.body.querySelector(`a[name="${url.match(/\#.*/g)[0].replace('#', '')}"]`);
+        if (anchor) {
+            anchor.scrollIntoView();
+        }
+    }
+
     /**
      * Creates and sends a navigation request to the Pjax web worker and queues navigation request.
      * @param url - the URL of the requested page
@@ -247,6 +257,7 @@ class Pjax {
             type: 'pjax',
             requestId: requestUid,
             url: url,
+            currentUrl: location.href,
         });
     }
 
@@ -342,7 +353,11 @@ class Pjax {
     private handlePjaxResponse(requestId: string, status: string, url: string, body?: string, error?: string) {
         const request = this.getNavigaitonRequest(requestId);
         if (requestId === this.state.activeRequestUid) {
-            if (status === 'ok') {
+            if (status === 'external') {
+                window.location.href = url;
+            } else if (status === 'hash-change') {
+                location.hash = url.match(/\#.*/g)[0].replace('#', '');
+            } else if (status === 'ok') {
                 const tempDocument: HTMLDocument = document.implementation.createHTMLDocument('pjax-temp-document');
                 tempDocument.documentElement.innerHTML = body;
 

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.10] - 2020-01-05
+
+### Fixed
+
+-   Pjax no longer attempts to prefetch external webpages
+-   Pjax no longer attepts to navigate to external webpages
+-   Pjax can handle page jumps [#14](https://github.com/Pageworks/djinnjs/issues/14)
+-   Pjax scrolls to the anchor element on page load
+
 ## [0.0.9] - 2020-01-03
 
 ### Added
@@ -134,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.9...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.10...HEAD
+[0.0.10]: https://github.com/pageworks/djinnjs/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/pageworks/djinnjs/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/pageworks/djinnjs/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/pageworks/djinnjs/compare/v0.0.6...v0.0.7
