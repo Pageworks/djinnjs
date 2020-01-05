@@ -18,7 +18,7 @@ class PjaxWorker {
                 this.checkRevision(e.data.url);
                 break;
             case 'pjax':
-                this.pjax(e.data.url, e.data.requestId);
+                this.pjax(e.data.url, e.data.requestId, e.data.currentUrl);
                 break;
             case 'prefetch':
                 const existingQueue = this.prefetch.length;
@@ -41,8 +41,16 @@ class PjaxWorker {
         if (this.prefetchQueue.length === 0) {
             return;
         }
+
         const url = this.prefetchQueue[0];
         this.prefetchQueue.splice(0, 1);
+
+        /** Prevents prefetching external webpages */
+        if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === false) {
+            this.prefetch();
+            return;
+        }
+
         fetch(url, {
             method: 'GET',
             credentials: 'include',
@@ -54,9 +62,7 @@ class PjaxWorker {
             .then(() => {})
             .catch(() => {})
             .finally(() => {
-                setTimeout(() => {
-                    this.prefetch();
-                }, 150);
+                this.prefetch();
             });
     }
 
@@ -65,7 +71,33 @@ class PjaxWorker {
      * @param url - the requested URL
      * @param requestId - the request ID
      */
-    private async pjax(url: string, requestId: string) {
+    private async pjax(url: string, requestId: string, currentUrl: string) {
+        if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === false) {
+            // @ts-ignore
+            self.postMessage({
+                type: 'pjax',
+                status: 'external',
+                url: url,
+                requestId: requestId,
+            });
+            return;
+        }
+
+        if (new RegExp(/\#/g).test(url)) {
+            const cleanUrl = url.replace(/\#.*/g, '');
+            const cleanCurrentUrl = currentUrl.replace(/\#.*/g, '');
+            if (cleanUrl === cleanCurrentUrl) {
+                // @ts-ignore
+                self.postMessage({
+                    type: 'pjax',
+                    status: 'hash-change',
+                    url: url,
+                    requestId: requestId,
+                });
+                return;
+            }
+        }
+
         try {
             const request = await fetch(url, {
                 method: 'GET',
