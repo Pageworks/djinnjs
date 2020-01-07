@@ -142,13 +142,20 @@ class Runtime {
                     scriptSelector += `[src="${script?.src}"]` || `#${script?.id}` || `[pjax-script-id="${script.getAttribute('pjax-script-id')}"]`;
                     const existingScript = document.head.querySelector(scriptSelector);
                     if (existingScript) {
-                        existingScript.remove();
+                        const preventRemount = script.getAttribute('pjax-prevent-remount');
+                        if (preventRemount === null) {
+                            existingScript.remove();
+                            newScript.src = script.src;
+                            document.head.appendChild(newScript);
+                        }
+                    } else {
+                        newScript.src = script.src;
+                        document.head.appendChild(newScript);
                     }
-                    newScript.src = script.src;
                 } else {
                     newScript.innerHTML = script.innerHTML;
+                    document.head.appendChild(newScript);
                 }
-                document.head.appendChild(newScript);
             });
         }
     }
