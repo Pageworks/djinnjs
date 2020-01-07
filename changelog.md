@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Pjax loads inline scripts [#19](https://github.com/Pageworks/djinnjs/issues/19)
+    -   Scripts with `src || id || pjax-script-id` attributes are removed and remounted every time the page loads
+    -   Scripts with `innerHTML` are remounted every time the page loads
+
 ## [0.0.11] - 2020-01-05
 
 ### Fixed
