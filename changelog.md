@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Fade transition accepts new `pjax-transition-data` object [#16](https://github.com/Pageworks/djinnjs/issues/16)
+-   Updated NPM packages
+
 ## [0.0.11] - 2020-01-05
 
 ### Fixed
