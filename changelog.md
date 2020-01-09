@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   `src` array check
+-   The scrubber and CSS util libs now synchronously resolve `src` paths when collecting files using [Glob](https://www.npmjs.com/package/glob)
+
 ## [0.0.11] - 2020-01-05
 
 ### Fixed

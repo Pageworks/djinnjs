@@ -9,17 +9,13 @@ function getFiles(sources) {
         let searched = 0;
         let files = [];
         for (let i = 0; i < sources.length; i++) {
-            const dirPath = path.resolve(cwd, sources[i]);
-            glob(`${dirPath}/**/*.css`, (error, newFiles) => {
-                if (error) {
-                    reject(error);
-                }
-                files = [...files, ...newFiles];
-                searched++;
-                if (searched === sources.length) {
-                    resolve(files);
-                }
-            });
+            const dirPath = path.resolve(process.cwd(), sources[i]);
+            const newFiles = glob.sync(`${dirPath}/**/*.css`);
+            files = [...files, ...newFiles];
+            searched++;
+            if (searched === sources.length) {
+                resolve(files);
+            }
         }
     });
 }
