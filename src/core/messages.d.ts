@@ -5,7 +5,7 @@ type Message = {
 
 interface BroadcastWorkerMessage extends Message {
     messageId: string;
-    protocol: 'Once' | 'Guaranteed';
+    protocol: "Once" | "Guaranteed";
     maxAttempts?: number;
     attempts?: number;
 }

@@ -5,8 +5,9 @@
         "target": "ES2019",
         "module": "ESNext",
         "outDir": "dist",
-        "declaration": true
+        "declaration": true,
+        "moduleResolution": "Node"
     },
-    "include": ["src"],
+    "include": ["src", "web_modules"],
     "exclude": ["node_modules"]
 }

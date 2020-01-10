@@ -1,10 +1,10 @@
-const glob = require('glob');
-const fs = require('fs');
-const path = require('path');
+const glob = require("glob");
+const fs = require("fs");
+const path = require("path");
 
 const cwd = process.cwd();
 
-function getFiles(sources) {
+function getProjectFiles(sources) {
     return new Promise((resolve, reject) => {
         let searched = 0;
         let files = [];
@@ -20,6 +20,18 @@ function getFiles(sources) {
     });
 }
 
+function getCoreFiles() {
+    return new Promise((resolve, reject) => {
+        const distDir = path.resolve(__dirname, "../../src");
+        glob(`${distDir}/**/*.css`, (error, files) => {
+            if (error) {
+                reject(error);
+            }
+            resolve(files);
+        });
+    });
+}
+
 function relocate(files, publicDir, relativeOutDir) {
     return new Promise((resolve, reject) => {
         if (files.length === 0) {
@@ -28,7 +40,7 @@ function relocate(files, publicDir, relativeOutDir) {
         let relocated = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
-            const filename = files[i].replace(/.*[\/\\]/g, '');
+            const filename = files[i].replace(/.*[\/\\]/g, "");
             fs.copyFile(files[i], `${outDir}/${filename}`, error => {
                 if (error) {
                     reject(error);
@@ -44,7 +56,9 @@ function relocate(files, publicDir, relativeOutDir) {
 
 async function move(sources, publicDir, outDir) {
     try {
-        const files = await getFiles(sources);
+        const coreFiles = await getCoreFiles();
+        const projectFiles = await getProjectFiles(sources);
+        const files = [...coreFiles, ...projectFiles];
         await relocate(files, publicDir, outDir);
         return;
     } catch (error) {

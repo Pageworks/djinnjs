@@ -10,15 +10,15 @@ async function parseLazyLoadedCSS(body: string) {
     const files: Array<string> = [];
     if (matches) {
         matches.map((match: string) => {
-            const clean = match.replace(/(lazy-load-css\=[\'\"])|[\'\"]$/g, '');
+            const clean = match.replace(/(lazy-load-css\=[\'\"])|[\'\"]$/g, "");
             const filenames = clean.trim().split(/\s+/g);
             if (filenames) {
                 filenames.map(filename => {
                     const cleanFilename = filename
                         .trim()
                         .toLowerCase()
-                        .replace(/(\.css)$|(\.scss)$/g, '');
-                    if (cleanFilename !== '') {
+                        .replace(/(\.css)$|(\.scss)$/g, "");
+                    if (cleanFilename !== "") {
                         files.push(cleanFilename);
                     }
                 });
@@ -51,15 +51,15 @@ async function parseEagerLoadedCSS(body: string) {
     const files: Array<string> = [];
     if (matches) {
         matches.map((match: string) => {
-            const clean = match.replace(/(eager-load-css\=[\'\"])|[\'\"]$/g, '');
+            const clean = match.replace(/(eager-load-css\=[\'\"])|[\'\"]$/g, "");
             const filenames = clean.trim().split(/\s+/g);
             if (filenames) {
                 filenames.map(filename => {
                     const cleanFilename = filename
                         .trim()
                         .toLowerCase()
-                        .replace(/(\.css)$|(\.scss)$/g, '');
-                    if (cleanFilename !== '') {
+                        .replace(/(\.css)$|(\.scss)$/g, "");
+                    if (cleanFilename !== "") {
                         files.push(cleanFilename);
                     }
                 });
@@ -102,29 +102,29 @@ async function parseCSS(body: string) {
 /** Incoming request from the Runtime class. */
 onmessage = (e: MessageEvent) => {
     switch (e.data.type) {
-        case 'eager':
+        case "eager":
             parseEagerLoadedCSS(e.data.body).then(files => {
                 // @ts-ignore
                 postMessage({
-                    type: 'eager',
+                    type: "eager",
                     files: files,
                 });
             });
             break;
-        case 'lazy':
+        case "lazy":
             parseLazyLoadedCSS(e.data.body).then(files => {
                 // @ts-ignore
                 postMessage({
-                    type: 'lazy',
+                    type: "lazy",
                     files: files,
                 });
             });
             break;
-        case 'parse':
+        case "parse":
             parseCSS(e.data.body).then(data => {
                 // @ts-ignore
                 postMessage({
-                    type: 'parse',
+                    type: "parse",
                     pjaxFiles: data,
                     requestUid: e.data.requestUid,
                 });

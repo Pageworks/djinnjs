@@ -5,7 +5,7 @@ export function slide(selector: string, newHTML: string, transitionData: string 
         window.scroll({
             top: 0,
             left: 0,
-            behavior: 'smooth',
+            behavior: "smooth",
         });
 
         /** Prepare for update */
@@ -17,19 +17,19 @@ export function slide(selector: string, newHTML: string, transitionData: string 
         currentMain.before(newMain);
 
         /** Transition reset */
-        currentMain.style.transform = 'translateX(0)';
-        currentMain.style.opacity = '1';
-        currentMain.style.position = 'absolute';
-        currentMain.style.top = '0';
-        currentMain.style.left = '0';
-        currentMain.style.width = '100vw';
+        currentMain.style.transform = "translateX(0)";
+        currentMain.style.opacity = "1";
+        currentMain.style.position = "absolute";
+        currentMain.style.top = "0";
+        currentMain.style.left = "0";
+        currentMain.style.width = "100vw";
 
         setTimeout(() => {
             /** Transition */
-            currentMain.style.transition = 'transform 600ms ease-in-out';
+            currentMain.style.transition = "transform 600ms ease-in-out";
             currentMain.style.transform = `translateX(${100 * data.direction}vw)`;
-            newMain.style.transition = 'transform 600ms ease-in-out';
-            newMain.style.transform = 'translateX(0)';
+            newMain.style.transition = "transform 600ms ease-in-out";
+            newMain.style.transform = "translateX(0)";
 
             setTimeout(() => {
                 currentMain.remove();
