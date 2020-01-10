@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   modified NotifyJS packge to `src/web_modules/`
 -   custom `<pjax-notification>` snackbar notification stylesheet
 -   Pjax fetches `pjax-notification` stylesheet during `init()`
+-   Custom elements are prefixed with `djinnjs` [#20](https://github.com/Pageworks/djinnjs/issues/20)
+    -   `file-loading-value` is now `djinnjs-file-loading-value`
+    -   `file-loading-message` is now `djinnjs-file-loading-message`
 
 ### Updated
 
