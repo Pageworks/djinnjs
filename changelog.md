@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Service Worker redirects [#17](https://github.com/Pageworks/djinnjs/issues/17)
+
 ## [0.0.11] - 2020-01-05
 
 ### Fixed
