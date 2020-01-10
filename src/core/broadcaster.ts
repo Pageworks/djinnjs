@@ -4,8 +4,8 @@ type MessageData = {
     [key: string]: any;
 };
 
-import { uuid, debug } from './env';
-import { djinnjsOutDir } from './config';
+import { uuid, debug } from "./env";
+import { djinnjsOutDir } from "./config";
 
 type Inbox = {
     callback: Function;
@@ -60,7 +60,7 @@ class Broadcaster {
      */
     private handleMessage(e: MessageEvent): void {
         const data = e.data;
-        if (data.recipient?.trim().toLowerCase() === 'broadcaster') {
+        if (data.recipient?.trim().toLowerCase() === "broadcaster") {
             this.inbox(data.data);
         } else {
             this.sendDataToInboxes(data.inboxIndexes, data.data);
@@ -70,13 +70,13 @@ class Broadcaster {
     private sendUserDeviceInformation(): void {
         // @ts-ignore
         const deviceMemory = window.navigator?.deviceMemory ?? 8;
-        const isSafari = navigator.userAgent.search('Safari') >= 0 && navigator.userAgent.search('Chrome') < 0;
+        const isSafari = navigator.userAgent.search("Safari") >= 0 && navigator.userAgent.search("Chrome") < 0;
         const workerMessage: BroadcastWorkerMessage = {
-            recipient: 'broadcast-worker',
+            recipient: "broadcast-worker",
             messageId: null,
-            protocol: 'Once',
+            protocol: "Once",
             data: {
-                type: 'init',
+                type: "init",
                 memory: deviceMemory,
                 isSafari: isSafari,
             },
@@ -90,14 +90,14 @@ class Broadcaster {
     private inbox(data: MessageData): void {
         const { type } = data;
         switch (type) {
-            case 'ready':
+            case "ready":
                 this.flushMessageQueue();
                 this.sendUserDeviceInformation();
                 break;
-            case 'cleanup':
+            case "cleanup":
                 this.cleanup();
                 break;
-            case 'ping':
+            case "ping":
                 break;
             default:
                 if (debug) {
@@ -114,14 +114,14 @@ class Broadcaster {
      * @param protocol - `Once` will attempt to send the message but will not guarantee it arrives, `Guaranteed` will attempt to deliver the message until the `maxAttempts` have been exceeded
      * @param maxAttempts - the maximum number of attempts before the `Guaranteed` message is dropped, can be set to `Infinity`
      */
-    public message(recipient: string, data: MessageData, protocol: 'Once' | 'Guaranteed' = 'Once', maxAttempts = 100): void {
+    public message(recipient: string, data: MessageData, protocol: "Once" | "Guaranteed" = "Once", maxAttempts = 100): void {
         const workerMessage: BroadcastWorkerMessage = {
             recipient: recipient,
             data: data,
             messageId: uuid(),
             protocol: protocol,
         };
-        if (protocol === 'Guaranteed') {
+        if (protocol === "Guaranteed") {
             workerMessage.maxAttempts = maxAttempts;
         }
         this.postMessageToWorker(workerMessage);
@@ -141,11 +141,11 @@ class Broadcaster {
         const address = this.inboxes.length;
         this.inboxes.push(newInbox);
         const workerMessage: BroadcastWorkerMessage = {
-            recipient: 'broadcast-worker',
+            recipient: "broadcast-worker",
             messageId: null,
-            protocol: 'Once',
+            protocol: "Once",
             data: {
-                type: 'hookup',
+                type: "hookup",
                 name: name,
                 inboxAddress: address,
             },
@@ -183,11 +183,11 @@ class Broadcaster {
         }
         this.inboxes = updatedInboxes;
         const workerMessage: BroadcastWorkerMessage = {
-            recipient: 'broadcast-worker',
+            recipient: "broadcast-worker",
             messageId: null,
-            protocol: 'Once',
+            protocol: "Once",
             data: {
-                type: 'update-addresses',
+                type: "update-addresses",
                 addresses: updatedAddresses,
             },
         };
@@ -212,11 +212,11 @@ class Broadcaster {
         inbox.disconnected = true;
         inbox.callback = () => {};
         const workerMessage: BroadcastWorkerMessage = {
-            recipient: 'broadcast-worker',
+            recipient: "broadcast-worker",
             messageId: null,
-            protocol: 'Once',
+            protocol: "Once",
             data: {
-                type: 'disconnect',
+                type: "disconnect",
                 inboxAddress: index,
             },
         };

@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "@codewithkyle/notifyjs": "./@codewithkyle/notifyjs.js"
+  }
+}

@@ -1,7 +1,7 @@
-import { environment } from './config';
+import { environment } from "./config";
 
-type DOMState = 'soft-loading' | 'hard-loading' | 'idling' | 'page-loading' | 'page-loading-complete';
-type NetworkType = '4g' | '3g' | '2g' | 'slow-2g';
+type DOMState = "soft-loading" | "hard-loading" | "idling" | "page-loading" | "page-loading-complete";
+type NetworkType = "4g" | "3g" | "2g" | "slow-2g";
 
 class Env {
     public isDebug: boolean;
@@ -17,11 +17,11 @@ class Env {
     constructor() {
         this.memory = 4;
         this.cpu = window.navigator.hardwareConcurrency;
-        this.connection = '4g';
+        this.connection = "4g";
         // @ts-ignore
-        this.isProduciton = environment === 'production';
+        this.isProduciton = environment === "production";
         this.isDebug = !this.isProduciton;
-        this.domState = 'hard-loading';
+        this.domState = "hard-loading";
         this.dataSaver = false;
 
         this._tickets = [];
@@ -30,7 +30,7 @@ class Env {
     }
 
     private init(): void {
-        if ('connection' in navigator) {
+        if ("connection" in navigator) {
             // @ts-ignore
             this.connection = window.navigator.connection.effectiveType;
             // @ts-ignore
@@ -39,17 +39,17 @@ class Env {
             navigator.connection.onchange = this.handleNetworkChange;
         }
 
-        if ('deviceMemory' in navigator) {
+        if ("deviceMemory" in navigator) {
             // @ts-ignore
             this.memory = window.navigator.deviceMemory;
         }
 
-        if (document.documentElement.getAttribute('debug')) {
+        if (document.documentElement.getAttribute("debug")) {
             this.isDebug = true;
         }
 
         if (window.location.search) {
-            if (new URL(window.location.href).searchParams.get('debug')) {
+            if (new URL(window.location.href).searchParams.get("debug")) {
                 this.isDebug = true;
             }
         }
@@ -65,7 +65,7 @@ class Env {
      * @param ticket - the `string` the was provided by the `startLoading()` method.
      */
     public stopLoading(ticket: string): void {
-        if ((!ticket && this.isDebug) || (typeof ticket !== 'string' && this.isDebug)) {
+        if ((!ticket && this.isDebug) || (typeof ticket !== "string" && this.isDebug)) {
             console.error(`A ticket with the typeof 'string' is required to end the loading state.`);
             return;
         }
@@ -77,9 +77,9 @@ class Env {
             }
         }
 
-        if (this._tickets.length === 0 && this.domState !== 'hard-loading') {
-            this.domState = 'idling';
-            document.documentElement.setAttribute('state', this.domState);
+        if (this._tickets.length === 0 && this.domState !== "hard-loading") {
+            this.domState = "idling";
+            document.documentElement.setAttribute("state", this.domState);
         }
     }
 
@@ -88,9 +88,9 @@ class Env {
      * @returns a ticket `string` that is required to stop the loading state.
      */
     public startLoading(): string {
-        if (this.domState !== 'hard-loading') {
-            this.domState = 'soft-loading';
-            document.documentElement.setAttribute('state', this.domState);
+        if (this.domState !== "hard-loading") {
+            this.domState = "soft-loading";
+            document.documentElement.setAttribute("state", this.domState);
         }
         const ticket = this.uuid();
         this._tickets.push(ticket);
@@ -98,20 +98,20 @@ class Env {
     }
 
     public startPageTransition(): void {
-        this.domState = 'page-loading';
-        document.documentElement.setAttribute('state', this.domState);
+        this.domState = "page-loading";
+        document.documentElement.setAttribute("state", this.domState);
     }
 
     public endPageTransition(): void {
-        this.domState = 'page-loading-complete';
-        document.documentElement.setAttribute('state', this.domState);
+        this.domState = "page-loading-complete";
+        document.documentElement.setAttribute("state", this.domState);
         setTimeout(() => {
             if (this._tickets.length) {
-                this.domState = 'soft-loading';
-                document.documentElement.setAttribute('state', this.domState);
+                this.domState = "soft-loading";
+                document.documentElement.setAttribute("state", this.domState);
             } else {
-                this.domState = 'idling';
-                document.documentElement.setAttribute('state', this.domState);
+                this.domState = "idling";
+                document.documentElement.setAttribute("state", this.domState);
             }
         }, 600);
     }
@@ -125,7 +125,7 @@ class Env {
         return new Array(4)
             .fill(0)
             .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
-            .join('-');
+            .join("-");
     }
 
     /**
@@ -136,7 +136,7 @@ class Env {
      */
     public setDOMState(newState: DOMState): void {
         this.domState = newState;
-        document.documentElement.setAttribute('state', this.domState);
+        document.documentElement.setAttribute("state", this.domState);
     }
 }
 export const env: Env = new Env();

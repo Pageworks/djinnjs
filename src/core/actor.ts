@@ -1,5 +1,5 @@
-import { broadcaster } from './broadcaster.js';
-import { debug } from './env.js';
+import { broadcaster } from "./broadcaster.js";
+import { debug } from "./env.js";
 
 export class Actor extends HTMLElement {
     public inboxId: string;
@@ -20,7 +20,7 @@ export class Actor extends HTMLElement {
             if (debug) {
                 console.warn(`This actor is missing an inbox name. Did you forget to call the classes constructor?`);
             }
-            this.inboxName = 'nil';
+            this.inboxName = "nil";
         }
         this.inboxId = broadcaster.hookup(this.inboxName, this.inbox.bind(this));
         this.connected();

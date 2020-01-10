@@ -51,25 +51,31 @@
         "cleanup": "node ./cleanup.js",
         "relocate": "node ./relocate.js",
         "compile": "npm run cleanup && tsc && npm run relocate",
-        "prerelease": "npm run cleanup && npm run prettier && npm run eslint && tsc && npm run relocate"
+        "prerelease": "npm run cleanup && npm run prettier && npm run eslint && tsc && npm run relocate",
+        "snowpack": "snowpack"
     },
     "devDependencies": {
-        "prettier": "1.19.1",
-        "rollup": "^1.27.13",
-        "@typescript-eslint/eslint-plugin": "^2.11.0",
-        "@typescript-eslint/parser": "^2.11.0",
-        "eslint": "^6.7.2",
-        "eslint-config-prettier": "^6.7.0",
+        "@typescript-eslint/eslint-plugin": "^2.15.0",
+        "@typescript-eslint/parser": "^2.15.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.9.0",
         "eslint-plugin-prettier": "^3.1.2",
-        "typescript": "^3.7.3"
+        "prettier": "1.19.1",
+        "snowpack": "^1.0.2",
+        "typescript": "^3.7.4"
     },
     "dependencies": {
-        "@codewithkyle/notifyjs": "^1.0.0",
+        "@codewithkyle/notifyjs": "^1.0.3",
         "ora": "^4.0.3",
         "rimraf": "^3.0.0",
         "semver": "^7.1.1",
-        "terser": "^4.4.3",
+        "terser": "^4.6.2",
         "update-notifier": "^4.0.0",
-        "yargs": "^15.0.2"
+        "yargs": "^15.1.0"
+    },
+    "snowpack": {
+        "webDependencies": [
+            "@codewithkyle/notifyjs"
+        ]
     }
 }
