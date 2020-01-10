@@ -3,7 +3,7 @@ import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { transitionManager } from "./transition-manager";
 import { djinnjsOutDir, gaId, disablePrefetching } from "./config";
-import { notify } from "@codewithkyle/notifyjs";
+import { notify } from "../../web_modules/@codewithkyle/notify";
 
 interface PjaxState {
     activeRequestUid: string;

@@ -40,9 +40,7 @@
         "fetch-js.js",
         "fetch-js.d.ts",
         "fetch.js",
-        "fetch.d.ts",
-        "notify.js",
-        "notify.d.ts"
+        "fetch.d.ts"
     ],
     "scripts": {
         "prettier": "prettier --write \"src/**/*.ts\"",
@@ -52,7 +50,8 @@
         "relocate": "node ./relocate.js",
         "compile": "npm run cleanup && tsc && npm run relocate",
         "prerelease": "npm run cleanup && npm run prettier && npm run eslint && tsc && npm run relocate",
-        "snowpack": "snowpack"
+        "snowpack": "snowpack",
+        "tsc": "tsc"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^2.15.0",
