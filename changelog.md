@@ -27,6 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated prettier style to force double quotes for faster parsing/optimization
 -   Locked NotifyJS package to v1.0.3
 -   regex patterns in CLI to handle new double quote string style
+-   `src` array check
+-   The scrubber and CSS util libs now synchronously resolve `src` paths when collecting files using [Glob](https://www.npmjs.com/package/glob)
+-   Pjax loads inline scripts [#19](https://github.com/Pageworks/djinnjs/issues/19)
+    -   Scripts with `src || id || pjax-script-id` attributes are removed and remounted every time the page loads
+    -   Scripts with `innerHTML` are remounted every time the page loads
+    -   Scripts with `src || id || pjax-script-id` attributes can prevent the remount using the `pjax-prevent-remount` attribute
+-   Service Worker redirects [#17](https://github.com/Pageworks/djinnjs/issues/17)
 
 ### Removed
 
