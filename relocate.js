@@ -1,4 +1,6 @@
 const fs = require("fs");
+const path = require("path");
+const glob = require("glob");
 
 fs.copyFile("./dist/core/env.js", "./env.js", error => {
     if (error) {
@@ -65,3 +67,24 @@ fs.copyFile("./dist/core/fetch.d.ts", "./fetch.d.ts", error => {
         console.log(error);
     }
 });
+
+function moveCssToDist() {
+    const pathToSrc = path.join(__dirname, "./src");
+    const pathToDist = path.join(__dirname, "./dist");
+    glob(`${pathToSrc}/**/*.css`, (error, srcFiles) => {
+        if (error) {
+            console.log(error);
+            return;
+        }
+
+        if (!srcFiles.length) {
+            return;
+        }
+
+        for (let i = 0; i < srcFiles.length; i++) {
+            const filename = srcFiles[i].replace(/.*\//, "");
+            fs.copyFileSync(srcFiles[i], `${pathToDist}/${filename}`);
+        }
+    });
+}
+moveCssToDist();

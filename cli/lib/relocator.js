@@ -1,6 +1,6 @@
-const glob = require('glob');
-const fs = require('fs');
-const path = require('path');
+const glob = require("glob");
+const fs = require("fs");
+const path = require("path");
 
 const cwd = process.cwd();
 
@@ -12,7 +12,7 @@ function copyFiles(files, publicDir, relativeOutDir) {
         let minified = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
-            const filename = files[i].replace(/.*[\/\\]/g, '');
+            const filename = files[i].replace(/.*[\/\\]/g, "");
             fs.copyFile(files[i], `${outDir}/${filename}`, error => {
                 if (error) {
                     reject(error);

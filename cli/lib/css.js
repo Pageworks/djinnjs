@@ -22,7 +22,7 @@ function getProjectFiles(sources) {
 
 function getCoreFiles() {
     return new Promise((resolve, reject) => {
-        const distDir = path.resolve(__dirname, "../../src");
+        const distDir = path.resolve(__dirname, "../../dist");
         glob(`${distDir}/**/*.css`, (error, files) => {
             if (error) {
                 reject(error);
