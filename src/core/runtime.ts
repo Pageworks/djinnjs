@@ -65,7 +65,7 @@ class Runtime {
             case "parse":
                 this.parseHTML(data.body, data.requestUid);
                 break;
-            case 'mount-inline-scripts':
+            case "mount-inline-scripts":
                 this.handleInlineScripts(data.selector);
                 break;
             default:
@@ -135,14 +135,14 @@ class Runtime {
     private handleInlineScripts(selector: string): void {
         const el = document.body.querySelector(selector);
         if (el) {
-            el.querySelectorAll('script').forEach(script => {
-                const newScript = document.createElement('script');
-                if (script?.src || script?.id || script.getAttribute('pjax-script-id')) {
-                    let scriptSelector = 'script';
-                    scriptSelector += `[src="${script?.src}"]` || `#${script?.id}` || `[pjax-script-id="${script.getAttribute('pjax-script-id')}"]`;
+            el.querySelectorAll("script").forEach(script => {
+                const newScript = document.createElement("script");
+                if (script?.src || script?.id || script.getAttribute("pjax-script-id")) {
+                    let scriptSelector = "script";
+                    scriptSelector += `[src="${script?.src}"]` || `#${script?.id}` || `[pjax-script-id="${script.getAttribute("pjax-script-id")}"]`;
                     const existingScript = document.head.querySelector(scriptSelector);
                     if (existingScript) {
-                        const preventRemount = script.getAttribute('pjax-prevent-remount');
+                        const preventRemount = script.getAttribute("pjax-prevent-remount");
                         if (preventRemount === null) {
                             existingScript.remove();
                             newScript.src = script.src;

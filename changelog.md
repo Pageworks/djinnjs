@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.13] - 2020-01-10
+
+### Fixed
+
+-   removed forgotten console log from CLI
+-   CSS from the `src/` directory is relocated to the `dist/` directory
+
+## [0.0.12] - 2020-01-10
+
 ### Added
 
 -   [snowpack](https://www.npmjs.com/package/snowpack) npm package for bundling npm packages
@@ -183,7 +192,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.11...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.13...HEAD
+[0.0.13]: https://github.com/pageworks/djinnjs/compare/v0.0.12...v0.0.13
+[0.0.12]: https://github.com/pageworks/djinnjs/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/pageworks/djinnjs/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/pageworks/djinnjs/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/pageworks/djinnjs/compare/v0.0.8...v0.0.9
