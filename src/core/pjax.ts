@@ -425,8 +425,8 @@ class Pjax {
                 broadcaster.message("runtime", {
                     type: "mount-components",
                 });
-                broadcaster.message('runtime', {
-                    type: 'mount-inline-scripts',
+                broadcaster.message("runtime", {
+                    type: "mount-inline-scripts",
                     selector: selector,
                 });
             });
