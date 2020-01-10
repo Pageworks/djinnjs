@@ -24,7 +24,7 @@ class Runtime {
 
     constructor() {
         this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.js`);
-        this._loadingMessage = document.body.querySelector('djinnjs-file-loading-message') || document.body.querySelector('file-loading-message') || null;
+        this._loadingMessage = document.body.querySelector('djinnjs-file-loading-message') || null;
         if (this._loadingMessage) {
             this._loadingMessage.setAttribute('state', '1');
         }
@@ -78,7 +78,7 @@ class Runtime {
         const response: WorkerResponse = e.data;
         switch (response.type) {
             case 'eager':
-                const loadingMessage = document.body.querySelector('djinnjs-file-loading-value') || document.body.querySelector('file-loading-value') || null;
+                const loadingMessage = document.body.querySelector('djinnjs-file-loading-value') || null;
                 if (env.domState === 'hard-loading' && this._loadingMessage) {
                     this._loadingMessage.setAttribute('state', '3');
                     this._loadingMessage.innerHTML = `Loading resources:`;
