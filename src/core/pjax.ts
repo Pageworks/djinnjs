@@ -3,7 +3,8 @@ import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { transitionManager } from "./transition-manager";
 import { djinnjsOutDir, gaId, disablePrefetching } from "./config";
-import { notify } from "../../web_modules/@codewithkyle/notify";
+import { notify } from "../web_modules/@codewithkyle/notifications";
+import { fetchCSS } from "./fetch";
 
 interface PjaxState {
     activeRequestUid: string;
@@ -91,6 +92,7 @@ class Pjax {
         window.addEventListener("popstate", this.windowPopstateEvent);
         /** Update the history state with the required `state.url` value */
         window.history.replaceState({ url: window.location.href }, document.title, window.location.href);
+        fetchCSS("pjax-notification");
     }
 
     /**

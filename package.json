@@ -64,7 +64,7 @@
         "typescript": "^3.7.4"
     },
     "dependencies": {
-        "@codewithkyle/notifyjs": "^1.0.3",
+        "@codewithkyle/notifyjs": "1.0.3",
         "ora": "^4.0.3",
         "rimraf": "^3.0.0",
         "semver": "^7.1.1",
