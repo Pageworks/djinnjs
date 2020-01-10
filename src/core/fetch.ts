@@ -69,7 +69,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
             resolve();
         }
 
-        const loadingMessage = document.body.querySelector('file-loading-value') || null;
+        const loadingMessage = document.body.querySelector('djinnjs-file-loading-value') || null;
 
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {

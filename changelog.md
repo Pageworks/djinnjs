@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Custom elements are prefixed with `djinnjs` [#20](https://github.com/Pageworks/djinnjs/issues/20)
+    -   `file-loading-value` is now `djinnjs-file-loading-value`
+    -   `file-loading-message` is now `djinnjs-file-loading-message`
+
+## [0.0.11] - 2020-01-05
+
+### Fixed
+
+-   Content cache bust bug within the service worker
+
 ## [0.0.10] - 2020-01-05
 
 ### Fixed
@@ -143,7 +155,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.10...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.11...HEAD
+[0.0.11]: https://github.com/pageworks/djinnjs/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/pageworks/djinnjs/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/pageworks/djinnjs/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/pageworks/djinnjs/compare/v0.0.7...v0.0.8

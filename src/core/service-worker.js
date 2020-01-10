@@ -112,7 +112,7 @@ async function cachebust(url) {
         }),
     });
     if (request2.ok) {
-        const response = await request.json();
+        const response = await request2.json();
         contentCacheId = `content-${response.cacheTimestamp}`;
         caches.keys().then(cacheNames => {
             return Promise.all(
