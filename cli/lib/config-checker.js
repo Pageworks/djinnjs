@@ -12,7 +12,7 @@ function checkSite(site, multisite = false) {
 
         if (site.src === undefined) {
             site.src = './src';
-        } else if (typeof site.src !== 'string' && site.src instanceof Array) {
+        } else if (typeof site.src !== 'string' && !Array.isArray(site.src)) {
             reject(`Invalid DjinnJS configuration. The src value must be a string or an array of strings.`);
         }
 

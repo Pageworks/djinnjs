@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-   `src` array check
+-   The scrubber and CSS util libs now synchronously resolve `src` paths when collecting files using [Glob](https://www.npmjs.com/package/glob)
 -   Pjax loads inline scripts [#19](https://github.com/Pageworks/djinnjs/issues/19)
     -   Scripts with `src || id || pjax-script-id` attributes are removed and remounted every time the page loads
     -   Scripts with `innerHTML` are remounted every time the page loads
