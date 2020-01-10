@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   [snowpack](https://www.npmjs.com/package/snowpack) npm package for bundling npm packages
+-   `web_modules/` directory to `src/`
+-   modified NotifyJS packge to `src/web_modules/`
+-   custom `<pjax-notification>` snackbar notification stylesheet
+-   Pjax fetches `pjax-notification` stylesheet during `init()`
+
+### Updated
+
+-   Updated [NotifyJS](https://www.npmjs.com/package/@codewithkyle/notifyjs) npm package to v1.0.3
+
+### Fixed
+
+-   Updated prettier style to force double quotes for faster parsing/optimization
+-   Locked NotifyJS package to v1.0.3
+-   regex patterns in CLI to handle new double quote string style
+
+### Removed
+
+-   [rollup](https://www.npmjs.com/package/rollup) dev dependency
+-   `notify.js` script from `core/`
+-   `notify.js` script from the NPM package
+
 ## [0.0.11] - 2020-01-05
 
 ### Fixed
