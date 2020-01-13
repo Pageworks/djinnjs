@@ -13,16 +13,16 @@ export function slide(selector: string, newHTML: string, target: HTMLElement | n
         if (target) {
             const scrollBehavior = target
                 .getAttribute("scroll")
-                .toLowerCase()
-                .trim();
+                ?.toLowerCase()
+                ?.trim();
             if (scrollBehavior === "auto" || scrollBehavior === "smooth" || scrollBehavior === "none") {
                 transition.scroll = scrollBehavior;
             }
 
             const targetDirection = target
                 .getAttribute("direction")
-                .toLowerCase()
-                .trim();
+                ?.toLowerCase()
+                ?.trim();
             if (targetDirection === "right") {
                 transition.direction = 1;
             } else if (targetDirection === "left") {

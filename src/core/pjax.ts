@@ -110,7 +110,7 @@ class Pjax {
                 this.collectLinks();
                 break;
             case "load":
-                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.target);
+                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId);
                 break;
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
@@ -249,10 +249,10 @@ class Pjax {
         transitionData: string = null,
         history: "push" | "replace" = "push",
         selector: string = null,
-        target: HTMLElement = null
+        navRequestId: string = null
     ): void {
         env.startPageTransition();
-        const requestUid = uuid();
+        const requestUid = navRequestId || uuid();
         this.state.activeRequestUid = requestUid;
         const navigationRequest: NavigaitonRequest = {
             url: url,
@@ -261,7 +261,7 @@ class Pjax {
             transition: transition,
             transitionData: transitionData,
             selector: selector,
-            target: target,
+            target: document.body.querySelector(`[navigation-request-id="${requestUid}"]`) || null,
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -324,6 +324,8 @@ class Pjax {
     private hijackRequest(e: Event): void {
         e.preventDefault();
         const target = e.currentTarget as HTMLAnchorElement;
+        const navigationUid = uuid();
+        target.setAttribute("navigation-request-id", navigationUid);
         /** Tell Pjax to load the clicked elements page */
         broadcaster.message("pjax", {
             type: "load",
@@ -331,7 +333,7 @@ class Pjax {
             transition: target.getAttribute("pjax-transition"),
             transitionData: target.getAttribute("pjax-transition-data"),
             selector: target.getAttribute("pjax-view-id"),
-            target: target,
+            navRequestId: navigationUid,
         });
     }
     private handleLinkClick: EventListener = this.hijackRequest.bind(this);

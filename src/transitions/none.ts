@@ -2,7 +2,10 @@ export function none(selector: string, newHTML: string, target: HTMLElement | nu
     return new Promise(resolve => {
         let behavior: ScrollBehavior | "none" = "auto";
         if (target) {
-            const desiredBehavior = target.getAttribute("scroll");
+            const desiredBehavior = target
+                .getAttribute("scroll")
+                ?.toLowerCase()
+                ?.trim();
             if (desiredBehavior === "auto" || desiredBehavior === "smooth" || desiredBehavior === "none") {
                 behavior = desiredBehavior;
             }

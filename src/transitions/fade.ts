@@ -18,13 +18,13 @@ export function fade(selector: string, newHTML: string, target: HTMLElement | nu
         if (target) {
             const scrollBehavior = target
                 .getAttribute("scroll")
-                .toLowerCase()
-                .trim();
+                ?.toLowerCase()
+                ?.trim();
             if (scrollBehavior === "auto" || scrollBehavior === "smooth" || scrollBehavior === "none") {
                 transition.scroll = scrollBehavior;
             }
 
-            const desiredDuration = target.getAttribute("duration").trim();
+            const desiredDuration = target.getAttribute("duration")?.trim();
             // @ts-ignore
             if (!isNaN(desiredDuration)) {
                 transition.duration = parseInt(desiredDuration);
