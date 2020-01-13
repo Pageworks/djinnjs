@@ -90,16 +90,12 @@ function getProjectFiles(sources) {
         let files = [];
         for (let i = 0; i < sources.length; i++) {
             const dirPath = path.resolve(process.cwd(), sources[i]);
-            glob(`${dirPath}/**/*.js`, (error, newFiles) => {
-                if (error) {
-                    reject(error);
-                }
-                files = [...newFiles];
-                searched++;
-                if (searched === sources.length) {
-                    resolve(files);
-                }
-            });
+            const newFiles = glob.sync(`${dirPath}/**/*.js`);
+            files = [...files, ...newFiles];
+            searched++;
+            if (searched === sources.length) {
+                resolve(files);
+            }
         }
     });
 }

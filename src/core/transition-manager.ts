@@ -1,10 +1,10 @@
-import { env, debug } from './env';
-import { defaultTransition } from './config';
+import { env, debug } from "./env";
+import { defaultTransition } from "./config";
 
 /** Import transitions */
-import { fade } from '../transitions/fade';
-import { slide } from '../transitions/slide';
-import { none } from '../transitions/none';
+import { fade } from "../transitions/fade";
+import { slide } from "../transitions/slide";
+import { none } from "../transitions/none";
 
 /**
  * The transition manager is used to manager Pjax page transitions. There must always be a `default` page transition, even if it's `none`
@@ -20,24 +20,24 @@ import { none } from '../transitions/none';
 export function transitionManager(selector: string, newHTML: string, transition: string | null, transitionData: string | null): Promise<{}> {
     return new Promise(resolve => {
         /** Pjax doesn't load on 2g, however, network conditions can change. Do not touch. */
-        if (env.connection === '2g' || env.connection === 'slow-2g') {
+        if (env.connection === "2g" || env.connection === "slow-2g") {
             none(selector, newHTML, transitionData).then(() => {
                 resolve();
             });
         } else {
             const transitionEffect = transition || defaultTransition;
             switch (transitionEffect) {
-                case 'slide':
+                case "slide":
                     slide(selector, newHTML, transitionData).then(() => {
                         resolve();
                     });
                     break;
-                case 'fade':
+                case "fade":
                     fade(selector, newHTML, transitionData).then(() => {
                         resolve();
                     });
                     break;
-                case 'none':
+                case "none":
                     none(selector, newHTML, transitionData).then(() => {
                         resolve();
                     });

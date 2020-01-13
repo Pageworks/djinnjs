@@ -14,13 +14,13 @@ class PjaxWorker {
     private handleMessage(e: MessageEvent): void {
         const { type } = e.data;
         switch (type) {
-            case 'revision-check':
+            case "revision-check":
                 this.checkRevision(e.data.url);
                 break;
-            case 'pjax':
+            case "pjax":
                 this.pjax(e.data.url, e.data.requestId, e.data.currentUrl);
                 break;
-            case 'prefetch':
+            case "prefetch":
                 const existingQueue = this.prefetch.length;
                 this.prefetchQueue = [...this.prefetchQueue, ...e.data.urls];
                 if (!existingQueue) {
@@ -52,11 +52,11 @@ class PjaxWorker {
         }
 
         fetch(url, {
-            method: 'GET',
-            credentials: 'include',
+            method: "GET",
+            credentials: "include",
             headers: new Headers({
-                'X-Requested-With': 'XMLHttpReqeust',
-                'X-Pjax': 'true',
+                "X-Requested-With": "XMLHttpReqeust",
+                "X-Pjax": "true",
             }),
         })
             .then(() => {})
@@ -75,8 +75,8 @@ class PjaxWorker {
         if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === false) {
             // @ts-ignore
             self.postMessage({
-                type: 'pjax',
-                status: 'external',
+                type: "pjax",
+                status: "external",
                 url: url,
                 requestId: requestId,
             });
@@ -84,13 +84,13 @@ class PjaxWorker {
         }
 
         if (new RegExp(/\#/g).test(url)) {
-            const cleanUrl = url.replace(/\#.*/g, '');
-            const cleanCurrentUrl = currentUrl.replace(/\#.*/g, '');
+            const cleanUrl = url.replace(/\#.*/g, "");
+            const cleanCurrentUrl = currentUrl.replace(/\#.*/g, "");
             if (cleanUrl === cleanCurrentUrl) {
                 // @ts-ignore
                 self.postMessage({
-                    type: 'pjax',
-                    status: 'hash-change',
+                    type: "pjax",
+                    status: "hash-change",
                     url: url,
                     requestId: requestId,
                 });
@@ -100,19 +100,19 @@ class PjaxWorker {
 
         try {
             const request = await fetch(url, {
-                method: 'GET',
-                credentials: 'include',
+                method: "GET",
+                credentials: "include",
                 headers: new Headers({
-                    'X-Requested-With': 'XMLHttpReqeust',
-                    'X-Pjax': 'true',
+                    "X-Requested-With": "XMLHttpReqeust",
+                    "X-Pjax": "true",
                 }),
             });
-            if (request.ok && request.headers.get('Content-Type') && request.headers.get('Content-Type').match(/(text\/html)/gi)) {
+            if (request.ok && request.headers.get("Content-Type") && request.headers.get("Content-Type").match(/(text\/html)/gi)) {
                 const response = await request.text();
                 // @ts-ignore
                 self.postMessage({
-                    type: 'pjax',
-                    status: 'ok',
+                    type: "pjax",
+                    status: "ok",
                     body: response,
                     requestId: requestId,
                     url: url,
@@ -120,8 +120,8 @@ class PjaxWorker {
             } else {
                 // @ts-ignore
                 self.postMessage({
-                    type: 'pjax',
-                    status: 'error',
+                    type: "pjax",
+                    status: "error",
                     error: request.statusText,
                     url: url,
                     requestId: requestId,
@@ -130,8 +130,8 @@ class PjaxWorker {
         } catch (error) {
             // @ts-ignore
             self.postMessage({
-                type: 'pjax',
-                status: 'error',
+                type: "pjax",
+                status: "error",
                 error: error,
                 url: url,
                 requestId: requestId,
@@ -150,13 +150,13 @@ class PjaxWorker {
         /** Get the headers from the redis server */
         new Promise((resolve, reject) => {
             fetch(url, {
-                method: 'HEAD',
-                credentials: 'include',
-                cache: 'no-cache',
+                method: "HEAD",
+                credentials: "include",
+                cache: "no-cache",
             })
                 .then(request => {
                     if (request.ok) {
-                        resolve(request.headers.get('ETag'));
+                        resolve(request.headers.get("ETag"));
                     }
 
                     resolve(null);
@@ -176,12 +176,12 @@ class PjaxWorker {
         /** Get the cached response from the service worker */
         new Promise((resolve, reject) => {
             fetch(url, {
-                method: 'GET',
-                credentials: 'include',
+                method: "GET",
+                credentials: "include",
             })
                 .then(request => {
                     if (request.ok) {
-                        resolve(request.headers.get('ETag'));
+                        resolve(request.headers.get("ETag"));
                     }
 
                     resolve(null);
@@ -211,8 +211,8 @@ class PjaxWorker {
         if (newTag !== cachedTag) {
             // @ts-ignore
             self.postMessage({
-                type: 'revision-check',
-                status: 'stale',
+                type: "revision-check",
+                status: "stale",
                 url: url,
             });
         }

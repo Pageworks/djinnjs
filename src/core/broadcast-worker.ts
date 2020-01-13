@@ -24,9 +24,9 @@ class BroadcastHelper {
 
         // @ts-ignore
         self.postMessage({
-            recipient: 'broadcaster',
+            recipient: "broadcaster",
             data: {
-                type: 'ready',
+                type: "ready",
             },
         });
     }
@@ -67,9 +67,9 @@ class BroadcastHelper {
         }
         // @ts-ignore
         self.postMessage({
-            recipient: 'broadcaster',
+            recipient: "broadcaster",
             data: {
-                type: 'ready',
+                type: "ready",
             },
         });
     }
@@ -80,16 +80,16 @@ class BroadcastHelper {
      */
     private inbox(data: MessageData) {
         switch (data.type) {
-            case 'hookup':
+            case "hookup":
                 this.addInbox(data as InboxHookupMessage);
                 break;
-            case 'disconnect':
+            case "disconnect":
                 this.removeInbox(data as InboxDisconnectMessage);
                 break;
-            case 'update-addresses':
+            case "update-addresses":
                 this.updateAddressIndexes(data as InboxUpdateMessage);
                 break;
-            case 'init':
+            case "init":
                 this.handleUserDeviceInfo(data as UserDeviceInfoMessage);
                 break;
             default:
@@ -105,9 +105,9 @@ class BroadcastHelper {
             setInterval(() => {
                 // @ts-ignore
                 self.postMessage({
-                    recipient: 'broadcaster',
+                    recipient: "broadcaster",
                     data: {
-                        type: 'cleanup',
+                        type: "cleanup",
                     },
                 });
             }, 60_000);
@@ -116,9 +116,9 @@ class BroadcastHelper {
             setInterval(() => {
                 // @ts-ignore
                 self.postMessage({
-                    recipient: 'broadcaster',
+                    recipient: "broadcaster",
                     data: {
-                        type: 'cleanup',
+                        type: "cleanup",
                     },
                 });
             }, 300_000);
@@ -129,9 +129,9 @@ class BroadcastHelper {
             setInterval(() => {
                 // @ts-ignore
                 self.postMessage({
-                    recipient: 'broadcaster',
+                    recipient: "broadcaster",
                     data: {
-                        type: 'ping',
+                        type: "ping",
                     },
                 });
             }, 3_000);
@@ -161,11 +161,11 @@ class BroadcastHelper {
             if (inboxAddressIndexes.length) {
                 // @ts-ignore
                 self.postMessage({
-                    type: 'lookup',
+                    type: "lookup",
                     data: data,
                     inboxIndexes: inboxAddressIndexes,
                 });
-            } else if (protocol === 'Guaranteed' && message.messageId !== null) {
+            } else if (protocol === "Guaranteed" && message.messageId !== null) {
                 if (message?.attempts < message.maxAttempts) {
                     message.attempts += 1;
                 } else if (message?.attempts === message.maxAttempts) {
@@ -218,10 +218,10 @@ class BroadcastHelper {
     private handleMessage(e: MessageEvent) {
         const { recipient, data } = e.data;
         switch (recipient) {
-            case 'broadcast-worker':
+            case "broadcast-worker":
                 this.inbox(data);
                 break;
-            case 'broadcaster':
+            case "broadcaster":
                 // @ts-ignore
                 self.postMessage(e.data);
                 break;
@@ -240,7 +240,7 @@ class BroadcastHelper {
         return new Array(4)
             .fill(0)
             .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
-            .join('-');
+            .join("-");
     }
 }
 

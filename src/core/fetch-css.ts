@@ -1,5 +1,5 @@
-import { env } from './env';
-import { djinnjsOutDir } from './config';
+import { env } from "./env";
+import { djinnjsOutDir } from "./config";
 
 /**
  * Appends resources to the documents head if it hasn't already been loaded.
@@ -13,36 +13,36 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
             resolve();
         }
 
-        const loadingMessage = document.body.querySelector('page-loading span');
+        const loadingMessage = document.body.querySelector("page-loading span");
 
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
             const filename = resourceList[i];
-            const local = filename.slice(0, 7).toLowerCase() !== 'http://' && filename.slice(0, 8).toLowerCase() !== 'https://';
+            const local = filename.slice(0, 7).toLowerCase() !== "http://" && filename.slice(0, 8).toLowerCase() !== "https://";
             let el: HTMLLinkElement = local ? document.head.querySelector(`link[file="${filename}.css"]`) : document.head.querySelector(`link[href="${filename}"]`);
             if (!el) {
-                el = document.createElement('link');
+                el = document.createElement("link");
                 if (local) {
-                    el.setAttribute('file', `${filename}.css`);
+                    el.setAttribute("file", `${filename}.css`);
                 }
-                el.rel = 'stylesheet';
+                el.rel = "stylesheet";
                 if (local) {
                     el.href = `${window.location.origin}/${djinnjsOutDir}/${filename}.css`;
                 } else {
                     el.href = filename;
                 }
-                el.addEventListener('load', () => {
+                el.addEventListener("load", () => {
                     loaded++;
-                    if (env.domState === 'hard-loading') {
+                    if (env.domState === "hard-loading") {
                         loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                     }
                     if (loaded === resourceList.length) {
                         resolve();
                     }
                 });
-                el.addEventListener('error', () => {
+                el.addEventListener("error", () => {
                     loaded++;
-                    if (env.domState === 'hard-loading') {
+                    if (env.domState === "hard-loading") {
                         loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                     }
                     if (loaded === resourceList.length) {
@@ -52,7 +52,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 document.head.append(el);
             } else {
                 loaded++;
-                if (env.domState === 'hard-loading') {
+                if (env.domState === "hard-loading") {
                     loadingMessage.innerHTML = `Loading resource: <resource-counter>${loaded}</resource-counter<span class="-slash">/</span><resource-total>${resourceList.length}</resource-total>`;
                 }
                 if (loaded === resourceList.length) {

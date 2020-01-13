@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const updateNotifier = require('update-notifier');
-const packageJson = require('../package.json');
+const updateNotifier = require("update-notifier");
+const packageJson = require("../package.json");
 
 const notifier = updateNotifier({
     pkg: packageJson,
@@ -12,19 +12,19 @@ if (notifier.update) {
     console.log(`Update available: ${notifier.update.latest}`);
 }
 
-const semver = require('semver');
+const semver = require("semver");
 const version = packageJson.engines.node;
 
 if (!semver.satisfies(process.version, version)) {
-    const rawVersion = version.replace(/[^\d\.]*/, '');
+    const rawVersion = version.replace(/[^\d\.]*/, "");
     console.log(`DjinnJS requires at least Node v${rawVersion} and you have v${process.version}`);
     process.exit(1);
 }
 
 /** TODO: Move config file logic into separate file */
-const path = require('path');
-const fs = require('fs');
-const yargs = require('yargs').argv;
+const path = require("path");
+const fs = require("fs");
+const yargs = require("yargs").argv;
 
 const cwd = process.cwd();
 const configFile = yargs.c || yargs.config;
@@ -37,11 +37,11 @@ if (configFile) {
         process.exit(1);
     }
 } else {
-    cfgPath = path.join(cwd, 'djinn.js');
+    cfgPath = path.join(cwd, "djinn.js");
     if (!fs.existsSync(cfgPath)) {
-        cfgPath = path.join(cwd, 'djinnjs.config.js');
+        cfgPath = path.join(cwd, "djinnjs.config.js");
         if (!fs.existsSync(cfgPath)) {
-            console.log('Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.');
+            console.log("Missing djinn.js config file. Visit https://djinnjs.com/docs/getting-started for more information.");
             process.exit(1);
         }
     }
@@ -49,15 +49,15 @@ if (configFile) {
 
 const config = require(cfgPath);
 
-const rimraf = require('rimraf');
-const ora = require('ora');
+const rimraf = require("rimraf");
+const ora = require("ora");
 
-const scrub = require('./lib/scrubber');
-const minify = require('./lib/minifier');
-const relocator = require('./lib/relocator');
-const moveCSS = require('./lib/css');
-const configChecker = require('./lib/config-checker');
-const noscript = require('./lib/noscript');
+const scrub = require("./lib/scrubber");
+const minify = require("./lib/minifier");
+const relocator = require("./lib/relocator");
+const moveCSS = require("./lib/css");
+const configChecker = require("./lib/config-checker");
+const noscript = require("./lib/noscript");
 
 class DjinnJS {
     constructor(config) {
@@ -69,7 +69,7 @@ class DjinnJS {
     }
 
     async main() {
-        const spinner = ora('DjinnJS').start();
+        const spinner = ora("DjinnJS").start();
         try {
             /** TODO: Add chalk and spinner packages */
             await this.preflightCheck();
@@ -79,41 +79,41 @@ class DjinnJS {
             await this.createOutputDirectories();
 
             if (!this.silent) {
-                spinner.text = 'Scrubbing JavaScript imports';
+                spinner.text = "Scrubbing JavaScript imports";
             }
             await this.scrubScripts();
             await this.injectConfigScriptVariables();
             await this.injectCachebustURL();
 
             if (!this.silent) {
-                spinner.text = 'Minifying JavaScript';
+                spinner.text = "Minifying JavaScript";
             }
             await this.minifyScript();
             await this.relocateServiceWorker();
 
             if (!this.silent) {
-                spinner.text = 'Relocating CSS files';
+                spinner.text = "Relocating CSS files";
             }
             await this.relocateCSS();
 
             if (!this.silent) {
-                spinner.text = 'Generating noscript CSS file';
+                spinner.text = "Generating noscript CSS file";
             }
             await this.generateNoScriptCSS();
 
             if (!this.silent) {
-                spinner.text = 'Cleaning up DjinnJS temporary files';
+                spinner.text = "Cleaning up DjinnJS temporary files";
             }
             await this.cleanup();
             await this.cachebust();
 
             /** Exit the process when everything runs successfully */
-            spinner.succeed('DjinnJS');
+            spinner.succeed("DjinnJS");
             process.exit(0);
         } catch (error) {
-            spinner.fail('Visit https://djinnjs.com/configuration for help.');
+            spinner.fail("Visit https://djinnjs.com/configuration for help.");
             console.log(error);
-            console.log('\n');
+            console.log("\n");
             process.exit(1);
         }
     }
@@ -122,17 +122,17 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let sitesBusted = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const output = path.resolve(cwd, this.sites[i].publicDir, 'resources-cachebust.json');
+                const output = path.resolve(cwd, this.sites[i].publicDir, "resources-cachebust.json");
                 if (fs.existsSync(output)) {
                     fs.unlinkSync(output);
                 }
 
-                const cachebustFile = path.join(__dirname, 'resources-cachebust.json');
+                const cachebustFile = path.join(__dirname, "resources-cachebust.json");
                 fs.readFile(cachebustFile, (errror, buffer) => {
                     if (errror) {
                         reject(errror);
                     }
-                    let data = buffer.toString().replace('REPLACE_WITH_TIMESTAMP', `${Date.now()}`);
+                    let data = buffer.toString().replace("REPLACE_WITH_TIMESTAMP", `${Date.now()}`);
                     fs.writeFile(output, data, errror => {
                         if (errror) {
                             reject(errror);
@@ -189,8 +189,8 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let sitesCompleted = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                if (this.sites[i].env === 'production') {
+                const handle = this.sites[i].handle === undefined ? "default" : this.sites[i].handle;
+                if (this.sites[i].env === "production") {
                     minify(handle, this.sites[i].publicDir, this.sites[i].outDir)
                         .then(() => {
                             sitesCompleted++;
@@ -202,7 +202,7 @@ class DjinnJS {
                             reject(error);
                         });
                 } else {
-                    relocator(handle, this.sites[i].publicDir, this.sites[i].outDir, 'js')
+                    relocator(handle, this.sites[i].publicDir, this.sites[i].outDir, "js")
                         .then(() => {
                             sitesCompleted++;
                             if (sitesCompleted === this.sites.length) {
@@ -238,7 +238,7 @@ class DjinnJS {
                             if (error) {
                                 reject(error);
                             }
-                            let data = buffer.toString().replace('REPLACE_WITH_NO_CACHE_PATTERN', this.config.noCachePattern);
+                            let data = buffer.toString().replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
                             fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
                                 if (error) {
                                     reject(error);
@@ -256,14 +256,14 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let completed = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                const serviceWorker = path.join(__dirname, 'temp', handle, 'service-worker.js');
+                const handle = this.sites[i].handle === undefined ? "default" : this.sites[i].handle;
+                const serviceWorker = path.join(__dirname, "temp", handle, "service-worker.js");
                 fs.readFile(serviceWorker, (error, buffer) => {
                     if (error) {
                         reject(error);
                     }
                     let data = buffer.toString();
-                    data = data.replace('REPLACE_WITH_CACHEBUST_URL', this.config.cachebustURL);
+                    data = data.replace("REPLACE_WITH_CACHEBUST_URL", this.config.cachebustURL);
                     fs.writeFile(serviceWorker, data, error => {
                         if (error) {
                             reject(error);
@@ -282,20 +282,20 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let completed = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
-                const runtimeFile = path.join(__dirname, 'temp', handle, 'config.js');
+                const handle = this.sites[i].handle === undefined ? "default" : this.sites[i].handle;
+                const runtimeFile = path.join(__dirname, "temp", handle, "config.js");
                 fs.readFile(runtimeFile, (error, buffer) => {
                     if (error) {
                         reject(error);
                     }
                     let data = buffer.toString();
-                    data = data.replace('REPLACE_WITH_OUTPUT_DIR_NAME', this.sites[i].outDir);
-                    data = data.replace('REPLACE_WITH_ENVIRONMENT', this.sites[i].env);
-                    data = data.replace('REPLACE_WITH_GTAG_ID', this.sites[i].gtagId);
-                    data = data.replace('REPLACE_WITH_DEFAULT_TRANSITION', this.sites[i].defaultTransition);
-                    data = data.replace("'REPLACE_WITH_PJAX_STATUS'", this.sites[i].disablePjax);
-                    data = data.replace("'REPLACE_WITH_PREFETCH_STATUS'", this.sites[i].disablePrefetching);
-                    data = data.replace("'REPLACE_WITH_USE_PERCENTAGE'", this.sites[i].usePercentage);
+                    data = data.replace("REPLACE_WITH_OUTPUT_DIR_NAME", this.sites[i].outDir);
+                    data = data.replace("REPLACE_WITH_ENVIRONMENT", this.sites[i].env);
+                    data = data.replace("REPLACE_WITH_GTAG_ID", this.sites[i].gtagId);
+                    data = data.replace("REPLACE_WITH_DEFAULT_TRANSITION", this.sites[i].defaultTransition);
+                    data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].disablePjax);
+                    data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].disablePrefetching);
+                    data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.sites[i].usePercentage);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -315,7 +315,7 @@ class DjinnJS {
             let scrubbed = 0;
             for (let i = 0; i < this.sites.length; i++) {
                 const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
-                const handle = this.sites[i].handle === undefined ? 'default' : this.sites[i].handle;
+                const handle = this.sites[i].handle === undefined ? "default" : this.sites[i].handle;
                 scrub(sources, handle)
                     .then(() => {
                         scrubbed++;
@@ -386,8 +386,8 @@ class DjinnJS {
             }
 
             if (this.config.cachebustURL === undefined) {
-                this.config.cachebustURL = '/cachebust.json';
-            } else if (typeof this.config.cachebustURL !== 'string') {
+                this.config.cachebustURL = "/cachebust.json";
+            } else if (typeof this.config.cachebustURL !== "string") {
                 reject(`Invalid DjinnJS configuration. The cachebustURL value must be a string.`);
             }
 
@@ -454,14 +454,14 @@ class DjinnJS {
 
     cleanup() {
         return new Promise(resolve => {
-            rimraf.sync(path.join(__dirname, 'temp'));
+            rimraf.sync(path.join(__dirname, "temp"));
             resolve();
         });
     }
 
     createTempDirectory() {
         return new Promise((resolve, reject) => {
-            fs.mkdir(path.join(__dirname, 'temp'), error => {
+            fs.mkdir(path.join(__dirname, "temp"), error => {
                 if (error) {
                     reject(error);
                 }
@@ -472,8 +472,8 @@ class DjinnJS {
 
     preflightCheck() {
         return new Promise(resolve => {
-            if (fs.existsSync(path.join(__dirname, 'temp'))) {
-                rimraf.sync(path.join(__dirname, 'temp'));
+            if (fs.existsSync(path.join(__dirname, "temp"))) {
+                rimraf.sync(path.join(__dirname, "temp"));
             }
             resolve();
         });

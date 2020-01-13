@@ -7,10 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
 -   Fade transition accepts new `pjax-transition-data` object [#16](https://github.com/Pageworks/djinnjs/issues/16)
 -   Updated NPM packages
+
+### Added
+
+## [0.0.13] - 2020-01-10
+
+### Fixed
+
+-   removed forgotten console log from CLI
+-   CSS from the `src/` directory is relocated to the `dist/` directory
+
+## [0.0.12] - 2020-01-10
+
+### Added
+
+-   [snowpack](https://www.npmjs.com/package/snowpack) npm package for bundling npm packages
+-   `web_modules/` directory to `src/`
+-   modified NotifyJS packge to `src/web_modules/`
+-   custom `<pjax-notification>` snackbar notification stylesheet
+-   Pjax fetches `pjax-notification` stylesheet during `init()`
+-   Custom elements are prefixed with `djinnjs` [#20](https://github.com/Pageworks/djinnjs/issues/20)
+    -   `file-loading-value` is now `djinnjs-file-loading-value`
+    -   `file-loading-message` is now `djinnjs-file-loading-message`
+
+### Updated
+
+-   Updated [NotifyJS](https://www.npmjs.com/package/@codewithkyle/notifyjs) npm package to v1.0.3
+
+### Fixed
+
+-   Updated prettier style to force double quotes for faster parsing/optimization
+-   Locked NotifyJS package to v1.0.3
+-   regex patterns in CLI to handle new double quote string style
+-   `src` array check
+-   The scrubber and CSS util libs now synchronously resolve `src` paths when collecting files using [Glob](https://www.npmjs.com/package/glob)
+-   Pjax loads inline scripts [#19](https://github.com/Pageworks/djinnjs/issues/19)
+    -   Scripts with `src || id || pjax-script-id` attributes are removed and remounted every time the page loads
+    -   Scripts with `innerHTML` are remounted every time the page loads
+    -   Scripts with `src || id || pjax-script-id` attributes can prevent the remount using the `pjax-prevent-remount` attribute
+-   Service Worker redirects [#17](https://github.com/Pageworks/djinnjs/issues/17)
+
+### Removed
+
+-   [rollup](https://www.npmjs.com/package/rollup) dev dependency
+-   `notify.js` script from `core/`
+-   `notify.js` script from the NPM package
 
 ## [0.0.11] - 2020-01-05
 
@@ -154,7 +197,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.11...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.13...HEAD
+[0.0.13]: https://github.com/pageworks/djinnjs/compare/v0.0.12...v0.0.13
+[0.0.12]: https://github.com/pageworks/djinnjs/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/pageworks/djinnjs/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/pageworks/djinnjs/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/pageworks/djinnjs/compare/v0.0.8...v0.0.9

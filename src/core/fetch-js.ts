@@ -1,4 +1,4 @@
-import { djinnjsOutDir } from './config';
+import { djinnjsOutDir } from "./config";
 
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
@@ -15,26 +15,26 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
             const filename = resourceList[i];
-            const local = filename.slice(0, 7).toLowerCase() !== 'http://' && filename.slice(0, 8).toLowerCase() !== 'https://';
+            const local = filename.slice(0, 7).toLowerCase() !== "http://" && filename.slice(0, 8).toLowerCase() !== "https://";
             let el: HTMLScriptElement = local ? document.head.querySelector(`script[file="${filename}.js"]`) : document.head.querySelector(`script[src="${filename}"]`);
             if (!el) {
-                el = document.createElement('script');
+                el = document.createElement("script");
                 if (local) {
-                    el.setAttribute('file', `${filename}.js`);
+                    el.setAttribute("file", `${filename}.js`);
                 }
-                el.type = 'module';
+                el.type = "module";
                 if (local) {
                     el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}.js`;
                 } else {
                     el.src = filename;
                 }
-                el.addEventListener('load', () => {
+                el.addEventListener("load", () => {
                     loaded++;
                     if (loaded === resourceList.length) {
                         resolve();
                     }
                 });
-                el.addEventListener('error', () => {
+                el.addEventListener("error", () => {
                     loaded++;
                     if (loaded === resourceList.length) {
                         resolve();

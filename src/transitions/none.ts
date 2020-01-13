@@ -1,16 +1,16 @@
 export function none(selector: string, newHTML: string, transitionData: string): Promise<{}> {
     return new Promise(resolve => {
-        if (transitionData === 'smooth') {
+        if (transitionData === "smooth") {
             window.scroll({
                 top: 0,
                 left: 0,
-                behavior: 'smooth',
+                behavior: "smooth",
             });
         } else {
             window.scroll({
                 top: 0,
                 left: 0,
-                behavior: 'auto',
+                behavior: "auto",
             });
         }
 
