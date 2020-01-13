@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
--   Fade transition accepts new `pjax-transition-data` object [#16](https://github.com/Pageworks/djinnjs/issues/16)
+-   Default transitions (None, Fade, Slide) use HTML attributes to controll transition settings [#16](https://github.com/Pageworks/djinnjs/issues/16)
 -   Updated NPM packages
 
 ### Added
