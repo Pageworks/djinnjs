@@ -60,11 +60,7 @@
         "eslint-config-prettier": "^6.9.0",
         "eslint-plugin-prettier": "^3.1.2",
         "prettier": "1.19.1",
-<<<<<<< HEAD
-        "rollup": "^1.29.0",
-=======
         "snowpack": "^1.0.2",
->>>>>>> develop
         "typescript": "^3.7.4"
     },
     "dependencies": {
@@ -75,13 +71,10 @@
         "terser": "^4.6.2",
         "update-notifier": "^4.0.0",
         "yargs": "^15.1.0"
-<<<<<<< HEAD
-=======
     },
     "snowpack": {
         "webDependencies": [
             "@codewithkyle/notifyjs"
         ]
->>>>>>> develop
     }
 }
