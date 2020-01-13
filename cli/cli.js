@@ -17,7 +17,7 @@ const version = packageJson.engines.node;
 
 if (!semver.satisfies(process.version, version)) {
     const rawVersion = version.replace(/[^\d\.]*/, "");
-    console.log(`DjinnJS requires at least Node v${rawVersion} and you have v${process.version}`);
+    console.log(`DjinnJS requires at least Node v${rawVersion} and you have ${process.version}`);
     process.exit(1);
 }
 
