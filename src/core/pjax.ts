@@ -252,7 +252,7 @@ class Pjax {
             requestUid: requestUid,
             transition: transition,
             transitionData: transitionData,
-            targetSelector: targetEl,
+            targetSelector: targetEl?.toLowerCase()?.trim(),
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -364,40 +364,35 @@ class Pjax {
                 tempDocument.documentElement.innerHTML = body;
 
                 let selector;
+                let currentMain;
                 if (request.targetSelector !== null) {
                     selector = `[pjax-id="${request.targetSelector}"]`;
+                    currentMain = document.body.querySelector(selector);
                 } else {
                     selector = "main";
+                    currentMain = document.body.querySelector(selector);
+                    const mainId = currentMain
+                        .getAttribute("pjax-id")
+                        ?.toLowerCase()
+                        ?.trim();
+                    if (mainId) {
+                        selector = `[pjax-id="${mainId}"]`;
+                    }
                 }
 
-                const currentMain = document.body.querySelector(selector);
-                const main = tempDocument.querySelector(selector);
+                const incomingMain = tempDocument.querySelector(selector);
 
-                if (main && currentMain) {
-                    if (main.getAttribute("pjax-id") && currentMain.getAttribute("pjax-id")) {
-                        const incomingId = main
-                            .getAttribute("pjax-id")
-                            .toLowerCase()
-                            .trim();
-                        const currentId = currentMain
-                            .getAttribute("pjax-id")
-                            .toLowerCase()
-                            .trim();
-                        if (incomingId !== currentId) {
-                            console.error("The elements pjax-id attributes don't match.");
-                            window.location.href = url;
-                        }
-                    }
+                if (incomingMain && currentMain) {
                     /** Tells the runtime class to parse the incoming HTML for any new CSS files */
                     broadcaster.message("runtime", {
                         type: "parse",
-                        body: main.innerHTML,
+                        body: incomingMain.innerHTML,
                         requestUid: requestId,
                     });
-                    request.body = main.innerHTML;
+                    request.body = incomingMain.innerHTML;
                     request.title = tempDocument.title;
                 } else {
-                    console.error("Failed to find the new and current main elements.");
+                    console.error("Failed to find matching elements.");
                     window.location.href = url;
                 }
             } else {
