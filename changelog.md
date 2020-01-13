@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-   Pjax verifies views exists before swapping [#30](https://github.com/Pageworks/djinnjs/issues/30)
+-   Pjax uses `pjax-id` attribute to verify the developer intended for the `<main>` elements match
 -   when `disableServiceWorker` is `true` Pjax no longer attempts to register any service worker scripts
 
 ## [0.0.13] - 2020-01-10
