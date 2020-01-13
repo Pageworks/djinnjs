@@ -1,6 +1,6 @@
 interface TransitionObject {
-    scroll?: ScrollBehavior | "none";
-    duration?: number;
+    scroll: ScrollBehavior | "none";
+    duration: number;
 }
 
 export function fade(selector: string, newHTML: string, target: HTMLElement | null): Promise<{}> {
@@ -14,13 +14,17 @@ export function fade(selector: string, newHTML: string, target: HTMLElement | nu
             scroll: "auto",
             duration: 450,
         };
+
         if (target) {
-            const scrollBehavior = target.getAttribute("scroll");
-            if (scrollBehavior === "auto" || scrollBehavior === "smooth") {
+            const scrollBehavior = target
+                .getAttribute("scroll")
+                .toLowerCase()
+                .trim();
+            if (scrollBehavior === "auto" || scrollBehavior === "smooth" || scrollBehavior === "none") {
                 transition.scroll = scrollBehavior;
             }
 
-            const desiredDuration = target.getAttribute("duration");
+            const desiredDuration = target.getAttribute("duration").trim();
             // @ts-ignore
             if (!isNaN(desiredDuration)) {
                 transition.duration = parseInt(desiredDuration);
@@ -34,16 +38,12 @@ export function fade(selector: string, newHTML: string, target: HTMLElement | nu
             setTimeout(() => {
                 main.innerHTML = newHTML;
 
-                switch (transition.scroll) {
-                    case "none":
-                        break;
-                    default:
-                        window.scroll({
-                            top: 0,
-                            left: 0,
-                            behavior: transition.scroll,
-                        });
-                        break;
+                if (transition.scroll !== "none") {
+                    window.scroll({
+                        top: 0,
+                        left: 0,
+                        behavior: transition.scroll,
+                    });
                 }
 
                 main.style.transition = `opacity ${transition.duration / 2}ms ease-in`;
