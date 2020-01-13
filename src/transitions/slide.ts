@@ -1,4 +1,4 @@
-export function slide(selector: string, newHTML: string, transitionData: string | null): Promise<{}> {
+export function slide(selector: string, newHTML: string, target: HTMLElement | null): Promise<{}> {
     return new Promise(resolve => {
         const data = JSON.parse(transitionData) ?? { direction: 1 };
 

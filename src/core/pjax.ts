@@ -18,7 +18,8 @@ interface NavigaitonRequest {
     requestUid: string;
     transition: string | null;
     transitionData: string | null;
-    target: string;
+    selector: string | null;
+    target: HTMLElement | null;
 }
 
 class Pjax {
@@ -109,7 +110,7 @@ class Pjax {
                 this.collectLinks();
                 break;
             case "load":
-                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.target);
+                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.target);
                 break;
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
@@ -240,9 +241,16 @@ class Pjax {
      * @param transition - the name of the desired transition effect
      * @param transitionData - optional data that could modify the transition
      * @param history - how Pjax should handle the windows history manipulation
-     * @param targetEl - the `pjax-id` attribute value
+     * @param selector - the `pjax-id` attribute value
      */
-    private navigate(url: string, transition: string = null, transitionData: string = null, history: "push" | "replace" = "push", targetEl: string = null): void {
+    private navigate(
+        url: string,
+        transition: string = null,
+        transitionData: string = null,
+        history: "push" | "replace" = "push",
+        selector: string = null,
+        target: HTMLElement = null
+    ): void {
         env.startPageTransition();
         const requestUid = uuid();
         this.state.activeRequestUid = requestUid;
@@ -252,7 +260,8 @@ class Pjax {
             requestUid: requestUid,
             transition: transition,
             transitionData: transitionData,
-            target: targetEl,
+            selector: selector,
+            target: target,
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -321,7 +330,8 @@ class Pjax {
             url: target.href,
             transition: target.getAttribute("pjax-transition"),
             transitionData: target.getAttribute("pjax-transition-data"),
-            target: target.getAttribute("pjax-view-id"),
+            selector: target.getAttribute("pjax-view-id"),
+            target: target,
         });
     }
     private handleLinkClick: EventListener = this.hijackRequest.bind(this);
@@ -364,8 +374,8 @@ class Pjax {
                 tempDocument.documentElement.innerHTML = body;
 
                 let selector = "main";
-                if (request.target !== null) {
-                    selector = `[pjax-id="${request.target}"]`;
+                if (request.selector !== null) {
+                    selector = `[pjax-id="${request.selector}"]`;
                 }
 
                 const currentMain = document.body.querySelector(selector);
@@ -410,11 +420,11 @@ class Pjax {
             env.endPageTransition();
 
             let selector = "main";
-            if (request.target !== null) {
-                selector = `[pjax-id="${request.target}"]`;
+            if (request.selector !== null) {
+                selector = `[pjax-id="${request.selector}"]`;
             }
 
-            transitionManager(selector, request.body, request.transition, request.transitionData).then(() => {
+            transitionManager(selector, request.body, request.transition, request.target).then(() => {
                 document.title = request.title;
                 broadcaster.message("pjax", {
                     type: "finalize-pjax",
