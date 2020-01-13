@@ -2,7 +2,7 @@ import { broadcaster } from "./broadcaster";
 import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { transitionManager } from "./transition-manager";
-import { djinnjsOutDir, gaId, disablePrefetching } from "./config";
+import { djinnjsOutDir, gaId, disablePrefetching, disableServiceWorker } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
 import { fetchCSS } from "./fetch";
 
@@ -63,7 +63,7 @@ class Pjax {
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
 
         /** Attempt to register a service worker */
-        if ("serviceWorker" in navigator) {
+        if ("serviceWorker" in navigator && !disableServiceWorker) {
             navigator.serviceWorker
                 .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
                 .then(() => {
