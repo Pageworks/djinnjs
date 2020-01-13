@@ -1,8 +1,8 @@
 export function none(selector: string, newHTML: string, target: HTMLElement | null): Promise<{}> {
     return new Promise(resolve => {
         let behavior: ScrollBehavior = "auto";
-        if (target && target.getAttribute("scroll-behavior")) {
-            let desiredBehavior = target.getAttribute("scroll-behavior");
+        if (target) {
+            const desiredBehavior = target.getAttribute("scroll");
             if (desiredBehavior === "auto" || desiredBehavior === "smooth") {
                 behavior = desiredBehavior;
             }

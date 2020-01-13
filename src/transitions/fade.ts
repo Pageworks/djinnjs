@@ -14,21 +14,16 @@ export function fade(selector: string, newHTML: string, target: HTMLElement | nu
             scroll: "auto",
             duration: 450,
         };
-        if (transitionData) {
-            const customData: TransitionObject = JSON.parse(transitionData);
-            if (customData) {
-                if ((customData?.scroll && customData.scroll === "smooth") || customData.scroll === "auto" || customData.scroll === "none") {
-                    transition.scroll = customData.scroll;
-                }
-                if (customData?.duration && typeof customData.duration === "number") {
-                    transition.duration = customData.duration;
-                }
-            } else {
-                if (transitionData === "smooth-scroll" || transitionData === "smooth") {
-                    transition.scroll = "smooth";
-                } else if (transitionData === "no-scroll" || transitionData === "none") {
-                    transition.scroll = "none";
-                }
+        if (target) {
+            const scrollBehavior = target.getAttribute("scroll");
+            if (scrollBehavior === "auto" || scrollBehavior === "smooth") {
+                transition.scroll = scrollBehavior;
+            }
+
+            const desiredDuration = target.getAttribute("duration");
+            // @ts-ignore
+            if (!isNaN(desiredDuration)) {
+                transition.duration = parseInt(desiredDuration);
             }
         }
 
