@@ -95,6 +95,7 @@ class Runtime {
                 }
                 fetchCSS(response.files).then(() => {
                     env.setDOMState("idling");
+                    this.handlePageScrollPosition();
                     this._bodyParserWorker.postMessage({
                         type: "lazy",
                         body: document.body.innerHTML,
@@ -158,6 +159,20 @@ class Runtime {
                 }
             });
         }
+    }
+
+    private handlePageScrollPosition(): void {
+        if (window.location.hash) {
+            /** Scroll to hash element */
+            const element = document.body.querySelector(window.location.hash);
+            if (element) {
+                const elementYPosition = (element.getBoundingClientRect().top - document.body.getBoundingClientRect().top) as number;
+                window.scrollTo(0, elementYPosition);
+                return;
+            }
+        }
+        /** Scroll to top of page */
+        window.scrollTo(0, 0);
     }
 
     private fetchPjaxResources(data: PjaxResources, requestUid: string): void {
