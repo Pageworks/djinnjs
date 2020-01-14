@@ -166,8 +166,7 @@ class Runtime {
             /** Scroll to hash element */
             const element = document.body.querySelector(window.location.hash);
             if (element) {
-                const elementYPosition = (element.getBoundingClientRect().top - document.body.getBoundingClientRect().top) as number;
-                window.scrollTo(0, elementYPosition);
+                element.scrollIntoView();
                 return;
             }
         }
