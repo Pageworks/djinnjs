@@ -82,7 +82,7 @@ function moveCssToDist() {
         }
 
         for (let i = 0; i < srcFiles.length; i++) {
-            const filename = srcFiles[i].replace(/.*\//, "");
+            const filename = srcFiles[i].replace(/.*[\/\\]/, "");
             fs.copyFileSync(srcFiles[i], `${pathToDist}/${filename}`);
         }
     });

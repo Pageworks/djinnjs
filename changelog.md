@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Windows filename regex issues [#28](https://github.com/Pageworks/djinnjs/issues/28)
+
 ## [0.0.14] - 2020-01-13
+
+### Fixed
+
+-   broken `pjax-id` attribute selectors
 
 ### Fixed
 
