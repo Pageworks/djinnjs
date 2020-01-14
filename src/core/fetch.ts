@@ -16,9 +16,12 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
 
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
-            const filename = resourceList[i].replace(/(\.js)$/gi, "");
-            const isUrl = new RegExp(/^(http)/i).test(filename);
-            let el: HTMLScriptElement = document.head.querySelector(`script[file="${filename}.js"]`) || document.head.querySelector(`script[src="${filename}"]`) || null;
+            let filename;
+            const isUrl = new RegExp(/^(http)/i).test(resourceList[i]);
+            if (!isUrl) {
+                filename = resourceList[i].replace(/(\.js)$/gi, "");
+            }
+            let el: HTMLScriptElement = document.head.querySelector(`script[src="${resourceList[i]}"]`) || document.head.querySelector(`script[file="${filename}.js"]`) || null;
             if (!el) {
                 el = document.createElement("script");
                 if (!isUrl) {
@@ -28,7 +31,7 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
                 if (!isUrl) {
                     el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}.js`;
                 } else {
-                    el.src = `${filename}.js`;
+                    el.src = resourceList[i];
                 }
                 el.addEventListener("load", () => {
                     loaded++;
