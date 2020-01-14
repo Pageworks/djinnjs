@@ -252,7 +252,7 @@ class Pjax {
             requestUid: requestUid,
             transition: transition,
             transitionData: transitionData,
-            targetSelector: targetEl?.toLowerCase()?.trim(),
+            targetSelector: targetEl,
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -371,10 +371,7 @@ class Pjax {
                 } else {
                     selector = "main";
                     currentMain = document.body.querySelector(selector);
-                    const mainId = currentMain
-                        .getAttribute("pjax-id")
-                        ?.toLowerCase()
-                        ?.trim();
+                    const mainId = currentMain.getAttribute("pjax-id");
                     if (mainId) {
                         selector = `[pjax-id="${mainId}"]`;
                     }
