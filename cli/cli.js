@@ -17,7 +17,7 @@ const version = packageJson.engines.node;
 
 if (!semver.satisfies(process.version, version)) {
     const rawVersion = version.replace(/[^\d\.]*/, "");
-    console.log(`DjinnJS requires at least Node v${rawVersion} and you have v${process.version}`);
+    console.log(`DjinnJS requires at least Node v${rawVersion} and you have ${process.version}`);
     process.exit(1);
 }
 
@@ -296,6 +296,7 @@ class DjinnJS {
                     data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].disablePjax);
                     data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].disablePrefetching);
                     data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.sites[i].usePercentage);
+                    data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.sites[i].disableServiceWorker);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
