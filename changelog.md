@@ -11,9 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Handles page scroll position on page load [#36](https://github.com/Pageworks/djinnjs/issues/36)
 -   Scroll to element with id if hash is in url
-
-### Fixed
-
 -   Windows filename regex issues [#28](https://github.com/Pageworks/djinnjs/issues/28)
 -   `fetchJS()` bug where `.js` was appended to external URLs [#35](https://github.com/Pageworks/djinnjs/issues/35)
 -   script scrubber regex issue [#40](https://github.com/Pageworks/djinnjs/issues/40)
