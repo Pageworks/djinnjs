@@ -1,6 +1,6 @@
-const glob = require('glob');
-const fs = require('fs');
-const path = require('path');
+const glob = require("glob");
+const fs = require("fs");
+const path = require("path");
 
 async function scrubber(sources, outDir) {
     try {
@@ -24,7 +24,7 @@ function scrubFiles(files, handle) {
         const outDir = path.resolve(__dirname, `../temp/${handle}`);
         for (let i = 0; i < files.length; i++) {
             const filePath = files[i];
-            const filename = filePath.replace(/.*[\/\\]/g, '');
+            const filename = filePath.replace(/.*[\/\\]/g, "");
             fs.readFile(filePath, (error, buffer) => {
                 if (error) {
                     reject(error);
@@ -38,8 +38,8 @@ function scrubFiles(files, handle) {
                 if (importFilePaths) {
                     importFilePaths.map(path => {
                         /** Remove everything in the path except the file name */
-                        let pathFileName = path.replace(/.*[\/\\]/g, '').replace(/(\.ts)|(\.js)$/g, '');
-                        data = data.replace(`${path}`, `./${pathFileName}.js`);
+                        let pathFileName = path.replace(/.*[\/\\]/g, "").replace(/(\.ts)|(\.js)$/g, "");
+                        data = data.replace(`"${path}"`, `"./${pathFileName}.js"`).replace(`'${path}'`, `"./${pathFileName}.js"`);
                     });
                 }
 
@@ -74,7 +74,7 @@ function createTempDirectory(outDir) {
 
 function getCoreFiles() {
     return new Promise((resolve, reject) => {
-        const distDir = path.resolve(__dirname, '../../dist');
+        const distDir = path.resolve(__dirname, "../../dist");
         glob(`${distDir}/**/*.js`, (error, files) => {
             if (error) {
                 reject(error);
