@@ -1,27 +1,10 @@
-type MessageData = {
-    type: string;
-    // eslint-disable-next-line
-    [key: string]: any;
-};
-
-type InboxData = {
-    name: string;
-    address: number;
-    uid: string;
-};
-
 class BroadcastHelper {
-    private queuedMessages: Array<BroadcastWorkerMessage>;
-    private queueTimer: WindowTimers;
-    private queueTimeout = 1000; // Milliseconds
-    private inboxes: Array<InboxData>;
-
     constructor() {
+        this.queueTimeout = 1000; // Milliseconds
         self.onmessage = this.handleMessage.bind(this);
         this.queuedMessages = [];
         this.queueTimer = null;
         this.inboxes = [];
-
         // @ts-ignore
         self.postMessage({
             recipient: "broadcaster",
@@ -30,22 +13,20 @@ class BroadcastHelper {
             },
         });
     }
-
     /**
      * Add the inbox to the inboxes array.
      * @param data - an `InboxHookupMessage` object
      */
-    private addInbox(data: InboxHookupMessage): void {
+    addInbox(data) {
         const { name, inboxAddress } = data;
-        const inboxData: InboxData = {
+        const inboxData = {
             name: name.trim().toLowerCase(),
             address: inboxAddress,
             uid: this.generateUUID(),
         };
         this.inboxes.push(inboxData);
     }
-
-    private removeInbox(data: InboxDisconnectMessage): void {
+    removeInbox(data) {
         const { inboxAddress } = data;
         for (let i = 0; i < this.inboxes.length; i++) {
             if (this.inboxes[i].address === inboxAddress) {
@@ -54,8 +35,7 @@ class BroadcastHelper {
             }
         }
     }
-
-    private updateAddressIndexes(data: InboxUpdateMessage): void {
+    updateAddressIndexes(data) {
         const { addresses } = data;
         for (let i = 0; i < addresses.length; i++) {
             for (let k = 0; k < this.inboxes.length; k++) {
@@ -73,32 +53,30 @@ class BroadcastHelper {
             },
         });
     }
-
     /**
      * The personal inbox of the `broadcast-worker` inbox.
      * @param data - the incoming `BroadcastWorkerMessage` data object
      */
-    private inbox(data: MessageData) {
+    inbox(data) {
         switch (data.type) {
             case "hookup":
-                this.addInbox(data as InboxHookupMessage);
+                this.addInbox(data);
                 break;
             case "disconnect":
-                this.removeInbox(data as InboxDisconnectMessage);
+                this.removeInbox(data);
                 break;
             case "update-addresses":
-                this.updateAddressIndexes(data as InboxUpdateMessage);
+                this.updateAddressIndexes(data);
                 break;
             case "init":
-                this.handleUserDeviceInfo(data as UserDeviceInfoMessage);
+                this.handleUserDeviceInfo(data);
                 break;
             default:
-                console.warn(`Unknown broadcast-worker message type: ${data.type}`);
+                console.error(`Unknown broadcast-worker message type: ${data.type}`);
                 break;
         }
     }
-
-    private handleUserDeviceInfo(data: UserDeviceInfoMessage): void {
+    handleUserDeviceInfo(data) {
         const { memory, isSafari } = data;
         if (memory <= 4) {
             /** Tells broadcaster to cleanup disconnected inboxes every minute on low-end devices */
@@ -110,8 +88,9 @@ class BroadcastHelper {
                         type: "cleanup",
                     },
                 });
-            }, 60_000);
-        } else {
+            }, 60000);
+        }
+        else {
             /** Tells broadcaster to cleanup disconnected inboxes every 5 minutes */
             setInterval(() => {
                 // @ts-ignore
@@ -121,9 +100,8 @@ class BroadcastHelper {
                         type: "cleanup",
                     },
                 });
-            }, 300_000);
+            }, 300000);
         }
-
         if (isSafari) {
             /** Pings broadcaster every 3 seconds on Safari due to iOS auto-terminating active workers */
             setInterval(() => {
@@ -134,30 +112,29 @@ class BroadcastHelper {
                         type: "ping",
                     },
                 });
-            }, 3_000);
+            }, 3000);
         }
     }
-
     /**
      * Look up the recipient(s) within the IDBDatabase.
      * If inbox addresses are found send the array of inbox indexes to the broadcasters inbox.
-     * If no recipient(s) are found check the message protocol.
+     * If no recipient(s) are found check the message max attempts.
      * If `UDP` the message is dropped.
      * If `TCP` the message is queued and will be reattempted at a late time.
      * @param message - the `BroadcastWorkerMessage` object
      */
-    private async lookup(message: BroadcastWorkerMessage) {
-        const { data, protocol } = message;
+    async lookup(message) {
+        var _a, _b;
+        const { data, maxAttempts } = message;
         const recipient = message.recipient.trim().toLowerCase();
         try {
-            const inboxAddressIndexes: Array<number> = [];
+            const inboxAddressIndexes = [];
             for (let i = 0; i < this.inboxes.length; i++) {
                 const inbox = this.inboxes[i];
                 if (inbox.name === recipient) {
                     inboxAddressIndexes.push(inbox.address);
                 }
             }
-
             if (inboxAddressIndexes.length) {
                 // @ts-ignore
                 self.postMessage({
@@ -165,12 +142,15 @@ class BroadcastHelper {
                     data: data,
                     inboxIndexes: inboxAddressIndexes,
                 });
-            } else if (protocol === "Guaranteed" && message.messageId !== null) {
-                if (message?.attempts < message.maxAttempts) {
+            }
+            else if (maxAttempts > 1 && message.messageId !== null) {
+                if (((_a = message) === null || _a === void 0 ? void 0 : _a.attempts) < message.maxAttempts) {
                     message.attempts += 1;
-                } else if (message?.attempts === message.maxAttempts) {
+                }
+                else if (((_b = message) === null || _b === void 0 ? void 0 : _b.attempts) === message.maxAttempts) {
                     this.dropMessageFromQueue(message.messageId);
-                } else {
+                }
+                else {
                     message.attempts = 1;
                     this.queuedMessages.push(message);
                     if (this.queueTimer === null) {
@@ -178,31 +158,30 @@ class BroadcastHelper {
                     }
                 }
             }
-        } catch (error) {
+        }
+        catch (error) {
             console.error(error);
         }
     }
-
     /**
      * Attempts to `lookup()` any `TCP` messages that previously failed.
      */
-    private flushMessageQueue(): void {
+    flushMessageQueue() {
         for (let i = 0; i < this.queuedMessages.length; i++) {
             this.lookup(this.queuedMessages[i]);
         }
-
         if (this.queuedMessages.length) {
             this.queueTimer = setTimeout(this.flushMessageQueue.bind(this), this.queueTimeout);
-        } else {
+        }
+        else {
             this.queueTimer = null;
         }
     }
-
     /**
      * Drops a queued message when the message has reached it's maximum number of attempts.
      * @param messageId - the `uid` of the message that needs to be dropped.
      */
-    private dropMessageFromQueue(messageId: string): void {
+    dropMessageFromQueue(messageId) {
         for (let i = 0; i < this.queuedMessages.length; i++) {
             if (this.queuedMessages[i].messageId === messageId) {
                 this.queuedMessages.splice(i, 1);
@@ -210,12 +189,11 @@ class BroadcastHelper {
             }
         }
     }
-
     /**
      * Worker received a message from another thread.
      * This method is an alias of `self.onmessage`
      * */
-    private handleMessage(e: MessageEvent) {
+    handleMessage(e) {
         const { recipient, data } = e.data;
         switch (recipient) {
             case "broadcast-worker":
@@ -230,18 +208,16 @@ class BroadcastHelper {
                 break;
         }
     }
-
     /**
      * Quick and dirty unique ID generation.
      * This method does not follow RFC 4122 and does not guarantee a universally unique ID.
      * @see https://tools.ietf.org/html/rfc4122
      */
-    private generateUUID(): string {
+    generateUUID() {
         return new Array(4)
             .fill(0)
             .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
             .join("-");
     }
 }
-
 new BroadcastHelper();

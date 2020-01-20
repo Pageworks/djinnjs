@@ -8,7 +8,9 @@ env.d.ts
 actor.js
 actor.d.ts
 broadcaster.js
+!/src/web_modules/broadcaster/broadcaster.js
 broadcaster.d.ts
+!/src/web_modules/broadcaster/broadcaster.d.ts
 fetch-css.js
 fetch-css.d.ts
 fetch-js.js

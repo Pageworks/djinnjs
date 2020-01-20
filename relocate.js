@@ -24,12 +24,12 @@ fs.copyFile("./dist/core/actor.d.ts", "./actor.d.ts", error => {
     }
 });
 
-fs.copyFile("./dist/core/broadcaster.js", "./broadcaster.js", error => {
+fs.copyFile("./dist/web_modules/broadcaster/broadcaster.js", "./broadcaster.js", error => {
     if (error) {
         console.log(error);
     }
 });
-fs.copyFile("./dist/core/broadcaster.d.ts", "./broadcaster.d.ts", error => {
+fs.copyFile("./src/web_modules/broadcaster/broadcaster.d.ts", "./broadcaster.d.ts", error => {
     if (error) {
         console.log(error);
     }

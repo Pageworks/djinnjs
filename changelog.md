@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   broadcom package replaces broadcaster scripts
+-   named exports from `djinnjs/broadcaster`
+
 ## [0.0.15] - 2020-01-15
 
 ### Fixed

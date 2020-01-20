@@ -1,5 +1,5 @@
 import { env } from "./env";
-import { broadcaster } from "./broadcaster";
+import { hookup, message } from "../web_modules/broadcaster/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
 import { djinnjsOutDir, disablePjax, usePercentage } from "./config";
 
@@ -39,7 +39,7 @@ class Runtime {
             this._loadingMessage.innerHTML = "Collecting resources";
             this._loadingMessage.setAttribute("state", "2");
         }
-        broadcaster.hookup("runtime", this.inbox.bind(this));
+        hookup("runtime", this.inbox.bind(this));
         this._bodyParserWorker.postMessage({
             type: "eager",
             body: document.body.innerHTML,
@@ -107,17 +107,16 @@ class Runtime {
                     this.handleWebComponents();
                     if (env.connection !== "2g" && env.connection !== "slow-2g" && !disablePjax) {
                         fetchJS("pjax").then(() => {
-                            broadcaster.message(
+                            message(
                                 "pjax",
                                 {
                                     type: "init",
                                 },
-                                "Guaranteed",
                                 Infinity
                             );
                         });
                     }
-                    broadcaster.message("runtime", {
+                    message("runtime", {
                         type: "completed",
                     });
                 });
@@ -178,7 +177,7 @@ class Runtime {
         /** Fetch the requested eager CSS files */
         fetchCSS(data.eager).then(() => {
             /** Tell the Pjax class that the eager CSS files have been loaded */
-            broadcaster.message("pjax", {
+            message("pjax", {
                 type: "css-ready",
                 requestUid: requestUid,
             });

@@ -1,28 +1,18 @@
-type MessageData = {
-    type: string;
-    // eslint-disable-next-line
-    [key: string]: any;
-};
+/**
+ * This package has been modified. Do not update.
+ * The package has been locked at v0.1.0
+ * Changes:
+ * - Removed `setupWorker()` function
+ * - Removed workers CDN fallback
+ * - File renamed to `broadcaster.js`
+ */
 
-import { uuid, debug } from "./env";
 import { djinnjsOutDir } from "./config";
-
-type Inbox = {
-    callback: Function;
-    disconnected?: boolean;
-    uid: string;
-};
+import { uuid } from "../../core/env";
 
 class Broadcaster {
-    private worker: Worker;
-    private inboxes: Array<Inbox>;
-    private messageQueue: Array<BroadcastWorkerMessage>;
-    private state: {
-        allowMessaging: boolean;
-    };
-
     constructor() {
-        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/broadcast-worker.js`);
+        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/broadcaster-worker.js`);
         this.worker.onmessage = this.handleMessage.bind(this);
         this.inboxes = [];
         this.messageQueue = [];
@@ -30,11 +20,10 @@ class Broadcaster {
             allowMessaging: false,
         };
     }
-
     /**
      * Set the broadcasters `workerReady` state to `true` and flush any queued messages.
      */
-    private flushMessageQueue(): void {
+    flushMessageQueue() {
         this.state.allowMessaging = true;
         if (this.messageQueue.length) {
             for (let i = 0; i < this.messageQueue.length; i++) {
@@ -43,8 +32,7 @@ class Broadcaster {
         }
         this.messageQueue = [];
     }
-
-    private sendDataToInboxes(inboxIndexes: Array<number>, data: MessageData): void {
+    sendDataToInboxes(inboxIndexes, data) {
         for (let i = 0; i < inboxIndexes.length; i++) {
             try {
                 this.inboxes[inboxIndexes[i]].callback(data);
@@ -53,28 +41,28 @@ class Broadcaster {
             }
         }
     }
-
     /**
      * Broadcaster received a message from another thread.
      * This method is an alias of `this.worker.onmessage`
      */
-    private handleMessage(e: MessageEvent): void {
+    handleMessage(e) {
+        var _a;
         const data = e.data;
-        if (data.recipient?.trim().toLowerCase() === "broadcaster") {
+        if (((_a = data.recipient) === null || _a === void 0 ? void 0 : _a.trim().toLowerCase()) === "broadcaster") {
             this.inbox(data.data);
         } else {
             this.sendDataToInboxes(data.inboxIndexes, data.data);
         }
     }
-
-    private sendUserDeviceInformation(): void {
+    sendUserDeviceInformation() {
+        var _a, _b;
         // @ts-ignore
-        const deviceMemory = window.navigator?.deviceMemory ?? 8;
+        const deviceMemory = ((_b = (_a = window.navigator) === null || _a === void 0 ? void 0 : _a.deviceMemory), _b !== null && _b !== void 0 ? _b : 8);
         const isSafari = navigator.userAgent.search("Safari") >= 0 && navigator.userAgent.search("Chrome") < 0;
-        const workerMessage: BroadcastWorkerMessage = {
+        const workerMessage = {
             recipient: "broadcast-worker",
             messageId: null,
-            protocol: "Once",
+            maxAttempts: 1,
             data: {
                 type: "init",
                 memory: deviceMemory,
@@ -83,11 +71,10 @@ class Broadcaster {
         };
         this.postMessageToWorker(workerMessage);
     }
-
     /**
      * The broadcaster's personal inbox.
      */
-    private inbox(data: MessageData): void {
+    inbox(data) {
         const { type } = data;
         switch (type) {
             case "ready":
@@ -100,50 +87,48 @@ class Broadcaster {
             case "ping":
                 break;
             default:
-                if (debug) {
-                    console.warn(`Unknown broadcaster message type: ${data.type}`);
-                }
+                console.warn(`Unknown broadcaster message type: ${data.type}`);
                 break;
         }
     }
-
     /**
      * Sends a message to an inbox.
      * @param recipient - the name of the inboxes you want to send a message to
      * @param data - the `MessageData` object that will be sent to the inboxes
-     * @param protocol - `Once` will attempt to send the message but will not guarantee it arrives, `Guaranteed` will attempt to deliver the message until the `maxAttempts` have been exceeded
-     * @param maxAttempts - the maximum number of attempts before the `Guaranteed` message is dropped, can be set to `Infinity`
+     * @param maxAttempts - the maximum number of attempts before the message is dropped, can be set to `Infinity`
      */
-    public message(recipient: string, data: MessageData, protocol: "Once" | "Guaranteed" = "Once", maxAttempts = 100): void {
-        const workerMessage: BroadcastWorkerMessage = {
+    message(recipient, data, maxAttempts = 1) {
+        let attempts = maxAttempts;
+        if (isNaN(attempts)) {
+            attempts = 1;
+        } else if (attempts < 1) {
+            attempts = 1;
+        }
+        const workerMessage = {
             recipient: recipient,
             data: data,
             messageId: uuid(),
-            protocol: protocol,
+            maxAttempts: attempts,
         };
-        if (protocol === "Guaranteed") {
-            workerMessage.maxAttempts = maxAttempts;
-        }
         this.postMessageToWorker(workerMessage);
     }
-
     /**
      * Register and hookup an inbox.
      * @param name - the name of the inbox
      * @param inbox - the function that will handle the inboxes incoming messages
-     * @returns - inbox unique ID
+     * @returns inbox UID
      */
-    public hookup(name: string, inbox: Function): string {
-        const newInbox: Inbox = {
+    hookup(name, inbox) {
+        const newInbox = {
             callback: inbox,
             uid: uuid(),
         };
         const address = this.inboxes.length;
         this.inboxes.push(newInbox);
-        const workerMessage: BroadcastWorkerMessage = {
+        const workerMessage = {
             recipient: "broadcast-worker",
             messageId: null,
-            protocol: "Once",
+            maxAttempts: 1,
             data: {
                 type: "hookup",
                 name: name,
@@ -153,26 +138,25 @@ class Broadcaster {
         this.postMessageToWorker(workerMessage);
         return newInbox.uid;
     }
-
     /**
      * Sends a message to the worker using `postMessage()` or queues the message if the worker isn't ready.
      * @param message - the `BroadcastWorkerMessage` object that will be sent
      */
-    private postMessageToWorker(message: BroadcastWorkerMessage): void {
+    postMessageToWorker(message) {
         if (this.state.allowMessaging) {
             this.worker.postMessage(message);
         } else {
             this.messageQueue.push(message);
         }
     }
-
-    private cleanup(): void {
+    cleanup() {
+        var _a;
         this.state.allowMessaging = false;
         const updatedAddresses = [];
         const updatedInboxes = [];
         for (let i = 0; i < this.inboxes.length; i++) {
             const inbox = this.inboxes[i];
-            if (!inbox?.disconnected) {
+            if (!((_a = inbox) === null || _a === void 0 ? void 0 : _a.disconnected)) {
                 const addressUpdate = {
                     oldAddressIndex: i,
                     newAddressIndex: updatedInboxes.length,
@@ -182,10 +166,10 @@ class Broadcaster {
             }
         }
         this.inboxes = updatedInboxes;
-        const workerMessage: BroadcastWorkerMessage = {
+        const workerMessage = {
             recipient: "broadcast-worker",
             messageId: null,
-            protocol: "Once",
+            maxAttempts: 1,
             data: {
                 type: "update-addresses",
                 addresses: updatedAddresses,
@@ -193,12 +177,11 @@ class Broadcaster {
         };
         this.worker.postMessage(workerMessage);
     }
-
     /**
      * Disconnect an inbox.
-     * @param inboxId - the unique ID of the inbox
+     * @param inboxId - the UID of the inbox
      */
-    public disconnect(inboxId: string): void {
+    disconnect(inboxId) {
         for (let i = 0; i < this.inboxes.length; i++) {
             const inbox = this.inboxes[i];
             if (inbox.uid === inboxId) {
@@ -207,14 +190,13 @@ class Broadcaster {
             }
         }
     }
-
-    private disconnectInbox(inbox: Inbox, index: number): void {
+    disconnectInbox(inbox, index) {
         inbox.disconnected = true;
         inbox.callback = () => {};
-        const workerMessage: BroadcastWorkerMessage = {
+        const workerMessage = {
             recipient: "broadcast-worker",
             messageId: null,
-            protocol: "Once",
+            maxAttempts: 1,
             data: {
                 type: "disconnect",
                 inboxAddress: index,
@@ -224,4 +206,25 @@ class Broadcaster {
     }
 }
 
-export const broadcaster: Broadcaster = new Broadcaster();
+const BroadcastManager = new Broadcaster();
+/**
+ * Sends a message to an inbox.
+ * @param recipient - the name of the inboxes you want to send a message to
+ * @param data - the `MessageData` object that will be sent to the inboxes
+ * @param maxAttempts - the maximum number of attempts before the message is dropped, can be set to `Infinity`
+ */
+const message = BroadcastManager.message.bind(BroadcastManager);
+/**
+ * Register and hookup an inbox.
+ * @param name - the name of the inbox
+ * @param inbox - the function that will handle the inboxes incoming messages
+ * @returns inbox UID
+ */
+const hookup = BroadcastManager.hookup.bind(BroadcastManager);
+/**
+ * Disconnect an inbox.
+ * @param inboxId - the UID of the inbox
+ */
+const disconnect = BroadcastManager.disconnect.bind(BroadcastManager);
+
+export { disconnect, hookup, message };
