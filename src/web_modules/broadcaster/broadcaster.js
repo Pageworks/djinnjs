@@ -207,6 +207,8 @@ class Broadcaster {
 }
 
 const BroadcastManager = new Broadcaster();
+const broadcaster = BroadcastManager;
+
 /**
  * Sends a message to an inbox.
  * @param recipient - the name of the inboxes you want to send a message to
@@ -227,4 +229,4 @@ const hookup = BroadcastManager.hookup.bind(BroadcastManager);
  */
 const disconnect = BroadcastManager.disconnect.bind(BroadcastManager);
 
-export { disconnect, hookup, message };
+export { disconnect, hookup, message, broadcaster };
