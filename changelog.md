@@ -9,8 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   broadcom package replaces broadcaster scripts
+-   [broadcom](https://github.com/codewithkyle/broadcom) package replaced broadcaster
 -   named exports from `djinnjs/broadcaster`
+-   TypeScript declarations for named exports
 
 ## [0.0.15] - 2020-01-15
 
