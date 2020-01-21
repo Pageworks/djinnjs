@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Terser `minify()` method now reports the results error message instead of `null`
+
 ## [0.0.15] - 2020-01-15
 
 ### Fixed
