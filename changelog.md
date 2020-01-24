@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Default transitions (None, Fade, Slide) use HTML attributes to controll transition settings [#16](https://github.com/Pageworks/djinnjs/issues/16)
+-   Updated NPM packages
+
+### Fixed
+
+-   Windows filename regex issues [#28](https://github.com/Pageworks/djinnjs/issues/28)
+-   broken `pjax-id` attribute selectors
+
 ## [0.0.15] - 2020-01-15
 
 ### Fixed
@@ -19,10 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated Pjax page jump logic to use `id` attribute instead of the obsolete `name` attribute [#39](https://github.com/Pageworks/djinnjs/issues/39)
 
 ## [0.0.14] - 2020-01-13
-
-### Fixed
-
--   broken `pjax-id` attribute selectors
 
 ### Fixed
 
