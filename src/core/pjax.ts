@@ -115,7 +115,7 @@ class Pjax {
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
                 if (new RegExp("#").test(data.url)) {
-                    this.scrollToAnchor(data.url);
+                    this.scrollToHash(data.url);
                 }
                 this.collectLinks();
                 this.checkPageRevision();
@@ -228,10 +228,12 @@ class Pjax {
         }
     }
 
-    private scrollToAnchor(url: string): void {
-        const anchor = document.body.querySelector(`a[name="${url.match(/\#.*/g)[0].replace("#", "")}"]`);
-        if (anchor) {
-            anchor.scrollIntoView();
+    private scrollToHash(url: string): void {
+        const hash = url.match(/\#.*/)[0];
+        const element = document.body.querySelector(hash);
+        if (element) {
+            element.scrollIntoView();
+            return;
         }
     }
 
