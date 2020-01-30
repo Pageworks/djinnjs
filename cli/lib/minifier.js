@@ -1,7 +1,7 @@
-const glob = require('glob');
-const mini = require('terser');
-const fs = require('fs');
-const path = require('path');
+const glob = require("glob");
+const mini = require("terser");
+const fs = require("fs");
+const path = require("path");
 
 const cwd = process.cwd();
 
@@ -23,15 +23,15 @@ function minifyFiles(files, publicDir, relativeOutDir) {
         let minified = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
-            const filename = files[i].replace(/.*[\/\\]/g, '');
+            const filename = files[i].replace(/.*[\/\\]/g, "");
             fs.readFile(files[i], (error, buffer) => {
                 if (error) {
                     reject(error);
                 }
                 const result = mini.minify(buffer.toString(), {
+                    ecma: 2017,
                     compress: {
                         drop_console: true,
-                        ecma: 6,
                         keep_infinity: true,
                         module: true,
                     },
@@ -40,7 +40,7 @@ function minifyFiles(files, publicDir, relativeOutDir) {
                     },
                 });
                 if (result.error) {
-                    reject(error);
+                    reject(`Terser Error: ${result.error.message} occured in ${filename}`);
                 }
                 fs.writeFile(`${outDir}/${filename}`, result.code, error => {
                     if (error) {
