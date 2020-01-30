@@ -1,21 +1,24 @@
-export function none(selector: string, newHTML: string, transitionData: string): Promise<{}> {
+export function none(selector: string, newHTML: string, target: HTMLElement | null): Promise<{}> {
     return new Promise(resolve => {
-        if (transitionData === "smooth") {
+        let behavior: ScrollBehavior | "none" = "auto";
+        if (target) {
+            const desiredBehavior = target
+                .getAttribute("scroll")
+                ?.toLowerCase()
+                ?.trim();
+            if (desiredBehavior === "auto" || desiredBehavior === "smooth" || desiredBehavior === "none") {
+                behavior = desiredBehavior;
+            }
+        }
+        if (behavior !== "none") {
             window.scroll({
                 top: 0,
                 left: 0,
-                behavior: "smooth",
-            });
-        } else {
-            window.scroll({
-                top: 0,
-                left: 0,
-                behavior: "auto",
+                behavior: behavior,
             });
         }
-
-        const main = document.body.querySelector(selector) as HTMLElement;
-        main.innerHTML = newHTML;
+        const view = document.body.querySelector(selector) as HTMLElement;
+        view.innerHTML = newHTML;
         resolve();
     });
 }

@@ -15,30 +15,30 @@ import { none } from "../transitions/none";
  * @param selector - the query selector string that will be used to get the views that need to be swapped
  * @param newHTML - the incoming `innerHTML` for the new view
  * @param transition - the name of the desired transition
- * @param transitionData - a custom data object or value that can be used to modify the transition
+ * @param target - the HTML element that triggered the navigation
  */
-export function transitionManager(selector: string, newHTML: string, transition: string | null, transitionData: string | null): Promise<{}> {
+export function transitionManager(selector: string, newHTML: string, transition: string | null, target: HTMLElement | null): Promise<{}> {
     return new Promise(resolve => {
         /** Pjax doesn't load on 2g, however, network conditions can change. Do not touch. */
         if (env.connection === "2g" || env.connection === "slow-2g") {
-            none(selector, newHTML, transitionData).then(() => {
+            none(selector, newHTML, target).then(() => {
                 resolve();
             });
         } else {
             const transitionEffect = transition || defaultTransition;
             switch (transitionEffect) {
                 case "slide":
-                    slide(selector, newHTML, transitionData).then(() => {
+                    slide(selector, newHTML, target).then(() => {
                         resolve();
                     });
                     break;
                 case "fade":
-                    fade(selector, newHTML, transitionData).then(() => {
+                    fade(selector, newHTML, target).then(() => {
                         resolve();
                     });
                     break;
                 case "none":
-                    none(selector, newHTML, transitionData).then(() => {
+                    none(selector, newHTML, target).then(() => {
                         resolve();
                     });
                     break;
@@ -46,7 +46,7 @@ export function transitionManager(selector: string, newHTML: string, transition:
                     if (debug) {
                         console.error(`Undefined transition handle: ${transition}`);
                     }
-                    none(selector, newHTML, transitionData).then(() => {
+                    none(selector, newHTML, target).then(() => {
                         resolve();
                     });
                     break;
