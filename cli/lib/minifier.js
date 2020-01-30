@@ -40,7 +40,7 @@ function minifyFiles(files, publicDir, relativeOutDir) {
                     },
                 });
                 if (result.error) {
-                    reject(result.error.message);
+                    reject(`Terser Error: ${result.error.message} occured in ${filename}`);
                 }
                 fs.writeFile(`${outDir}/${filename}`, result.code, error => {
                     if (error) {
