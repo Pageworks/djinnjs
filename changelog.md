@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Windows filename regex issues [#28](https://github.com/Pageworks/djinnjs/issues/28)
 -   broken `pjax-id` attribute selectors
+-   Terser `minify()` method now reports the results error message instead of `null`
 
 ## [0.0.15] - 2020-01-15
 
