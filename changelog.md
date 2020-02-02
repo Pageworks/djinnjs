@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
--   support for multisite config
+-   support for multisite config [#47](https://github.com/Pageworks/djinnjs/issues/47)
 
 ## [0.0.16] - 2020-01-30
 
