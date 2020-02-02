@@ -2,6 +2,7 @@ node_modules
 cli/temp
 dist
 .DS_Store
+web_modules
 
 env.js
 env.d.ts

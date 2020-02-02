@@ -71,7 +71,7 @@
         "semver": "^7.1.1",
         "terser": "^4.6.2",
         "update-notifier": "^4.0.0",
-        "wwibs": "0.0.4",
+        "wwibs": "0.0.5",
         "yargs": "^15.1.0"
     },
     "snowpack": {
