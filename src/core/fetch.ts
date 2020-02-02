@@ -16,20 +16,21 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
 
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
-            let filename;
+            const filename = resourceList[i];
             const isUrl = new RegExp(/^(http)/i).test(resourceList[i]);
-            if (!isUrl) {
-                filename = resourceList[i].replace(/(\.js)$/gi, "");
-            }
-            let el: HTMLScriptElement = document.head.querySelector(`script[src="${resourceList[i]}"]`) || document.head.querySelector(`script[file="${filename}.js"]`) || null;
+            let el: HTMLScriptElement = document.head.querySelector(`script[src="${resourceList[i]}"]`) || document.head.querySelector(`script[file="${filename}"]`) || null;
             if (!el) {
                 el = document.createElement("script");
                 if (!isUrl) {
-                    el.setAttribute("file", `${filename}.js`);
+                    el.setAttribute("file", `${filename}`);
                 }
                 el.type = "module";
                 if (!isUrl) {
-                    el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}.js`;
+                    if (filename.match(/(\..*)$/gi)) {
+                        el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}`;
+                    } else {
+                        el.src = `${window.location.origin}/${djinnjsOutDir}/${filename}.mjs`;
+                    }
                 } else {
                     el.src = resourceList[i];
                 }

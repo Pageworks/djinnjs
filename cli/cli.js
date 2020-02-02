@@ -230,7 +230,7 @@ class DjinnJS {
                         resolve();
                     });
                 } else {
-                    fs.rename(`${assetPath}/service-worker.js`, `${publicPath}/service-worker.js`, error => {
+                    fs.rename(`${assetPath}/service-worker.mjs`, `${publicPath}/service-worker.js`, error => {
                         if (error) {
                             reject(error);
                         }

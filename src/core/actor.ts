@@ -1,5 +1,5 @@
-import { broadcaster } from "./broadcaster.js";
-import { debug } from "./env.js";
+import { broadcaster } from "./broadcaster";
+import { debug } from "./env";
 
 export class Actor extends HTMLElement {
     public inboxId: string;

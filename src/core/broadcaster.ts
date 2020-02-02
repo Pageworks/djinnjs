@@ -22,7 +22,7 @@ class Broadcaster {
     };
 
     constructor() {
-        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/broadcast-worker.js`);
+        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/broadcast-worker.mjs`);
         this.worker.onmessage = this.handleMessage.bind(this);
         this.inboxes = [];
         this.messageQueue = [];
