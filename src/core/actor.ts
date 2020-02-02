@@ -1,4 +1,4 @@
-import { broadcaster } from "./broadcaster.js";
+import { hookup, disconnect } from "../web_modules/broadcaster";
 import { debug } from "./env.js";
 
 export class Actor extends HTMLElement {
@@ -11,7 +11,7 @@ export class Actor extends HTMLElement {
     }
 
     // eslint-disable-next-line
-    public inbox(data: MessageData): void {}
+    public inbox(data): void {}
     public connected(): void {}
     public disconnected(): void {}
 
@@ -22,12 +22,12 @@ export class Actor extends HTMLElement {
             }
             this.inboxName = "nil";
         }
-        this.inboxId = broadcaster.hookup(this.inboxName, this.inbox.bind(this));
+        this.inboxId = hookup(this.inboxName, this.inbox.bind(this));
         this.connected();
     }
 
     private disconnectedCallback() {
-        broadcaster.disconnect(this.inboxId);
+        disconnect(this.inboxId);
         this.disconnected();
     }
 }

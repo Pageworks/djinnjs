@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   [wwibs](https://github.com/Pageworks/wwibs) replaced integrated broadcaster
+
 ## [0.0.16] - 2020-01-30
 
 ### Added

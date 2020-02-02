@@ -9,6 +9,7 @@ actor.js
 actor.d.ts
 broadcaster.js
 broadcaster.d.ts
+broadcaster-worker.min.js
 fetch-css.js
 fetch-css.d.ts
 fetch-js.js

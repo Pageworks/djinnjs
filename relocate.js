@@ -24,17 +24,6 @@ fs.copyFile("./dist/core/actor.d.ts", "./actor.d.ts", error => {
     }
 });
 
-fs.copyFile("./dist/core/broadcaster.js", "./broadcaster.js", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-fs.copyFile("./dist/core/broadcaster.d.ts", "./broadcaster.d.ts", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-
 fs.copyFile("./dist/core/fetch-css.js", "./fetch-css.js", error => {
     if (error) {
         console.log(error);
@@ -63,6 +52,22 @@ fs.copyFile("./dist/core/fetch.js", "./fetch.js", error => {
     }
 });
 fs.copyFile("./dist/core/fetch.d.ts", "./fetch.d.ts", error => {
+    if (error) {
+        console.log(error);
+    }
+});
+
+fs.copyFile("./dist/web_modules/broadcaster.js", "./broadcaster.js", error => {
+    if (error) {
+        console.log(error);
+    }
+});
+fs.copyFile("./dist/web_modules/broadcaster.d.ts", "./broadcaster.d.ts", error => {
+    if (error) {
+        console.log(error);
+    }
+});
+fs.copyFile("./node_modules/wwibs/broadcaster-worker.min.js", "./broadcaster-worker.min.js", error => {
     if (error) {
         console.log(error);
     }
