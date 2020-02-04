@@ -9,7 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-   switched to `.mjs` file extension [#49](https://github.com/Pageworks/djinnjs/issues/49)
 -   [wwibs](https://github.com/Pageworks/wwibs) replaced integrated broadcaster
+
+### Updated
+
+-   `fetchJS()` util no longer strips file extension
+    -   fetch will use a provided file extension
+    -   fetch will append a `.mjs` file extention when one wasn't provided
+    -   fetch still accepts a URL and does not modify the URL
+
+### Removed
+
+-   `fetchCSS()` from the `fetch-css` file, use `fetchCSS` from `djiinjs/fetch` instead
+-   `fetchJS()` from the `fetch-js` file, use `fetchJS` from `djiinjs/fetch` instead
 
 ## [0.0.16] - 2020-01-30
 

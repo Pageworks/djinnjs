@@ -39,7 +39,7 @@ function scrubFiles(files, handle) {
                     importFilePaths.map(path => {
                         /** Remove everything in the path except the file name */
                         let pathFileName = path.replace(/.*[\/\\]/g, "").replace(/(\.ts)|(\.js)$/g, "");
-                        data = data.replace(`"${path}"`, `"./${pathFileName}.js"`).replace(`'${path}'`, `"./${pathFileName}.js"`);
+                        data = data.replace(`"${path}"`, `"./${pathFileName}.mjs"`).replace(`'${path}'`, `"./${pathFileName}.mjs"`);
                     });
                 }
 

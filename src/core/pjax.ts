@@ -60,13 +60,13 @@ class Pjax {
         setupGoogleAnalytics(gaId);
 
         /** Prepare the Pjax Web Worker */
-        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.js`);
+        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
 
         /** Attempt to register a service worker */
         if ("serviceWorker" in navigator && !disableServiceWorker) {
             navigator.serviceWorker
-                .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
+                .register(`${window.location.origin}/service-worker.mjs`, { scope: "/" })
                 .then(() => {
                     /** Verify the service worker was registered correctly */
                     if (navigator.serviceWorker.controller) {

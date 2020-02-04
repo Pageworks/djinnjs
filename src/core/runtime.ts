@@ -23,7 +23,7 @@ class Runtime {
     private _loadingMessage: HTMLElement;
 
     constructor() {
-        this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.js`);
+        this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.mjs`);
         this._loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
         if (this._loadingMessage) {
             this._loadingMessage.setAttribute("state", "1");

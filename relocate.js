@@ -24,39 +24,6 @@ fs.copyFile("./dist/core/actor.d.ts", "./actor.d.ts", error => {
     }
 });
 
-fs.copyFile("./dist/core/fetch-css.js", "./fetch-css.js", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-fs.copyFile("./dist/core/fetch-css.d.ts", "./fetch-css.d.ts", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-
-fs.copyFile("./dist/core/fetch-js.js", "./fetch-js.js", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-fs.copyFile("./dist/core/fetch-js.d.ts", "./fetch-js.d.ts", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-
-fs.copyFile("./dist/core/fetch.js", "./fetch.js", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-fs.copyFile("./dist/core/fetch.d.ts", "./fetch.d.ts", error => {
-    if (error) {
-        console.log(error);
-    }
-});
-
 fs.copyFile("./dist/web_modules/broadcaster.js", "./broadcaster.js", error => {
     if (error) {
         console.log(error);

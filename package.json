@@ -36,10 +36,6 @@
         "broadcaster-worker.min.js",
         "env.js",
         "env.d.ts",
-        "fetch-css.js",
-        "fetch-css.d.ts",
-        "fetch-js.js",
-        "fetch-js.d.ts",
         "fetch.js",
         "fetch.d.ts"
     ],
