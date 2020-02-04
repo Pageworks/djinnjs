@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.18] - 2020-02-04
+## [0.0.19] - 2020-02-04
 
 ### Fixed
 
@@ -268,8 +268,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.18...HEAD
-[0.0.18]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.18
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.19...HEAD
+[0.0.19]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.19
 [0.0.17]: https://github.com/pageworks/djinnjs/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/pageworks/djinnjs/compare/v0.0.15...v0.0.16
 [0.0.15]: https://github.com/pageworks/djinnjs/compare/v0.0.14...v0.0.15
