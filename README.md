@@ -26,14 +26,14 @@ Setup the DjinnJS config file. [Click here](https://djinnjs.com/configuration) t
 
 ```javascript
 module.exports = {
-    src: './src',
+    src: "./src",
 };
 ```
 
 Include the runtime JavaScript:
 
 ```html
-<script type="module" src="/assets/runtime.js"></script>
+<script type="module" src="/assets/runtime.mjs"></script>
 ```
 
 Inlcude the noscript CSS file:
@@ -48,7 +48,7 @@ Include the Web Component polyfill:
 
 ```html
 <script>
-    if (typeof CustomElementRegistry === 'undefined') {
+    if (typeof CustomElementRegistry === "undefined") {
         document.write('<script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-bundle.js"><\/script>');
     }
 </script>
@@ -88,7 +88,6 @@ We welcome all contributions. Please read our [contributing guideline](https://g
 -   [Configuration](https://djinnjs.com/configuration)
 -   [Getting Started](https://djinnjs.com/getting-started)
 -   [Pjax](https://djinnjs.com/pjax)
--   [Messaging System](https://djinnjs.com/messaging)
 -   [Transitions](https://djinnjs.com/transitions)
 -   [Code of Conduct](https://djinnjs.com/code-of-conduct)
 -   [Contributing](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md)

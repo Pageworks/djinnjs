@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.17] - 2020-02-04
+
+### ⚠️ Breaking Changes ⚠️
+
+`fetch-js` and `fetch-css` files have been removed, switch to using the `fetch` file.
+
+```javascript
+import { fetchJS, fetchCSS } from "djinnjs/fetch";
+```
+
+DjinnJS no longer supports multisite configurations. Instead, create a new `package.json` for each site within a multisite project.
+
+Files now use `.mjs` file extension. [Click here](https://v8.dev/features/modules#mjs) for information about using the `.mjs` extension. Update the runtime script `src` attribute to use the new `runtime.mjs` file. This change could require additional server configuration in order to server `.mjs` files with the `Content-Type: text/javascript` header.
+
+The `broadcaster` object is no longer exported from `djinnjs/broadcaster` instead you must import the functions directly:
+
+```javascript
+import { hookup, disconnect, message } from "djinnjs/broadcaster";
+```
+
 ### Added
 
 -   switched to `.mjs` file extension [#49](https://github.com/Pageworks/djinnjs/issues/49)
@@ -242,7 +262,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.16...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.17...HEAD
+[0.0.17]: https://github.com/pageworks/djinnjs/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/pageworks/djinnjs/compare/v0.0.15...v0.0.16
 [0.0.15]: https://github.com/pageworks/djinnjs/compare/v0.0.14...v0.0.15
 [0.0.14]: https://github.com/pageworks/djinnjs/compare/v0.0.13...v0.0.14
