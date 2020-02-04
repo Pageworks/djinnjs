@@ -66,7 +66,7 @@ class Pjax {
         /** Attempt to register a service worker */
         if ("serviceWorker" in navigator && !disableServiceWorker) {
             navigator.serviceWorker
-                .register(`${window.location.origin}/service-worker.mjs`, { scope: "/" })
+                .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
                 .then(() => {
                     /** Verify the service worker was registered correctly */
                     if (navigator.serviceWorker.controller) {

@@ -254,7 +254,7 @@ class DjinnJS {
                                 reject(error);
                             }
                             let data = buffer.toString().replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
-                            fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
+                            fs.writeFile(`${publicPath}/service-worker.mjs`, data, error => {
                                 if (error) {
                                     reject(error);
                                 }
