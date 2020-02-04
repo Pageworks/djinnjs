@@ -2,6 +2,7 @@ node_modules
 cli/temp
 dist
 .DS_Store
+web_modules
 
 env.js
 env.d.ts
@@ -9,6 +10,7 @@ actor.js
 actor.d.ts
 broadcaster.js
 broadcaster.d.ts
+broadcaster-worker.min.js
 fetch-css.js
 fetch-css.d.ts
 fetch-js.js

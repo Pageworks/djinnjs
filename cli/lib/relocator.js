@@ -12,8 +12,8 @@ function copyFiles(files, publicDir, relativeOutDir) {
         let minified = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
-            const filename = files[i].replace(/.*[\/\\]/g, "");
-            fs.copyFile(files[i], `${outDir}/${filename}`, error => {
+            const filename = files[i].replace(/(.*[\/\\])|(\..*)$/g, "");
+            fs.copyFile(files[i], `${outDir}/${filename}.mjs`, error => {
                 if (error) {
                     reject(error);
                 }

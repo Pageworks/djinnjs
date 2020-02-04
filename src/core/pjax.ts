@@ -1,4 +1,4 @@
-import { broadcaster } from "./broadcaster";
+import { hookup, message } from "../web_modules/broadcaster";
 import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { transitionManager } from "./transition-manager";
@@ -54,19 +54,19 @@ class Pjax {
         }
 
         /** Hookup Pjax's inbox */
-        broadcaster.hookup("pjax", this.inbox.bind(this));
+        hookup("pjax", this.inbox.bind(this));
 
         /** Prepare Google Analytics */
         setupGoogleAnalytics(gaId);
 
         /** Prepare the Pjax Web Worker */
-        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.js`);
+        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
 
         /** Attempt to register a service worker */
         if ("serviceWorker" in navigator && !disableServiceWorker) {
             navigator.serviceWorker
-                .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
+                .register(`${window.location.origin}/service-worker.mjs`, { scope: "/" })
                 .then(() => {
                     /** Verify the service worker was registered correctly */
                     if (navigator.serviceWorker.controller) {
@@ -80,7 +80,7 @@ class Pjax {
                         });
 
                         /** Tell Pjax to check if the current page is stale */
-                        broadcaster.message("pjax", { type: "revision-check" });
+                        message("pjax", { type: "revision-check" });
                     }
                 })
                 .catch(error => {
@@ -100,7 +100,7 @@ class Pjax {
      * The public inbox for the Pjax class. All incoming messages sent through the `Broadcaster` will be received here.
      * @param data - the `MessageData` passed into the inbox by the `Broadcaster` class
      */
-    private inbox(data: MessageData): void {
+    private inbox(data): void {
         const { type } = data;
         switch (type) {
             case "revision-check":
@@ -123,7 +123,7 @@ class Pjax {
                 if (!disablePrefetching) {
                     this.prefetchLinks();
                 }
-                broadcaster.message("pjax", {
+                message("pjax", {
                     type: "completed",
                 });
                 break;
@@ -137,9 +137,9 @@ class Pjax {
                 break;
             case "init":
                 /** Tell Pjax to hijack all viable links */
-                broadcaster.message("pjax", { type: "hijack-links" });
+                message("pjax", { type: "hijack-links" });
                 /** Tell Pjax to prefetch links */
-                broadcaster.message("pjax", {
+                message("pjax", {
                     type: "prefetch",
                 });
                 break;
@@ -284,7 +284,7 @@ class Pjax {
             /** Tells the Pjax class to load the URL stored in this windows history.
              * In order to preserve the timeline navigation the history will use `replace` instead of `push`.
              */
-            broadcaster.message("pjax", {
+            message("pjax", {
                 type: "load",
                 url: e.state.url,
                 history: "replace",
@@ -329,7 +329,7 @@ class Pjax {
         const navigationUid = uuid();
         target.setAttribute("navigation-request-id", navigationUid);
         /** Tell Pjax to load the clicked elements page */
-        broadcaster.message("pjax", {
+        message("pjax", {
             type: "load",
             url: target.href,
             transition: target.getAttribute("pjax-transition"),
@@ -395,7 +395,7 @@ class Pjax {
 
                 if (incomingMain && currentMain) {
                     /** Tells the runtime class to parse the incoming HTML for any new CSS files */
-                    broadcaster.message("runtime", {
+                    message("runtime", {
                         type: "parse",
                         body: incomingMain.innerHTML,
                         requestUid: requestId,
@@ -436,16 +436,16 @@ class Pjax {
 
             transitionManager(selector, request.body, request.transition, request.target).then(() => {
                 document.title = request.title;
-                broadcaster.message("pjax", {
+                message("pjax", {
                     type: "finalize-pjax",
                     url: request.url,
                     title: request.title,
                     history: request.history,
                 });
-                broadcaster.message("runtime", {
+                message("runtime", {
                     type: "mount-components",
                 });
-                broadcaster.message("runtime", {
+                message("runtime", {
                     type: "mount-inline-scripts",
                     selector: selector,
                 });
