@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.19] - 2020-02-04
+## [0.0.20] - 2020-02-04
 
 ### Fixed
 
 -   service worker file extension issue
+-   service workers `credentials: 'include'` value was prevented fetching scripts from CDNs due to CORS policy settings
 
 ## [0.0.17] - 2020-02-04
 
