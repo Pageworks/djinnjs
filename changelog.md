@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   switched to `.mjs` file extension [#49](https://github.com/Pageworks/djinnjs/issues/49)
+-   [wwibs](https://github.com/Pageworks/wwibs) replaced integrated broadcaster
 
 ### Updated
 

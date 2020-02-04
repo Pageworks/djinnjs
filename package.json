@@ -33,6 +33,7 @@
         "actor.d.ts",
         "broadcaster.js",
         "boradcaster.d.ts",
+        "broadcaster-worker.min.js",
         "env.js",
         "env.d.ts",
         "fetch.js",
@@ -66,11 +67,13 @@
         "semver": "^7.1.1",
         "terser": "^4.6.2",
         "update-notifier": "^4.0.0",
+        "wwibs": "0.0.5",
         "yargs": "^15.1.0"
     },
     "snowpack": {
         "webDependencies": [
-            "@codewithkyle/notifyjs"
+            "@codewithkyle/notifyjs",
+            "wwibs"
         ]
     }
 }
