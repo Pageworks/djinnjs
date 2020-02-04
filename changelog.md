@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `fetchCSS()` from the `fetch-css` file, use `fetchCSS` from `djiinjs/fetch` instead
 -   `fetchJS()` from the `fetch-js` file, use `fetchJS` from `djiinjs/fetch` instead
+-   support for multisite config [#47](https://github.com/Pageworks/djinnjs/issues/47)
 
 ## [0.0.16] - 2020-01-30
 
