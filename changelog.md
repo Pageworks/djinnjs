@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠️ Breaking Changes ⚠️
 
-`fetch-js` and `fetch-css` files have been removed, switch to using the `djinnjs/fetch` file.
+`fetch-js` and `fetch-css` files have been removed, switch to using the `fetch` file.
 
-Support for multisite configurations has been removed. Instead, create a new `package.json` for each site within a multisite project.
+```javascript
+import { fetchJS, fetchCSS } from "djinnjs/fetch";
+```
+
+DjinnJS no longer supports multisite configurations. Instead, create a new `package.json` for each site within a multisite project.
 
 Files now use `.mjs` file extension. [Click here](https://v8.dev/features/modules#mjs) for information about using the `.mjs` extension. Update the runtime script `src` attribute to use the new `runtime.mjs` file. This change could require additional server configuration in order to server `.mjs` files with the `Content-Type: text/javascript` header.
 
