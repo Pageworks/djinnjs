@@ -269,8 +269,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.19...HEAD
-[0.0.19]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.19
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.20...HEAD
+[0.0.20]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.20
 [0.0.17]: https://github.com/pageworks/djinnjs/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/pageworks/djinnjs/compare/v0.0.15...v0.0.16
 [0.0.15]: https://github.com/pageworks/djinnjs/compare/v0.0.14...v0.0.15
