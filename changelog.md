@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   incorrect file extensions for production builds
+-   service worker is removed from the `outDir` when disabled
+
 ## [0.0.20] - 2020-02-04
 
 ### Fixed

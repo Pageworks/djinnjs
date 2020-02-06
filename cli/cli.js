@@ -238,7 +238,7 @@ class DjinnJS {
                 const publicPath = path.resolve(cwd, this.sites[i].publicDir);
                 const assetPath = path.resolve(publicPath, this.sites[i].outDir);
                 if (this.sites[i].disableServiceWorker) {
-                    fs.unlink(`${assetPath}/service-worker.js`, error => {
+                    fs.unlink(`${assetPath}/service-worker.mjs`, error => {
                         if (error) {
                             reject(error);
                         }
