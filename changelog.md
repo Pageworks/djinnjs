@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.21] - 2020-02-06
+
+### Fixed
+
+-   incorrect file extensions for production builds
+-   service worker is removed from the `outDir` when disabled
+
 ## [0.0.20] - 2020-02-04
 
 ### Fixed
@@ -269,7 +276,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.20...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.21...HEAD
+[0.0.21]: https://github.com/pageworks/djinnjs/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.20
 [0.0.17]: https://github.com/pageworks/djinnjs/compare/v0.0.16...v0.0.17
 [0.0.16]: https://github.com/pageworks/djinnjs/compare/v0.0.15...v0.0.16
