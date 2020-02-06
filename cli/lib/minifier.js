@@ -23,7 +23,7 @@ function minifyFiles(files, publicDir, relativeOutDir) {
         let minified = 0;
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
-            const filename = files[i].replace(/.*[\/\\]/g, "");
+            const filename = files[i].replace(/(.*[\/\\])|(\..*)$/g, "");
             fs.readFile(files[i], (error, buffer) => {
                 if (error) {
                     reject(error);
@@ -42,7 +42,7 @@ function minifyFiles(files, publicDir, relativeOutDir) {
                 if (result.error) {
                     reject(`Terser Error: ${result.error.message} occured in ${filename}`);
                 }
-                fs.writeFile(`${outDir}/${filename}`, result.code, error => {
+                fs.writeFile(`${outDir}/${filename}.mjs`, result.code, error => {
                     if (error) {
                         reject(error);
                     }
