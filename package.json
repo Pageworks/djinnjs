@@ -1,6 +1,6 @@
 {
     "name": "djinnjs",
-    "version": "0.0.21",
+    "version": "0.0.22",
     "description": "DjinnJS is an ES Module based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
     "author": "Pageworks",
     "license": "GPL-3.0",
@@ -57,7 +57,7 @@
         "eslint-config-prettier": "^6.10.0",
         "eslint-plugin-prettier": "^3.1.2",
         "prettier": "1.19.1",
-        "snowpack": "^1.1.4",
+        "snowpack": "^1.6.0",
         "typescript": "^3.7.5"
     },
     "dependencies": {

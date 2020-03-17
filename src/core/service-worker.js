@@ -7,7 +7,9 @@ self.addEventListener("fetch", event => {
     const noCache = event.request.url.match(new RegExp(REPLACE_WITH_NO_CACHE_PATTERN));
     if (noCache || event.request.method !== "GET") {
         event.respondWith(
-            fetch(event.request).then(response => {
+            fetch(event.request, {
+                redirect: "follow",
+            }).then(response => {
                 return response;
             })
         );
