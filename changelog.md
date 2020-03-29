@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.23] - 2020-03-29
+
 ### ⚠️ Breaking Changes ⚠️
 
 WWIBS v0.0.9 introduced a breaking change where a new `senderId` string value can be provided allowing actors to reply/reply all. This value is provided after the `MessageData` object but before the `maxAttempts` number. Any `message()` that provided a `maxAttempts` value will need to be updated to appear as the following:
@@ -306,7 +308,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.22...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.23...HEAD
+[0.0.23]: https://github.com/pageworks/djinnjs/compare/v0.0.22...v0.0.23
 [0.0.22]: https://github.com/pageworks/djinnjs/compare/v0.0.21...v0.0.22
 [0.0.21]: https://github.com/pageworks/djinnjs/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.20
