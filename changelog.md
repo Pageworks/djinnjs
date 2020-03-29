@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ⚠️ Breaking Changes ⚠️
+
+WWIBS v0.0.9 introduced a breaking change where a new `senderId` string value can be provided allowing actors to reply/reply all. This value is provided after the `MessageData` object but before the `maxAttempts` number. Any `message()` that provided a `maxAttempts` value will need to be updated to appear as the following:
+
+```javascript
+message(
+    "recipient",
+    {
+        type: "message",
+    },
+    null,
+    Infinity
+);
+```
+
+### Fixed
+
+-   JavaScript scrubber bug where files could be injected twice
+-   changed update notification
+
+### Update
+
+-   updated [wwibs](https://github.com/Pageworks/wwibs) to v0.0.9
+
+## [0.0.22] - 2020-03-17
+
+### Fixed
+
+-   allows blacklisted fetch requests to follow redirects [#57](https://github.com/Pageworks/djinnjs/issues/57)
+
 ## [0.0.21] - 2020-02-06
 
 ### Fixed
@@ -276,7 +306,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.21...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.22...HEAD
+[0.0.22]: https://github.com/pageworks/djinnjs/compare/v0.0.21...v0.0.22
 [0.0.21]: https://github.com/pageworks/djinnjs/compare/v0.0.20...v0.0.21
 [0.0.20]: https://github.com/pageworks/djinnjs/compare/v0.0.17...v0.0.20
 [0.0.17]: https://github.com/pageworks/djinnjs/compare/v0.0.16...v0.0.17
