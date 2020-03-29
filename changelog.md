@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.23] - 2020-03-29
+
+### ⚠️ Breaking Changes ⚠️
+
+WWIBS v0.0.9 introduced a breaking change where a new `senderId` string value can be provided allowing actors to reply/reply all. This value is provided after the `MessageData` object but before the `maxAttempts` number. Any `message()` that provided a `maxAttempts` value will need to be updated to appear as the following:
+
+```javascript
+message(
+    "recipient",
+    {
+        type: "message",
+    },
+    null,
+    Infinity
+);
+```
+
+### Fixed
+
+-   JavaScript scrubber bug where files could be injected twice
+
+### Update
+
+-   updated [wwibs](https://github.com/Pageworks/wwibs) to v0.0.9
+
 ## [0.0.22] - 2020-03-17
 
 ### Fixed

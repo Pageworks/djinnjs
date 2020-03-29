@@ -9,7 +9,7 @@ const notifier = updateNotifier({
 });
 
 if (notifier.update) {
-    console.log(`Update available: ${notifier.update.latest}`);
+    console.log(`\nDjinnJS ${notifier.update.latest} available.\n`);
 }
 
 const semver = require("semver");
@@ -330,7 +330,7 @@ class DjinnJS {
         return new Promise((resolve, reject) => {
             let scrubbed = 0;
             for (let i = 0; i < this.sites.length; i++) {
-                const sources = this.sites[i].src instanceof Array ? this.sites[i].src : [this.sites[i].src];
+                const sources = Array.isArray(this.sites[i].src) ? this.sites[i].src : [this.sites[i].src];
                 const handle = this.sites[i].handle === undefined ? "default" : this.sites[i].handle;
                 scrub(sources, handle)
                     .then(() => {

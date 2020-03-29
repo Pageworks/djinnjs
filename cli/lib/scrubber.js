@@ -25,35 +25,43 @@ function scrubFiles(files, handle) {
         for (let i = 0; i < files.length; i++) {
             const filePath = files[i];
             const filename = filePath.replace(/.*[\/\\]/g, "");
-            fs.readFile(filePath, (error, buffer) => {
-                if (error) {
-                    reject(error);
-                }
-
-                let data = buffer.toString();
-
-                /** Grab everything between the string values for the import statement */
-                let importFilePaths = data.match(/(?<=from\s+[\'\"]).*(?=[\'\"]\;)/g);
-
-                if (importFilePaths) {
-                    importFilePaths.map(path => {
-                        /** Remove everything in the path except the file name */
-                        let pathFileName = path.replace(/.*[\/\\]/g, "").replace(/(\.ts)|(\.js)$/g, "");
-                        data = data.replace(`"${path}"`, `"./${pathFileName}.mjs"`).replace(`'${path}'`, `"./${pathFileName}.mjs"`);
-                    });
-                }
-
-                fs.writeFile(`${outDir}/${filename}`, data, error => {
+            if (!fs.existsSync(`${outDir}/${filename}`)) {
+                fs.readFile(filePath, (error, buffer) => {
                     if (error) {
                         reject(error);
                     }
 
-                    scrubbed++;
-                    if (scrubbed === files.length) {
-                        resolve();
+                    let data = buffer.toString();
+
+                    /** Grab everything between the string values for the import statement */
+                    let importFilePaths = data.match(/(?<=from\s+[\'\"]).*(?=[\'\"]\;)/g);
+
+                    if (importFilePaths) {
+                        importFilePaths.map(path => {
+                            /** Remove everything in the path except the file name */
+                            let pathFileName = path.replace(/.*[\/\\]/g, "").replace(/(\.ts)|(\.js)$/g, "");
+                            data = data.replace(`"${path}"`, `"./${pathFileName}.mjs"`).replace(`'${path}'`, `"./${pathFileName}.mjs"`);
+                        });
                     }
+
+                    fs.writeFile(`${outDir}/${filename}`, data, error => {
+                        if (error) {
+                            reject(error);
+                        }
+
+                        scrubbed++;
+                        if (scrubbed === files.length) {
+                            resolve();
+                        }
+                    });
                 });
-            });
+            } else {
+                console.log(`\n${filename} was loaded twice, double check you don't have 2 files with the same name.`);
+                scrubbed++;
+                if (scrubbed === files.length) {
+                    resolve();
+                }
+            }
         }
     });
 }
