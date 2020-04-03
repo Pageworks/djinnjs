@@ -6,13 +6,8 @@ let contentCacheId = "content-initial";
 self.addEventListener("fetch", event => {
     const noCache = event.request.url.match(new RegExp(REPLACE_WITH_NO_CACHE_PATTERN));
     if (noCache || event.request.method !== "GET") {
-        event.respondWith(
-            fetch(event.request, {
-                redirect: "follow",
-            }).then(response => {
-                return response;
-            })
-        );
+        // Use a passthrough to ignore the caching system
+        event.respondWith(fetch(event.request));
     } else {
         const isResource = event.request.url.match(/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$/gi);
         const cacheName = isResource ? resourcesCacheId : contentCacheId;
@@ -25,6 +20,7 @@ self.addEventListener("fetch", event => {
 
                 return fetch(event.request, {
                     redirect: "follow",
+                    credentials: "include",
                 }).then(response => {
                     if (!response || response.status !== 200 || response.type !== "basic" || response.headers.get("PWA-Cache") === "no-cache" || response.redirected) {
                         return response;
