@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   ability to disable redirect following when pjaxing pages using the `followRedirects` config variable [#61](https://github.com/Pageworks/djinnjs/issues/61)
+
+### Fixed
+
+-   changed the service worker no-cache passthrough
+
 ## [0.0.23] - 2020-03-29
 
 ### ⚠️ Breaking Changes ⚠️

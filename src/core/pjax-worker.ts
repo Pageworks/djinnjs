@@ -18,7 +18,7 @@ class PjaxWorker {
                 this.checkRevision(e.data.url);
                 break;
             case "pjax":
-                this.pjax(e.data.url, e.data.requestId, e.data.currentUrl);
+                this.pjax(e.data.url, e.data.requestId, e.data.currentUrl, e.data.followRedirects);
                 break;
             case "prefetch":
                 const existingQueue = this.prefetch.length;
@@ -71,7 +71,7 @@ class PjaxWorker {
      * @param url - the requested URL
      * @param requestId - the request ID
      */
-    private async pjax(url: string, requestId: string, currentUrl: string) {
+    private async pjax(url: string, requestId: string, currentUrl: string, followRedirects: boolean) {
         if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === false) {
             // @ts-ignore
             self.postMessage({
@@ -108,6 +108,17 @@ class PjaxWorker {
                 }),
             });
             if (request.ok && request.headers.get("Content-Type") && request.headers.get("Content-Type").match(/(text\/html)/gi)) {
+                if (request.redirected && !followRedirects) {
+                    // @ts-ignore
+                    self.postMessage({
+                        type: "pjax",
+                        status: "error",
+                        error: "Request resulted in a redirect and following redirects is disabled",
+                        url: url,
+                        requestId: requestId,
+                    });
+                    return;
+                }
                 const response = await request.text();
                 // @ts-ignore
                 self.postMessage({
