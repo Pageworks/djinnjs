@@ -45,7 +45,7 @@ fs.copyFile("./dist/web_modules/broadcaster.d.ts", "./broadcaster.d.ts", error =
         console.log(error);
     }
 });
-fs.copyFile("./node_modules/wwibs/broadcaster-worker.min.js", "./broadcaster-worker.min.js", error => {
+fs.copyFile("./node_modules/wwibs/wwibs-worker.min.js", "./broadcaster-worker.min.js", error => {
     if (error) {
         console.log(error);
     }

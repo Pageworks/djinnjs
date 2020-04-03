@@ -112,6 +112,7 @@ class Runtime {
                                 {
                                     type: "init",
                                 },
+                                null,
                                 Infinity
                             );
                         });
