@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   changed the service worker no-cache passthrough
+-   PJAX script mounting bug [#63](https://github.com/Pageworks/djinnjs/issues/63)
 
 ## [0.0.23] - 2020-03-29
 
