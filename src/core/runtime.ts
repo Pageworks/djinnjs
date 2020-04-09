@@ -138,6 +138,12 @@ class Runtime {
         if (el) {
             el.querySelectorAll("script").forEach(script => {
                 const newScript = document.createElement("script");
+                newScript.type = script.type;
+                newScript.noModule = script.noModule;
+                newScript.crossOrigin = script.crossOrigin;
+                newScript.integrity = script.integrity;
+                newScript.nonce = script.nonce;
+                newScript.referrerPolicy = script.referrerPolicy;
                 if (script?.src || script?.id || script.getAttribute("pjax-script-id")) {
                     let scriptSelector = "script";
                     scriptSelector += `[src="${script?.src}"]` || `#${script?.id}` || `[pjax-script-id="${script.getAttribute("pjax-script-id")}"]`;

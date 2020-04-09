@@ -310,6 +310,7 @@ class DjinnJS {
                     data = data.replace("REPLACE_WITH_DEFAULT_TRANSITION", this.sites[i].defaultTransition);
                     data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].disablePjax);
                     data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].disablePrefetching);
+                    data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.sites[i].followRedirects);
                     data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.sites[i].usePercentage);
                     data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.sites[i].disableServiceWorker);
                     fs.writeFile(runtimeFile, data, error => {

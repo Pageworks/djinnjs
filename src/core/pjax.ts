@@ -2,7 +2,7 @@ import { hookup, message } from "../web_modules/broadcaster";
 import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { transitionManager } from "./transition-manager";
-import { djinnjsOutDir, gaId, disablePrefetching, disableServiceWorker } from "./config";
+import { djinnjsOutDir, gaId, disablePrefetching, disableServiceWorker, followRedirects } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
 import { fetchCSS } from "./fetch";
 
@@ -271,6 +271,7 @@ class Pjax {
             requestId: requestUid,
             url: url,
             currentUrl: location.href,
+            followRedirects: followRedirects,
         });
     }
 
