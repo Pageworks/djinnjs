@@ -80,7 +80,10 @@ class Pjax {
                         });
 
                         /** Tell Pjax to check if the current page is stale */
-                        message("pjax", { type: "revision-check" });
+                        message({
+                            recipient: "pjax",
+                            type: "revision-check",
+                        });
                     }
                 })
                 .catch(error => {
@@ -123,7 +126,8 @@ class Pjax {
                 if (!disablePrefetching) {
                     this.prefetchLinks();
                 }
-                message("pjax", {
+                message({
+                    recipient: "pjax",
                     type: "completed",
                 });
                 break;
@@ -137,9 +141,13 @@ class Pjax {
                 break;
             case "init":
                 /** Tell Pjax to hijack all viable links */
-                message("pjax", { type: "hijack-links" });
+                message({
+                    recipient: "pjax",
+                    type: "hijack-links",
+                });
                 /** Tell Pjax to prefetch links */
-                message("pjax", {
+                message({
+                    recipient: "pjax",
                     type: "prefetch",
                 });
                 break;
@@ -285,10 +293,13 @@ class Pjax {
             /** Tells the Pjax class to load the URL stored in this windows history.
              * In order to preserve the timeline navigation the history will use `replace` instead of `push`.
              */
-            message("pjax", {
+            message({
+                recipient: "pjax",
                 type: "load",
-                url: e.state.url,
-                history: "replace",
+                data: {
+                    url: e.state.url,
+                    history: "replace",
+                },
             });
         }
     }
@@ -330,13 +341,16 @@ class Pjax {
         const navigationUid = uuid();
         target.setAttribute("navigation-request-id", navigationUid);
         /** Tell Pjax to load the clicked elements page */
-        message("pjax", {
+        message({
+            recipient: "pjax",
             type: "load",
-            url: target.href,
-            transition: target.getAttribute("pjax-transition"),
-            transitionData: target.getAttribute("pjax-transition-data"),
-            selector: target.getAttribute("pjax-view-id"),
-            navRequestId: navigationUid,
+            data: {
+                url: target.href,
+                transition: target.getAttribute("pjax-transition"),
+                transitionData: target.getAttribute("pjax-transition-data"),
+                selector: target.getAttribute("pjax-view-id"),
+                navRequestId: navigationUid,
+            },
         });
     }
     private handleLinkClick: EventListener = this.hijackRequest.bind(this);
@@ -396,10 +410,13 @@ class Pjax {
 
                 if (incomingMain && currentMain) {
                     /** Tells the runtime class to parse the incoming HTML for any new CSS files */
-                    message("runtime", {
+                    message({
+                        recipient: "runtime",
                         type: "parse",
-                        body: incomingMain.innerHTML,
-                        requestUid: requestId,
+                        data: {
+                            body: incomingMain.innerHTML,
+                            requestUid: requestId,
+                        },
                     });
                     request.body = incomingMain.innerHTML;
                     request.title = tempDocument.title;
@@ -437,18 +454,25 @@ class Pjax {
 
             transitionManager(selector, request.body, request.transition, request.target).then(() => {
                 document.title = request.title;
-                message("pjax", {
+                message({
+                    recipient: "pjax",
                     type: "finalize-pjax",
-                    url: request.url,
-                    title: request.title,
-                    history: request.history,
+                    data: {
+                        url: request.url,
+                        title: request.title,
+                        history: request.history,
+                    },
                 });
-                message("runtime", {
+                message({
+                    recipient: "runtime",
                     type: "mount-components",
                 });
-                message("runtime", {
+                message({
+                    recipient: "runtime",
                     type: "mount-inline-scripts",
-                    selector: selector,
+                    data: {
+                        selector: selector,
+                    },
                 });
             });
         }
