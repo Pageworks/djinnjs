@@ -107,17 +107,15 @@ class Runtime {
                     this.handleWebComponents();
                     if (env.connection !== "2g" && env.connection !== "slow-2g" && !disablePjax) {
                         fetchJS("pjax").then(() => {
-                            message(
-                                "pjax",
-                                {
-                                    type: "init",
-                                },
-                                null,
-                                Infinity
-                            );
+                            message({
+                                recipient: "pjax",
+                                type: "init",
+                                maxAttempts: Infinity,
+                            });
                         });
                     }
-                    message("runtime", {
+                    message({
+                        recipient: "runtime",
                         type: "completed",
                     });
                 });
@@ -184,9 +182,12 @@ class Runtime {
         /** Fetch the requested eager CSS files */
         fetchCSS(data.eager).then(() => {
             /** Tell the Pjax class that the eager CSS files have been loaded */
-            message("pjax", {
+            message({
+                recipient: "pjax",
                 type: "css-ready",
-                requestUid: requestUid,
+                data: {
+                    requestUid: requestUid,
+                },
             });
             fetchCSS(data.lazy);
         });

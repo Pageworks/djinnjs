@@ -5,7 +5,6 @@
  *  - renamed local wwibs-worker.min.js fetch to broadcaster-worker.min.js
  *  - swapped CDN fetch with local fetch
  */
-
 /**
  * Quick and dirty unique ID generation.
  * This method does not follow RFC 4122 and does not guarantee a universally unique ID.
@@ -18,7 +17,7 @@ function uuid() {
         .join("-");
 }
 
-const VERSION = "0.1.1";
+const VERSION = "0.1.2";
 class Broadcaster {
     constructor() {
         this.worker;
@@ -39,7 +38,7 @@ class Broadcaster {
         });
     }
     async setupBroadcastWorker() {
-        let request = await fetch("/broadcaster-worker.min.js");
+        let request = await fetch("/broadcast-worker.min.js");
         let url;
         if (request.ok) {
             const response = await request.blob();
@@ -138,13 +137,13 @@ class Broadcaster {
      * Sends a message to an inbox.
      */
     message(data) {
-        var _a, _b;
+        var _a, _b, _c;
         const message = {
             recipient: data.recipient,
             type: data.type,
-            data: data.data,
-            senderId: (_a = data === null || data === void 0 ? void 0 : data.senderId) !== null && _a !== void 0 ? _a : null,
-            maxAttempts: (_b = data === null || data === void 0 ? void 0 : data.maxAttempts) !== null && _b !== void 0 ? _b : 1,
+            data: (_a = data === null || data === void 0 ? void 0 : data.data) !== null && _a !== void 0 ? _a : {},
+            senderId: (_b = data === null || data === void 0 ? void 0 : data.senderId) !== null && _b !== void 0 ? _b : null,
+            maxAttempts: (_c = data === null || data === void 0 ? void 0 : data.maxAttempts) !== null && _c !== void 0 ? _c : 1,
             messageId: uuid(),
         };
         this.postMessageToWorker(message);
@@ -194,13 +193,13 @@ class Broadcaster {
      * Send a reply message.
      */
     reply(data) {
-        var _a, _b;
+        var _a, _b, _c;
         const message = {
             replyId: data.replyId,
             type: data.type,
-            data: data.data,
-            senderId: (_a = data === null || data === void 0 ? void 0 : data.senderId) !== null && _a !== void 0 ? _a : null,
-            maxAttempts: (_b = data === null || data === void 0 ? void 0 : data.maxAttempts) !== null && _b !== void 0 ? _b : 1,
+            data: (_a = data === null || data === void 0 ? void 0 : data.data) !== null && _a !== void 0 ? _a : {},
+            senderId: (_b = data === null || data === void 0 ? void 0 : data.senderId) !== null && _b !== void 0 ? _b : null,
+            maxAttempts: (_c = data === null || data === void 0 ? void 0 : data.maxAttempts) !== null && _c !== void 0 ? _c : 1,
             messageId: uuid(),
         };
         this.postMessageToWorker(message);
@@ -209,13 +208,13 @@ class Broadcaster {
      * Send a reply to the sender and all original recipients.
      */
     replyAll(data) {
-        var _a, _b;
+        var _a, _b, _c;
         const message = {
             replyId: data.replyId,
             type: data.type,
-            data: data.data,
-            senderId: (_a = data === null || data === void 0 ? void 0 : data.senderId) !== null && _a !== void 0 ? _a : null,
-            maxAttempts: (_b = data === null || data === void 0 ? void 0 : data.maxAttempts) !== null && _b !== void 0 ? _b : 1,
+            data: (_a = data === null || data === void 0 ? void 0 : data.data) !== null && _a !== void 0 ? _a : {},
+            senderId: (_b = data === null || data === void 0 ? void 0 : data.senderId) !== null && _b !== void 0 ? _b : null,
+            maxAttempts: (_c = data === null || data === void 0 ? void 0 : data.maxAttempts) !== null && _c !== void 0 ? _c : 1,
             messageId: uuid(),
             replyAll: true,
         };
