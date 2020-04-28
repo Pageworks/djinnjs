@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.25] - 2020-04-28
+
 ### ⚠️ Breaking Changes ⚠️
 
 [WWIBS](https://github.com/Pageworks/wwibs) v0.1.1 introduced a breaking change where `message()` and `reply()` functions no longer accept several optional paramaters, instead they require an object:
@@ -351,7 +353,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.24...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.25...HEAD
+[0.0.25]: https://github.com/pageworks/djinnjs/compare/v0.0.24...v0.0.25
 [0.0.24]: https://github.com/pageworks/djinnjs/compare/v0.0.23...v0.0.24
 [0.0.23]: https://github.com/pageworks/djinnjs/compare/v0.0.22...v0.0.23
 [0.0.22]: https://github.com/pageworks/djinnjs/compare/v0.0.21...v0.0.22
