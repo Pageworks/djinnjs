@@ -1,6 +1,6 @@
 {
     "name": "djinnjs",
-    "version": "0.0.24",
+    "version": "0.0.25",
     "description": "DjinnJS is an ES Module based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
     "author": "Pageworks",
     "license": "GPL-3.0",
@@ -47,7 +47,7 @@
         "relocate": "node ./relocate.js",
         "compile": "npm run cleanup && tsc && npm run relocate",
         "prerelease": "npm run cleanup && npm run prettier && npm run eslint && tsc && npm run relocate",
-        "snowpack": "snowpack",
+        "unpack": "snowpack",
         "tsc": "tsc"
     },
     "devDependencies": {
@@ -67,7 +67,7 @@
         "semver": "^7.1.3",
         "terser": "^4.6.7",
         "update-notifier": "^4.1.0",
-        "wwibs": "0.0.9",
+        "wwibs": "^0.1.1",
         "yargs": "^15.3.1"
     },
     "snowpack": {
