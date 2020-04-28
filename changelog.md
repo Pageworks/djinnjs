@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ⚠️ Breaking Changes ⚠️
+
+[WWIBS](https://github.com/Pageworks/wwibs) v0.1.1 introduced a breaking change where `message()` and `reply()` functions no longer accept several optional paramaters, instead they require an object:
+
+**Message**
+
+```typescript
+type settings = {
+    recipient: string;
+    type: string;
+    data: {
+        [key: string]: any;
+    };
+    senderId?: string;
+    maxAttempts?: number;
+};
+```
+
+**Reply**
+
+```typescript
+type settings = {
+    replyId: string;
+    type: string;
+    data: {
+        [key: string]: any;
+    };
+    senderId?: string;
+    maxAttempts?: number;
+};
+```
+
 ## [0.0.24] - 2020-04-09
 
 ### Added
@@ -22,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ⚠️ Breaking Changes ⚠️
 
-WWIBS v0.0.9 introduced a breaking change where a new `senderId` string value can be provided allowing actors to reply/reply all. This value is provided after the `MessageData` object but before the `maxAttempts` number. Any `message()` that provided a `maxAttempts` value will need to be updated to appear as the following:
+[WWIBS](https://github.com/Pageworks/wwibs) v0.0.9 introduced a breaking change where a new `senderId` string value can be provided allowing actors to reply/reply all. This value is provided after the `MessageData` object but before the `maxAttempts` number. Any `message()` that provided a `maxAttempts` value will need to be updated to appear as the following:
 
 ```javascript
 message(
