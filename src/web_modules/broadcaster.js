@@ -38,7 +38,7 @@ class Broadcaster {
         });
     }
     async setupBroadcastWorker() {
-        let request = await fetch("/broadcast-worker.min.js");
+        let request = await fetch("/broadcaster-worker.min.js");
         let url;
         if (request.ok) {
             const response = await request.blob();
