@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   strict file name checks [#67](https://github.com/Pageworks/djinnjs/issues/67)
+-   `serviceWorker` config boolean
+-   `predictivePrefetching` config boolean
+-   `pjax` config boolean
+
+### Deprecated
+
+-   `disableServiceWorker` config value
+-   `disablePrefetching` config value
+-   `disablePjax` config value
+
 ## [0.0.27] - 2020-05-04
 
 ### Fixed

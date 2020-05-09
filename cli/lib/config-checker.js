@@ -32,10 +32,20 @@ function checkSite(site, multisite = false) {
             site.outDir = site.outDir.toLowerCase().trim();
         }
 
+        // TODO: Remove
         if (site.disableServiceWorker === undefined) {
             site.disableServiceWorker = false;
         } else if (typeof site.disableServiceWorker !== "boolean") {
             reject(`Invalid DjinnJS configuration. The disableServiceWorker value must be a boolean.`);
+        } else {
+            console.warn("disableServiceWorker value has been deprecated use serviceWorker instead");
+            site.serviceWorker = site.disableServiceWorker ? false : true;
+        }
+
+        if (site.serviceWorker === undefined) {
+            site.serviceWorker = true;
+        } else if (typeof site.serviceWorker !== "boolean") {
+            reject(`Invalid DjinnJS configuration. The serviceWorker value must be a boolean.`);
         }
 
         if (site.gtagId === undefined) {
@@ -54,6 +64,15 @@ function checkSite(site, multisite = false) {
             site.disablePjax = false;
         } else if (typeof site.disablePjax !== "boolean") {
             reject(`Invalid DjinnJS configuration. The disablePjax value must be a boolean.`);
+        } else {
+            console.warn("disablePjax value has been deprecated use pjax instead");
+            site.pjax = site.disablePjax ? false : true;
+        }
+
+        if (site.pjax === undefined) {
+            site.pjax = true;
+        } else if (typeof site.pjax !== "boolean") {
+            reject(`Invalid DjinnJS configuration. The pjax value must be a boolean.`);
         }
 
         if (site.followRedirects === undefined) {
@@ -62,10 +81,20 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The followRedirects value must be a boolean.`);
         }
 
+        // TODO: Remove
         if (site.disablePrefetching === undefined) {
             site.disablePrefetching = false;
         } else if (typeof site.disablePrefetching !== "boolean") {
             reject(`Invalid DjinnJS configuration. The disablePrefetching value must be a boolean.`);
+        } else {
+            console.warn("disablePrefetching value has been deprecated use prefetch instead");
+            site.predictivePrefetching = site.disablePrefetching ? false : true;
+        }
+
+        if (site.predictivePrefetching === undefined) {
+            site.predictivePrefetching = true;
+        } else if (typeof site.predictivePrefetching !== "boolean") {
+            reject(`Invalid DjinnJS configuration. The prefetch value must be a boolean.`);
         }
 
         if (site.usePercentage === undefined) {

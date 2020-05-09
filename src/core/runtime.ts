@@ -1,7 +1,7 @@
 import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
-import { djinnjsOutDir, disablePjax, usePercentage } from "./config";
+import { djinnjsOutDir, usePjax, usePercentage } from "./config";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -105,7 +105,7 @@ class Runtime {
             case "lazy":
                 fetchCSS(response.files).then(() => {
                     this.handleWebComponents();
-                    if (env.connection !== "2g" && env.connection !== "slow-2g" && !disablePjax) {
+                    if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
                         fetchJS("pjax").then(() => {
                             message({
                                 recipient: "pjax",

@@ -41,15 +41,20 @@ function relocate(files, publicDir, relativeOutDir) {
         const outDir = path.resolve(cwd, publicDir, relativeOutDir);
         for (let i = 0; i < files.length; i++) {
             const filename = files[i].replace(/.*[\/\\]/g, "");
-            fs.copyFile(files[i], `${outDir}/${filename}`, error => {
-                if (error) {
-                    reject(error);
-                }
-                relocated++;
-                if (relocated === files.length) {
-                    resolve();
-                }
-            });
+            if (!fs.existsSync(`${outDir}/${filename}`)) {
+                fs.copyFile(files[i], `${outDir}/${filename}`, error => {
+                    if (error) {
+                        reject(error);
+                    }
+                    relocated++;
+                    if (relocated === files.length) {
+                        resolve();
+                    }
+                });
+            } else {
+                reject(`Two files exist with the same name: ${filename}`);
+                break;
+            }
         }
     });
 }
