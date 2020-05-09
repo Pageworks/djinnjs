@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.27] - 2020-05-04
+
+### Fixed
+
+-   broken `broadcaster-worker.min.js` fetch URL
+
 ## [0.0.26] - 2020-04-28
 
 ### ⚠️ Breaking Changes ⚠️
@@ -353,7 +359,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.26...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.27...HEAD
+[0.0.27]: https://github.com/pageworks/djinnjs/compare/v0.0.26...v0.0.27
 [0.0.26]: https://github.com/pageworks/djinnjs/compare/v0.0.24...v0.0.26
 [0.0.24]: https://github.com/pageworks/djinnjs/compare/v0.0.23...v0.0.24
 [0.0.23]: https://github.com/pageworks/djinnjs/compare/v0.0.22...v0.0.23
