@@ -237,7 +237,7 @@ class DjinnJS {
             for (let i = 0; i < this.sites.length; i++) {
                 const publicPath = path.resolve(cwd, this.sites[i].publicDir);
                 const assetPath = path.resolve(publicPath, this.sites[i].outDir);
-                if (this.sites[i].disableServiceWorker) {
+                if (!this.sites[i].serviceWorker) {
                     fs.unlink(`${assetPath}/service-worker.mjs`, error => {
                         if (error) {
                             reject(error);
@@ -308,11 +308,11 @@ class DjinnJS {
                     data = data.replace("REPLACE_WITH_ENVIRONMENT", this.sites[i].env);
                     data = data.replace("REPLACE_WITH_GTAG_ID", this.sites[i].gtagId);
                     data = data.replace("REPLACE_WITH_DEFAULT_TRANSITION", this.sites[i].defaultTransition);
-                    data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].disablePjax);
-                    data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].disablePrefetching);
+                    data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].pjax);
+                    data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].predictivePrefetching);
                     data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.sites[i].followRedirects);
                     data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.sites[i].usePercentage);
-                    data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.sites[i].disableServiceWorker);
+                    data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.sites[i].serviceWorker);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -413,11 +413,14 @@ class DjinnJS {
                 publicDir: this.config.publicDir,
                 outDir: this.config.outDir,
                 disableServiceWorker: this.config.disableServiceWorker,
+                serviceWorker: this.config.serviceWorker,
                 env: this.config.env,
                 gtagId: this.config.gtagId,
                 defaultTransition: this.config.defaultTransition,
                 disablePjax: this.config.disablePjax,
                 disablePrefetching: this.config.disablePrefetching,
+                predictivePrefetching: this.config.predictivePrefetching,
+                pjax: this.config.pjax,
                 usePercentage: this.config.usePercentage,
             };
             configChecker(site)
