@@ -71,7 +71,7 @@ class DjinnJS {
     async main() {
         const spinner = ora("DjinnJS").start();
         try {
-            /** TODO: Add chalk and spinner packages */
+            /** TODO: Add chalk */
             await this.preflightCheck();
             await this.createTempDirectory();
             await this.validateSettings();

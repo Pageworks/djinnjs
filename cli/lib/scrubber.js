@@ -56,11 +56,8 @@ function scrubFiles(files, handle) {
                     });
                 });
             } else {
-                console.log(`\n${filename} was loaded twice, double check you don't have 2 files with the same name.`);
-                scrubbed++;
-                if (scrubbed === files.length) {
-                    resolve();
-                }
+                reject(`Two files exist with the same name: ${filename}`);
+                break;
             }
         }
     });
