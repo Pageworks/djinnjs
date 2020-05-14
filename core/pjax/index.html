@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Dev Docs</title>
+
+        <link href="/normalize.css" rel="stylesheet" />
+        <link href="/reset.css" rel="stylesheet" />
+        <link href="/brixi.css" rel="stylesheet" />
+        <link href="/base.css" rel="stylesheet" />
+
+        <script defer src="/prism.js"></script>
+        <link href="/prism.css" rel="stylesheet" />
+
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+        <script defer src="/nav.js"></script>
+    </head>
+    <body>
+        <main>
+            <aside><nav><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/installation" data-slug="/installation"><span>installation</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/importing-resources" data-slug="/core/importing-resources"><span>importing resources</span></a><a href="/core/lazy-loading" data-slug="/core/lazy-loading"><span>lazy loading</span></a><a href="/core/pjax" data-slug="/core/pjax"><span>pjax</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/requesting-css" data-slug="/core/requesting-css"><span>requesting css</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/demo-project" data-slug="/guides/demo-project"><span>demo project</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><header>loading states</header><a href="/loading-states/hard" data-slug="/loading-states/hard"><span>hard</span></a><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a><header>messaging system</header><a href="/messaging-system/actor-model" data-slug="/messaging-system/actor-model"><span>actor model</span></a><a href="/messaging-system/actors" data-slug="/messaging-system/actors"><span>actors</span></a><a href="/messaging-system/broadcaster" data-slug="/messaging-system/broadcaster"><span>broadcaster</span></a><a href="/messaging-system/hooks" data-slug="/messaging-system/hooks"><span>hooks</span></a><a href="/messaging-system/sending-messages" data-slug="/messaging-system/sending-messages"><span>sending messages</span></a><header>page transitions</header><a href="/page-transitions/custom" data-slug="/page-transitions/custom"><span>custom</span></a><a href="/page-transitions/default" data-slug="/page-transitions/default"><span>default</span></a></nav></aside>
+            <article><h1 id="pjax">Pjax</h1>
+<p>Pjax is a term used when referring to the hijacking of traditional page navigation within a project where only one HTTP request used to load the initial page. The future page requests are loaded using AJAX and the content of the page is dynamically swapped.</p>
+<p>In DjinnJS Pjax is built into the core system as part of the Service Worker and offline-first content strategy. Pages are prefetched and stored in the offline cache when the user has a 4g connection and they're not using data-saver mode.</p>
+<p>Pjax also provides the ability to perform page transitions. By default, the fade page transition is used.</p>
+<p>Pjax will hijack the <code>click</code> event of all HTML Anchor Element within the DOM.</p>
+<h2 id="preventingpjax">Preventing Pjax</h2>
+<p>When Pjax shouldn't hijack a link use one of the following methods:</p>
+<ol>
+<li>Give the element a <code>no-pjax</code> class</li>
+<li>Give the element a <code>target</code> attribute</li>
+<li>Give the element a <code>no-pjax</code> attribute</li>
+</ol>
+<pre><code class="html language-html">&lt;a href="https://example.com/" target="_blank" no-pjax class="no-pjax"&gt;Click Here&lt;/a&gt;
+</code></pre>
+<h2 id="dynamictransitions">Dynamic Transitions</h2>
+<p>The element can control what page transition is used via a <code>pjax-transition</code> attribute. By default the configured <code>defaultTransition</code> is used for all page transitions, developers can add custom page transitions via the config file, <a href="/configuration#transitions">see configuration</a> for more information.</p>
+<p>The element that triggered the navigation can also control the animation using HTML attributes. For example the fade transition can prevent scrolling using the <code>scroll="none"</code> attribute.</p>
+<pre><code class="html language-html">&lt;a href="https://example.com/" pjax-transition="fade" scroll="none"&gt;Click Here&lt;/a&gt;
+</code></pre>
+<h2 id="hotswappingviews">Hotswapping Views</h2>
+<p>By default Pjax swaps the documents <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/main">main element</a>. Sometimes a view within the <code>&lt;main&gt;</code> needs to be swapped instead, when this happens tag the view with the <code>pjax-id</code> attribute and the anchor element with a <code>pjax-view-id</code> attribute. The links <code>pjax-view-id</code> value will be used to swap out the innerHTML for the elements with matching <code>pjax-id</code> attributes.</p>
+<pre><code class="html language-html">&lt;div pjax-id="blog-articles"&gt;
+    ...snip...
+&lt;/div&gt;
+&lt;a href="https://example.com/blog?category=example" pjax-transition="fade" scroll="none" pjax-view-id="blog-articles"&gt;Example Category&lt;/a&gt;
+</code></pre>
+<h2 id="manualnavigation">Manual Navigation</h2>
+<p>Pjax can be told to change pages via <a href="/messaging">Messaging System</a>.</p>
+<pre><code class="javascript language-javascript">import { broadcaster } from 'djinnjs/broadcaster';
+
+broadcaster.message('pjax', {
+    type: 'load',
+    url: 'https://example.com/'
+});
+</code></pre>
+<h2 id="inlinescriptelements">Inline Script Elements</h2>
+<p>When Pjax loads a page any <code>&lt;script&gt;</code> element within the new page will be reloacted and remounted to the documents head. By default scripts will be remounted everytime they appear on a new page. This functionality is ideal when using UI Frameworks such as <a href="https://preactjs.com/">Preact</a> alongside DjinnJS, however, sometimes scripts should only be loaded once. To prevent a script from being removed and remounted add the <code>pjax-prevent-remount</code> attribute to the script element. </p></article>
+        </main>
+    </body>
+</html>
