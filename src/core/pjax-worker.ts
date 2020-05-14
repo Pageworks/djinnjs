@@ -55,7 +55,7 @@ class PjaxWorker {
             method: "GET",
             credentials: "include",
             headers: new Headers({
-                "X-Requested-With": "XMLHttpReqeust",
+                "X-Requested-With": "XMLHttpRequest",
                 "X-Pjax": "true",
             }),
         })
@@ -103,7 +103,7 @@ class PjaxWorker {
                 method: "GET",
                 credentials: "include",
                 headers: new Headers({
-                    "X-Requested-With": "XMLHttpReqeust",
+                    "X-Requested-With": "XMLHttpRequest",
                     "X-Pjax": "true",
                 }),
             });

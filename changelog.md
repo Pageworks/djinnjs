@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `pjax` config boolean
 -   developer documentation [#68](https://github.com/Pageworks/djinnjs/issues/68)
 
+### Fixed
+
+-   fixed `XMLHttpRequest` header bug
+
 ### Deprecated
 
 -   `disableServiceWorker` config value
