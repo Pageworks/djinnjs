@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.28] - 2020-05-14
+
+### Added
+
+-   strict file name checks [#67](https://github.com/Pageworks/djinnjs/issues/67)
+-   `serviceWorker` config boolean
+-   `predictivePrefetching` config boolean
+-   `pjax` config boolean
+-   developer documentation [#68](https://github.com/Pageworks/djinnjs/issues/68)
+
+### Fixed
+
+-   fixed `XMLHttpRequest` header bug
+
+### Deprecated
+
+-   `disableServiceWorker` config value
+-   `disablePrefetching` config value
+-   `disablePjax` config value
+
 ## [0.0.27] - 2020-05-04
 
 ### Fixed
@@ -359,7 +379,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.27...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.28...HEAD
+[0.0.28]: https://github.com/pageworks/djinnjs/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/pageworks/djinnjs/compare/v0.0.26...v0.0.27
 [0.0.26]: https://github.com/pageworks/djinnjs/compare/v0.0.24...v0.0.26
 [0.0.24]: https://github.com/pageworks/djinnjs/compare/v0.0.23...v0.0.24

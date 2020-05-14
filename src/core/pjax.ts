@@ -2,7 +2,7 @@ import { hookup, message } from "../web_modules/broadcaster";
 import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { transitionManager } from "./transition-manager";
-import { djinnjsOutDir, gaId, disablePrefetching, disableServiceWorker, followRedirects } from "./config";
+import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
 import { fetchCSS } from "./fetch";
 
@@ -64,7 +64,7 @@ class Pjax {
         this.worker.onmessage = this.handleWorkerMessage.bind(this);
 
         /** Attempt to register a service worker */
-        if ("serviceWorker" in navigator && !disableServiceWorker) {
+        if ("serviceWorker" in navigator && useServiceWorker) {
             navigator.serviceWorker
                 .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
                 .then(() => {
@@ -123,7 +123,7 @@ class Pjax {
                 this.collectLinks();
                 this.checkPageRevision();
                 sendPageView(window.location.pathname, gaId);
-                if (!disablePrefetching) {
+                if (doPrefetching) {
                     this.prefetchLinks();
                 }
                 message({
@@ -135,7 +135,7 @@ class Pjax {
                 this.swapPjaxContent(data.requestUid);
                 break;
             case "prefetch":
-                if (!disablePrefetching) {
+                if (doPrefetching) {
                     this.prefetchLinks();
                 }
                 break;
