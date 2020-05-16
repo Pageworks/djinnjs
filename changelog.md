@@ -10,13 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   `uid()` export to the `Env` class
--   `tickets` string array value to the Pjax inboxes `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
--   `pageJumpOffset` config variable, defaults to `null`
+-   `tickets` string array value to the Pjax `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
+-   `pageJumpOffset` config variable, defaults to `null` [#42](https://github.com/Pageworks/djinnjs/issues/42)
+-   `page-jump-offset` attribute allows developers to set dynamic offsets
+-   `customPageJumpOffset` number value to the Pjax `load` message type
 
 ### Fixed
 
 -   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
--   page jumps scroll the selected element into the center of the screen [#42](https://github.com/Pageworks/djinnjs/issues/42)
+-   page jumps scroll the selected element into the center of the screen
 
 ### Removes
 

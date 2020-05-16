@@ -20,6 +20,7 @@ interface NavigaitonRequest {
     target: HTMLElement | null;
     targetSelector: string;
     tickets: string[];
+    customPageJumpOffset: number;
 }
 
 class Pjax {
@@ -111,12 +112,12 @@ class Pjax {
                 this.collectLinks();
                 break;
             case "load":
-                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId, data?.tickets);
+                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId, data?.tickets, data?.customPageJumpOffset);
                 break;
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
                 if (new RegExp("#").test(data.url)) {
-                    this.scrollToHash(data.url);
+                    this.scrollToHash(data.url, data.customPageJumpOffset);
                 }
                 this.collectLinks();
                 this.checkPageRevision();
@@ -230,22 +231,33 @@ class Pjax {
         }
     }
 
-    private scrollToHash(url: string): void {
+    private scrollToHash(url: string, customPageJumpOffset: number): void {
         const hash = url.match(/\#.*/)[0];
         const element = document.body.querySelector(hash);
+
         if (!element) {
             return;
         }
-        if (pageJumpOffset === null) {
+
+        if (pageJumpOffset === null && customPageJumpOffset === null) {
             element.scrollIntoView({
                 behavior: "auto",
                 block: "center",
             });
-        } else {
-            element.scrollIntoView({
+            return;
+        }
+
+        element.scrollIntoView({
+            behavior: "auto",
+            block: "start",
+        });
+        if (customPageJumpOffset !== null) {
+            window.scrollBy({
                 behavior: "auto",
-                block: "start",
+                top: customPageJumpOffset,
+                left: 0,
             });
+        } else {
             window.scrollBy({
                 behavior: "auto",
                 // @ts-ignore
@@ -257,11 +269,6 @@ class Pjax {
 
     /**
      * Creates and sends a navigation request to the Pjax web worker and queues navigation request.
-     * @param url - the URL of the requested page
-     * @param transition - the name of the desired transition effect
-     * @param transitionData - optional data that could modify the transition
-     * @param history - how Pjax should handle the windows history manipulation
-     * @param selector - the `pjax-id` attribute value
      */
     private navigate(
         url: string,
@@ -270,7 +277,8 @@ class Pjax {
         history: "push" | "replace" = "push",
         selector: string = null,
         navRequestId: string = null,
-        tickets: Array<string> = []
+        tickets: Array<string> = [],
+        customPageJumpOffset: number = null
     ): void {
         env.startPageTransition();
         const requestUid = navRequestId || uid();
@@ -284,6 +292,7 @@ class Pjax {
             target: document.body.querySelector(`[navigation-request-id="${requestUid}"]`) || null,
             targetSelector: selector,
             tickets: tickets,
+            customPageJumpOffset: customPageJumpOffset,
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -345,13 +354,13 @@ class Pjax {
 
     /**
      * Called when the `click` event fires on a Pjax tracked anchor element.
-     * @param e - click `Event`
      */
-    private hijackRequest(e: Event): void {
+    private handleLinkClick: EventListener = (e: Event) => {
         e.preventDefault();
         const target = e.currentTarget as HTMLAnchorElement;
         const navigationUid = uid();
         target.setAttribute("navigation-request-id", navigationUid);
+        const customPageJumpOffset = target.getAttribute("page-jump-offset");
         /** Tell Pjax to load the clicked elements page */
         message({
             recipient: "pjax",
@@ -362,10 +371,10 @@ class Pjax {
                 transitionData: target.getAttribute("pjax-transition-data"),
                 selector: target.getAttribute("pjax-view-id"),
                 navRequestId: navigationUid,
+                customPageJumpOffset: customPageJumpOffset ? parseInt(customPageJumpOffset) : null,
             },
         });
-    }
-    private handleLinkClick: EventListener = this.hijackRequest.bind(this);
+    };
 
     /**
      * Collect all anchor elements with a `href` attribute and add a click event listener.
@@ -481,6 +490,7 @@ class Pjax {
                     url: request.url,
                     title: tempDocument.title,
                     history: request.history,
+                    customPageJumpOffset: request.customPageJumpOffset,
                 },
             });
             message({
