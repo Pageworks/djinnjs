@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
+-   page jumps scroll the selected element into the center of the screen [#42](https://github.com/Pageworks/djinnjs/issues/42)
 
 ### Removes
 

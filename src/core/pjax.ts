@@ -234,7 +234,10 @@ class Pjax {
         const hash = url.match(/\#.*/)[0];
         const element = document.body.querySelector(hash);
         if (element) {
-            element.scrollIntoView();
+            element.scrollIntoView({
+                behavior: "auto",
+                block: "center",
+            });
             return;
         }
     }
