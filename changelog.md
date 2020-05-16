@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `uid()` export to the `Env` class
+-   `tickets` string array value to the Pjax inboxes `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
+
 ### Fixed
 
 -   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
@@ -17,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   transition config variables
 -   support for custom transitions
 -   transition documentation
+-   removed `debug` export from the `Env` class
+    -   all console logs are stipped when building for production
+-   removed `uuid()` export from the `Env` class
+    -   function was generating UIDs not UUIDs
 
 ## [0.0.28] - 2020-05-14
 

@@ -1,5 +1,5 @@
 import { hookup, message } from "../web_modules/broadcaster";
-import { debug, env, uuid } from "./env";
+import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
@@ -19,6 +19,7 @@ interface NavigaitonRequest {
     transitionData: string | null;
     target: HTMLElement | null;
     targetSelector: string;
+    tickets: string[];
 }
 
 class Pjax {
@@ -86,9 +87,7 @@ class Pjax {
                     }
                 })
                 .catch(error => {
-                    if (debug) {
-                        console.error("Registration failed with " + error);
-                    }
+                    console.error("Registration failed with " + error);
                 });
         }
         /** Add event listeners */
@@ -112,7 +111,7 @@ class Pjax {
                 this.collectLinks();
                 break;
             case "load":
-                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId);
+                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId, data?.tickets);
                 break;
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
@@ -201,9 +200,7 @@ class Pjax {
                 }
                 break;
             default:
-                if (debug) {
-                    console.error(`Undefined Service Worker response message type: ${type}`);
-                }
+                console.error(`Undefined Service Worker response message type: ${type}`);
                 break;
         }
     }
@@ -228,9 +225,7 @@ class Pjax {
                 this.handlePjaxResponse(e.data.requestId, e.data.status, e.data.url, e.data?.body, e.data?.error);
                 break;
             default:
-                if (debug) {
-                    console.error(`Undefined Pjax Worker response message type: ${type}`);
-                }
+                console.error(`Undefined Pjax Worker response message type: ${type}`);
                 break;
         }
     }
@@ -258,10 +253,11 @@ class Pjax {
         transitionData: string = null,
         history: "push" | "replace" = "push",
         selector: string = null,
-        navRequestId: string = null
+        navRequestId: string = null,
+        tickets: Array<string> = []
     ): void {
         env.startPageTransition();
-        const requestUid = navRequestId || uuid();
+        const requestUid = navRequestId || uid();
         this.state.activeRequestUid = requestUid;
         const navigationRequest: NavigaitonRequest = {
             url: url,
@@ -271,6 +267,7 @@ class Pjax {
             transitionData: transitionData,
             target: document.body.querySelector(`[navigation-request-id="${requestUid}"]`) || null,
             targetSelector: selector,
+            tickets: tickets,
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -337,7 +334,7 @@ class Pjax {
     private hijackRequest(e: Event): void {
         e.preventDefault();
         const target = e.currentTarget as HTMLAnchorElement;
-        const navigationUid = uuid();
+        const navigationUid = uid();
         target.setAttribute("navigation-request-id", navigationUid);
         /** Tell Pjax to load the clicked elements page */
         message({
@@ -456,6 +453,10 @@ class Pjax {
                 left: 0,
                 behavior: "auto",
             });
+
+            for (let i = 0; i < request.tickets.length; i++) {
+                env.stopLoading(request.tickets[i]);
+            }
 
             message({
                 recipient: "pjax",

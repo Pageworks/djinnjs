@@ -1,30 +1,23 @@
-import { environment } from "./config";
-
 type DOMState = "soft-loading" | "hard-loading" | "idling" | "page-loading" | "page-loading-complete";
 type NetworkType = "4g" | "3g" | "2g" | "slow-2g";
 
 class Env {
-    public isDebug: boolean;
     public connection: NetworkType;
     public cpu: number;
     public memory: number | null;
-    public isProduciton: boolean;
     public domState: DOMState;
     public dataSaver: boolean;
 
-    private _tickets: Array<string>;
+    private tickets: Array<string>;
 
     constructor() {
         this.memory = 4;
         this.cpu = window.navigator.hardwareConcurrency;
         this.connection = "4g";
-        // @ts-ignore
-        this.isProduciton = environment === "production";
-        this.isDebug = !this.isProduciton;
         this.domState = "hard-loading";
         this.dataSaver = false;
 
-        this._tickets = [];
+        this.tickets = [];
 
         this.init();
     }
@@ -43,16 +36,6 @@ class Env {
             // @ts-ignore
             this.memory = window.navigator.deviceMemory;
         }
-
-        if (document.documentElement.getAttribute("debug")) {
-            this.isDebug = true;
-        }
-
-        if (window.location.search) {
-            if (new URL(window.location.href).searchParams.get("debug")) {
-                this.isDebug = true;
-            }
-        }
     }
 
     private handleNetworkChange: EventListener = () => {
@@ -65,19 +48,19 @@ class Env {
      * @param ticket - the `string` the was provided by the `startLoading()` method.
      */
     public stopLoading(ticket: string): void {
-        if ((!ticket && this.isDebug) || (typeof ticket !== "string" && this.isDebug)) {
+        if (!ticket || typeof ticket !== "string") {
             console.error(`A ticket with the typeof 'string' is required to end the loading state.`);
             return;
         }
 
-        for (let i = 0; i < this._tickets.length; i++) {
-            if (this._tickets[i] === ticket) {
-                this._tickets.splice(i, 1);
+        for (let i = 0; i < this.tickets.length; i++) {
+            if (this.tickets[i] === ticket) {
+                this.tickets.splice(i, 1);
                 break;
             }
         }
 
-        if (this._tickets.length === 0 && this.domState !== "hard-loading") {
+        if (this.tickets.length === 0 && this.domState === "soft-loading") {
             this.domState = "idling";
             document.documentElement.setAttribute("state", this.domState);
         }
@@ -92,8 +75,8 @@ class Env {
             this.domState = "soft-loading";
             document.documentElement.setAttribute("state", this.domState);
         }
-        const ticket = this.uuid();
-        this._tickets.push(ticket);
+        const ticket = this.uid();
+        this.tickets.push(ticket);
         return ticket;
     }
 
@@ -106,7 +89,7 @@ class Env {
         this.domState = "page-loading-complete";
         document.documentElement.setAttribute("state", this.domState);
         setTimeout(() => {
-            if (this._tickets.length) {
+            if (this.tickets.length) {
                 this.domState = "soft-loading";
                 document.documentElement.setAttribute("state", this.domState);
             } else {
@@ -121,7 +104,7 @@ class Env {
      * This method does not follow RFC 4122 and does not guarantee a universally unique ID.
      * @see https://tools.ietf.org/html/rfc4122
      */
-    public uuid(): string {
+    public uid(): string {
         return new Array(4)
             .fill(0)
             .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
@@ -140,6 +123,5 @@ class Env {
     }
 }
 export const env: Env = new Env();
-export const debug: boolean = env.isDebug;
-export const uuid: Function = env.uuid;
+export const uid: Function = env.uid;
 export const dataSaver: boolean = env.dataSaver;

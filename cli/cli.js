@@ -305,7 +305,6 @@ class DjinnJS {
                     }
                     let data = buffer.toString();
                     data = data.replace("REPLACE_WITH_OUTPUT_DIR_NAME", this.sites[i].outDir);
-                    data = data.replace("REPLACE_WITH_ENVIRONMENT", this.sites[i].env);
                     data = data.replace("REPLACE_WITH_GTAG_ID", this.sites[i].gtagId);
                     data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].pjax);
                     data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].predictivePrefetching);
