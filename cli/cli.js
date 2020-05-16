@@ -307,7 +307,6 @@ class DjinnJS {
                     data = data.replace("REPLACE_WITH_OUTPUT_DIR_NAME", this.sites[i].outDir);
                     data = data.replace("REPLACE_WITH_ENVIRONMENT", this.sites[i].env);
                     data = data.replace("REPLACE_WITH_GTAG_ID", this.sites[i].gtagId);
-                    data = data.replace("REPLACE_WITH_DEFAULT_TRANSITION", this.sites[i].defaultTransition);
                     data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.sites[i].pjax);
                     data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.sites[i].predictivePrefetching);
                     data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.sites[i].followRedirects);
@@ -416,7 +415,6 @@ class DjinnJS {
                 serviceWorker: this.config.serviceWorker,
                 env: this.config.env,
                 gtagId: this.config.gtagId,
-                defaultTransition: this.config.defaultTransition,
                 disablePjax: this.config.disablePjax,
                 disablePrefetching: this.config.disablePrefetching,
                 predictivePrefetching: this.config.predictivePrefetching,

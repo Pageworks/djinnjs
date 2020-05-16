@@ -72,7 +72,8 @@ class PjaxWorker {
      * @param requestId - the request ID
      */
     private async pjax(url: string, requestId: string, currentUrl: string, followRedirects: boolean) {
-        if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === false) {
+        // Handle external links
+        if (new RegExp(self.location.origin).test(url) === false) {
             // @ts-ignore
             self.postMessage({
                 type: "pjax",
@@ -83,6 +84,7 @@ class PjaxWorker {
             return;
         }
 
+        // Handle page jumps
         if (new RegExp(/\#/g).test(url)) {
             const cleanUrl = url.replace(/\#.*/g, "");
             const cleanCurrentUrl = currentUrl.replace(/\#.*/g, "");
@@ -107,7 +109,7 @@ class PjaxWorker {
                     "X-Pjax": "true",
                 }),
             });
-            if (request.ok && request.headers.get("Content-Type") && request.headers.get("Content-Type").match(/(text\/html)/gi)) {
+            if (request.ok && request.headers?.get("Content-Type")?.match(/(text\/html)/gi)) {
                 if (request.redirected && !followRedirects) {
                     // @ts-ignore
                     self.postMessage({

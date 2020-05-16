@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
+
+### Removes
+
+-   transition manager
+-   transition config variables
+-   support for custom transitions
+-   transition documentation
+
 ## [0.0.28] - 2020-05-14
 
 ### Added

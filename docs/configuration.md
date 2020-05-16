@@ -32,27 +32,20 @@ Below is a config example displaying every configurable option.
 
 ```javascript
 module.exports = {
-    src: './src',
-    publicDir: './public',
-    outDir: 'assets',
+    src: "./src",
+    publicDir: "./public",
+    outDir: "assets",
     noCachePattern: /(\.json)$|(cachebust\.js)/gi,
-    cachebustURL: '/cachebust.json',
-    disableServiceWorker: false,
+    cachebustURL: "/cachebust.json",
+    serviceWorker: true,
     silent: true,
-    env: 'production',
-	gtagId: '',
-    defaultTransition: 'fade',
-    disablePrefetching: false,
+    env: "production",
+    gtagId: "",
+    pjax: true,
+    predictivePrefetching: true,
     followRedirects: true,
-    disablePjax: false,
     usePercentage: false,
-    transitions: [
-        {
-            handle: '',
-            file: '',
-        }
-    ]
-}
+};
 ```
 
 #### src
@@ -97,11 +90,11 @@ A URL pathname string. This is the location of the cache bust file used to cache
 
 `contentCacheDuration` is the number of days the offline content cache will be used before the Service Worker clears the entire content cache.
 
-#### disableServiceWorker
+#### serviceWorker
 
-Default: `false`
+Default: `true`
 
-A boolean. When disabled the Service Worker will not be placed in the public directory. The Service Worker is required for the offline-first content strategy.
+A boolean. When `false` the Service Worker will not be placed in the public directory.
 
 #### silent
 
@@ -119,17 +112,11 @@ A string. This value is used to determine if the JavaScript should be minified a
 
 A string. This is the ID used for Googles [gtag.js](https://developers.google.com/analytics/devguides/collection/gtagjs).
 
-#### defaultTransition
+#### predictivePrefetching
 
-Default: `"fade"`
+Default: `true`
 
-A transition handle string. This value is used to determine what the default page transition effect will be for the site. [Click here](/transitions) for more information about page transitions.
-
-#### disablePrefetching
-
-Default: `false`
-
-A boolean. When set to `true` Pjax will not prefetch and cache links.
+A boolean. When set to `true` Pjax will prefetch and cache links based on the users device metrics & active connection.
 
 #### followRedirects
 
@@ -137,18 +124,14 @@ Default: `true`
 
 A boolean. When set to `false` Pjax will not follow redirects and will resort to native browser navigation.
 
-#### disablePjax
+#### pjax
 
-Default: `false`
+Default: `true`
 
-A boolean. When set to `true` Pjax will not load.
+A boolean. When set to `false` Pjax will not load.
 
 #### usePercentage
 
 Default: `false`
 
 A boolean. This value is used to determine if the `<file-loading-value>` element should be injected with the X/Y format or the X% format.
-
-#### transitions
-
-An array of transitions. See [this page](/transitions) for more information about creating custom page transitions.

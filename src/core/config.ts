@@ -1,7 +1,6 @@
 export const djinnjsOutDir = "REPLACE_WITH_OUTPUT_DIR_NAME";
 export const gaId = "REPLACE_WITH_GTAG_ID";
 export const environment = "REPLACE_WITH_ENVIRONMENT";
-export const defaultTransition = "REPLACE_WITH_DEFAULT_TRANSITION";
 export const usePjax = "REPLACE_WITH_PJAX_STATUS";
 export const doPrefetching = "REPLACE_WITH_PREFETCH_STATUS";
 export const followRedirects = "REPLACE_WITH_FOLLOW_REDIRECT_STATUS";

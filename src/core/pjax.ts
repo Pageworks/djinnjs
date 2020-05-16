@@ -1,7 +1,6 @@
 import { hookup, message } from "../web_modules/broadcaster";
 import { debug, env, uuid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
-import { transitionManager } from "./transition-manager";
 import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
 import { fetchCSS } from "./fetch";
@@ -389,41 +388,16 @@ class Pjax {
             } else if (status === "hash-change") {
                 location.hash = url.match(/\#.*/g)[0].replace("#", "");
             } else if (status === "ok") {
-                const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("pjax-temp-document");
-                tempDocument.documentElement.innerHTML = body;
-
-                let selector;
-                let currentMain;
-                if (request.targetSelector !== null) {
-                    selector = `[pjax-id="${request.targetSelector}"]`;
-                    currentMain = document.body.querySelector(selector);
-                } else {
-                    selector = "main";
-                    currentMain = document.body.querySelector(selector);
-                    const mainId = currentMain.getAttribute("pjax-id");
-                    if (mainId) {
-                        selector = `[pjax-id="${mainId}"]`;
-                    }
-                }
-
-                const incomingMain = tempDocument.querySelector(selector);
-
-                if (incomingMain && currentMain) {
-                    /** Tells the runtime class to parse the incoming HTML for any new CSS files */
-                    message({
-                        recipient: "runtime",
-                        type: "parse",
-                        data: {
-                            body: incomingMain.innerHTML,
-                            requestUid: requestId,
-                        },
-                    });
-                    request.body = incomingMain.innerHTML;
-                    request.title = tempDocument.title;
-                } else {
-                    console.error("Failed to find matching elements.");
-                    window.location.href = url;
-                }
+                /** Tells the runtime class to parse the incoming HTML for any new CSS files */
+                message({
+                    recipient: "runtime",
+                    type: "parse",
+                    data: {
+                        body: body,
+                        requestUid: requestId,
+                    },
+                });
+                request.body = body;
             } else {
                 console.error(`Failed to fetch page: ${url}. Server responded with: ${error}`);
                 window.location.href = url;
@@ -443,38 +417,68 @@ class Pjax {
     private swapPjaxContent(requestUid: string) {
         const request = this.getNavigaitonRequest(requestUid);
         if (request.requestUid === this.state.activeRequestUid) {
-            env.endPageTransition();
-
             let selector;
+            let currentMain: HTMLElement;
             if (request.targetSelector !== null) {
                 selector = `[pjax-id="${request.targetSelector}"]`;
+                currentMain = document.body.querySelector(selector);
             } else {
                 selector = "main";
+                currentMain = document.body.querySelector(selector);
+                const mainId = currentMain.getAttribute("pjax-id");
+                if (mainId) {
+                    selector = `[pjax-id="${mainId}"]`;
+                }
             }
 
-            transitionManager(selector, request.body, request.transition, request.target).then(() => {
-                document.title = request.title;
-                message({
-                    recipient: "pjax",
-                    type: "finalize-pjax",
-                    data: {
-                        url: request.url,
-                        title: request.title,
-                        history: request.history,
-                    },
-                });
-                message({
-                    recipient: "runtime",
-                    type: "mount-components",
-                });
-                message({
-                    recipient: "runtime",
-                    type: "mount-inline-scripts",
-                    data: {
-                        selector: selector,
-                    },
-                });
+            if (!currentMain) {
+                console.error(`${location.href} is missing selector ${selector}`);
+                window.location.href = request.url;
+                return;
+            }
+
+            currentMain.innerHTML = "";
+            const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("pjax-temp-document");
+            tempDocument.documentElement.innerHTML = request.body;
+            const incomingMain = tempDocument.querySelector(selector) as HTMLElement;
+
+            if (!incomingMain) {
+                console.error(`New page is missing selector ${selector}`);
+                window.location.href = request.url;
+                return;
+            }
+
+            currentMain.innerHTML = incomingMain.innerHTML;
+            document.title = tempDocument.title;
+
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: "auto",
             });
+
+            message({
+                recipient: "pjax",
+                type: "finalize-pjax",
+                data: {
+                    url: request.url,
+                    title: tempDocument.title,
+                    history: request.history,
+                },
+            });
+            message({
+                recipient: "runtime",
+                type: "mount-components",
+            });
+            message({
+                recipient: "runtime",
+                type: "mount-inline-scripts",
+                data: {
+                    selector: selector,
+                },
+            });
+
+            env.endPageTransition();
         }
         this.removeNavigationRequest(request.requestUid);
     }
