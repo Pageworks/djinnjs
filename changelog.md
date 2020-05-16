@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   `uid()` export to the `Env` class
 -   `tickets` string array value to the Pjax inboxes `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
+-   `pageJumpOffset` config variable, defaults to `null`
 
 ### Fixed
 

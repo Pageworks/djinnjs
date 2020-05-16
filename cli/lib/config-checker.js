@@ -97,6 +97,12 @@ function checkSite(site, multisite = false) {
             reject(`Invalid DjinnJS configuration. The usePercentage value must be a boolean.`);
         }
 
+        if (site.pageJumpOffset === undefined) {
+            site.pageJumpOffset = null;
+        } else if (typeof site.pageJumpOffset !== "number") {
+            reject(`Invalid DjinnJS configuration. The pageJumpOffset value must be a number.`);
+        }
+
         let env = site.env || yargs.e || yargs.env;
         if (!env) {
             env = "production";

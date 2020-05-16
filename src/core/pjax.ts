@@ -1,7 +1,7 @@
 import { hookup, message } from "../web_modules/broadcaster";
 import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
-import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching } from "./config";
+import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching, pageJumpOffset } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
 import { fetchCSS } from "./fetch";
 
@@ -233,12 +233,25 @@ class Pjax {
     private scrollToHash(url: string): void {
         const hash = url.match(/\#.*/)[0];
         const element = document.body.querySelector(hash);
-        if (element) {
+        if (!element) {
+            return;
+        }
+        if (pageJumpOffset === null) {
             element.scrollIntoView({
                 behavior: "auto",
                 block: "center",
             });
-            return;
+        } else {
+            element.scrollIntoView({
+                behavior: "auto",
+                block: "start",
+            });
+            window.scrollBy({
+                behavior: "auto",
+                // @ts-ignore
+                top: pageJumpOffset,
+                left: 0,
+            });
         }
     }
 

@@ -45,6 +45,7 @@ module.exports = {
     predictivePrefetching: true,
     followRedirects: true,
     usePercentage: false,
+    pageJumpOffset: null,
 };
 ```
 
@@ -135,3 +136,9 @@ A boolean. When set to `false` Pjax will not load.
 Default: `false`
 
 A boolean. This value is used to determine if the `<file-loading-value>` element should be injected with the X/Y format or the X% format.
+
+#### pageJumpOffset
+
+Default: `null`
+
+A number. When `null` page jumps scroll the element into the center of the viewport. When a number is provided the element is scrolled to the top of the viewport then the offset is added. Positive numbers move the element up, negative numbers move the element down.

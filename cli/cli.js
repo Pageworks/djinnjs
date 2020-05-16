@@ -311,6 +311,7 @@ class DjinnJS {
                     data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.sites[i].followRedirects);
                     data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.sites[i].usePercentage);
                     data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.sites[i].serviceWorker);
+                    data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.sites[i].pageJumpOffset);
                     fs.writeFile(runtimeFile, data, error => {
                         if (error) {
                             reject(error);
@@ -419,6 +420,7 @@ class DjinnJS {
                 predictivePrefetching: this.config.predictivePrefetching,
                 pjax: this.config.pjax,
                 usePercentage: this.config.usePercentage,
+                pageJumpOffset: this.config.pageJumpOffset,
             };
             configChecker(site)
                 .then(validSite => {
