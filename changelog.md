@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `pageJumpOffset` config variable, defaults to `null` [#42](https://github.com/Pageworks/djinnjs/issues/42)
 -   `page-jump-offset` attribute allows developers to set dynamic offsets
 -   `customPageJumpOffset` number value to the Pjax `load` message type
+-   `reserveThread()` and `releaseThread()` functions to the `Env` class
+-   public `threadPool` variable to the `Env` class -- tracks number of available threads
 
 ### Fixed
 

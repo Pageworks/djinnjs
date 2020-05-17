@@ -7,12 +7,15 @@ class Env {
     public memory: number | null;
     public domState: DOMState;
     public dataSaver: boolean;
+    public threadPool: number;
 
     private tickets: Array<string>;
 
     constructor() {
         this.memory = 4;
-        this.cpu = window.navigator.hardwareConcurrency;
+        this.cpu = window.navigator?.hardwareConcurrency || 2;
+        // Automatically removing 2 since DjinnJS has 2 critical web workers
+        this.threadPool = this.cpu - 2;
         this.connection = "4g";
         this.domState = "hard-loading";
         this.dataSaver = false;
@@ -120,6 +123,27 @@ class Env {
     public setDOMState(newState: DOMState): void {
         this.domState = newState;
         document.documentElement.setAttribute("state", this.domState);
+    }
+
+    /**
+     * Reserve a thread in the generic thread pool.
+     */
+    public reserveThread(): Promise<string> {
+        return new Promise((resolve, reject) => {
+            if (this.threadPool - 1 < 0) {
+                reject("Thread pool is empty");
+            } else {
+                this.threadPool--;
+                resolve();
+            }
+        });
+    }
+
+    /**
+     * Release a thread after terminating a Worker.
+     */
+    public releaseThread() {
+        this.threadPool++;
     }
 }
 export const env: Env = new Env();
