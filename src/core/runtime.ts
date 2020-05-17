@@ -114,7 +114,7 @@ class Runtime {
                             });
                         });
                     }
-                    if (useServiceWorker) {
+                    if (useServiceWorker && env.threadPool !== 0) {
                         fetchJS("servicve-worker-bootstrap");
                     }
                     message({

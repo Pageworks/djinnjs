@@ -160,7 +160,7 @@ class Pjax {
             case "cachebust":
                 sessionStorage.setItem("maxPrompts", `${e.data.max}`);
                 const currentPromptCount = sessionStorage.getItem("prompts");
-                if (parseInt(currentPromptCount) >= e.data.max) {
+                if (parseInt(currentPromptCount) >= e.data.max && this.serviceWorker) {
                     sessionStorage.setItem("prompts", "0");
                     this.serviceWorker.postMessage({
                         type: "clear-content-cache",
@@ -169,7 +169,7 @@ class Pjax {
                 const contentCacheTimestap = parseInt(localStorage.getItem("contentCache"));
                 const difference = Date.now() - contentCacheTimestap;
                 const neededDifference = e.data.contentCacheExpires * 24 * 60 * 60 * 1000;
-                if (difference >= neededDifference) {
+                if (difference >= neededDifference && this.serviceWorker) {
                     localStorage.setItem("contentCache", `${Date.now()}`);
                     this.serviceWorker.postMessage({
                         type: "clear-content-cache",
@@ -177,7 +177,7 @@ class Pjax {
                 }
                 break;
             case "revision-check":
-                if (e.data.status === "stale") {
+                if (e.data.status === "stale" && this.serviceWorker) {
                     this.serviceWorker.postMessage({
                         type: "page-refresh",
                         url: e.data.url,
@@ -258,13 +258,17 @@ class Pjax {
             customPageJumpOffset: customPageJumpOffset,
         };
         this.navigationRequestQueue.push(navigationRequest);
-        this.serviceWorker.postMessage({
-            type: "pjax",
-            requestId: requestUid,
-            url: url,
-            currentUrl: location.href,
-            followRedirects: followRedirects,
-        });
+        if (this.serviceWorker) {
+            this.serviceWorker.postMessage({
+                type: "pjax",
+                requestId: requestUid,
+                url: url,
+                currentUrl: location.href,
+                followRedirects: followRedirects,
+            });
+        } else {
+            this.pjax(url, requestUid, location.href, followRedirects);
+        }
     }
 
     /**
@@ -504,10 +508,12 @@ class Pjax {
      * Sends a `revision-check` message to the Pjax web worker.
      */
     private checkPageRevision(): void {
-        this.serviceWorker.postMessage({
-            type: "revision-check",
-            url: window.location.href,
-        });
+        if (this.serviceWorker) {
+            this.serviceWorker.postMessage({
+                type: "revision-check",
+                url: window.location.href,
+            });
+        }
     }
 
     /** Collect primary navigation links and tell the Pjax web worker to prefetch the pages. */
@@ -533,10 +539,12 @@ class Pjax {
         });
 
         /** Send the requested URLs to the Pjax web worker */
-        this.serviceWorker.postMessage({
-            type: "prefetch",
-            urls: urls,
-        });
+        if (this.serviceWorker) {
+            this.serviceWorker.postMessage({
+                type: "prefetch",
+                urls: urls,
+            });
+        }
 
         /** Require at least a 4g connection while respecting the users data  */
         if (env.connection === "3g") {
@@ -563,7 +571,7 @@ class Pjax {
                 urls.push(link.href);
             }
         });
-        if (urls.length) {
+        if (urls.length && this.serviceWorker) {
             /** Send the requested URLs to the Pjax web worker */
             this.serviceWorker.postMessage({
                 type: "prefetch",
@@ -572,5 +580,49 @@ class Pjax {
         }
     }
     private handleIntersection: IntersectionObserverCallback = this.prefetchLink.bind(this);
+
+    /**
+     * Fallback pjax fetch function, used when service worker is disabled.
+     */
+    private async pjax(url, requestId, currentUrl, followRedirects) {
+        // Handle external links
+        if (new RegExp(self.location.origin).test(url) === false) {
+            this.handlePjaxResponse(requestId, "external", url);
+            return;
+        }
+
+        // Handle page jumps
+        if (new RegExp(/\#/g).test(url)) {
+            const cleanUrl = url.replace(/\#.*/g, "");
+            const cleanCurrentUrl = currentUrl.replace(/\#.*/g, "");
+            if (cleanUrl === cleanCurrentUrl) {
+                this.handlePjaxResponse(requestId, "hash-change", url);
+                return;
+            }
+        }
+
+        try {
+            const request = await fetch(url, {
+                method: "GET",
+                credentials: "include",
+                headers: new Headers({
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-Pjax": "true",
+                }),
+            });
+            if (request.ok && request.headers?.get("Content-Type")?.match(/(text\/html)/gi)) {
+                if (request.redirected && !followRedirects) {
+                    this.handlePjaxResponse(requestId, "error", url, null, "Request resulted in a redirect and following redirects is disabled");
+                    return;
+                }
+                const response = await request.text();
+                this.handlePjaxResponse(requestId, "ok", url, response);
+            } else {
+                this.handlePjaxResponse(requestId, "error", url, null, request.statusText);
+            }
+        } catch (error) {
+            this.handlePjaxResponse(requestId, "error", url, null, error);
+        }
+    }
 }
 new Pjax();
