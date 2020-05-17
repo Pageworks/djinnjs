@@ -38,14 +38,37 @@ function checkSite(site, multisite = false) {
         } else if (typeof site.disableServiceWorker !== "boolean") {
             reject(`Invalid DjinnJS configuration. The disableServiceWorker value must be a boolean.`);
         } else {
-            console.warn("disableServiceWorker value has been deprecated use serviceWorker instead");
+            console.warn("\ndisableServiceWorker value has been deprecated use serviceWorker instead\n");
             site.serviceWorker = site.disableServiceWorker ? false : true;
         }
 
         if (site.serviceWorker === undefined) {
-            site.serviceWorker = true;
-        } else if (typeof site.serviceWorker !== "boolean") {
-            reject(`Invalid DjinnJS configuration. The serviceWorker value must be a boolean.`);
+            site.serviceWorker = "offline-first";
+        } else if (site.serviceWorker === null) {
+            site.serviceWorker = false;
+        } else if (typeof site.serviceWorker === "boolean") {
+            if (site.serviceWorker) {
+                site.serviceWorker = "offline-first";
+            } else {
+                site.serviceWorker = false;
+            }
+        } else if (typeof site.serviceWorker === "string") {
+            switch (site.serviceWorker) {
+                case "offline-first":
+                    site.serviceWorker = "offline-first";
+                    break;
+                case "offline-backup":
+                    site.serviceWorker = "offline-backup";
+                    break;
+                case "resources-only":
+                    site.serviceWorker = "resources-only";
+                    break;
+                default:
+                    site.serviceWorker = "offline-first";
+                    break;
+            }
+        } else {
+            reject(`Invalid DjinnJS configuration. The serviceWorker value must be a boolean, null, or a string: 'offline-first', 'offline-backup', 'resources-only'`);
         }
 
         if (site.gtagId === undefined) {

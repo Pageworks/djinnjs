@@ -237,31 +237,30 @@ class DjinnJS {
             for (let i = 0; i < this.sites.length; i++) {
                 const publicPath = path.resolve(cwd, this.sites[i].publicDir);
                 const assetPath = path.resolve(publicPath, this.sites[i].outDir);
-                if (!this.sites[i].serviceWorker) {
-                    fs.unlink(`${assetPath}/service-worker.mjs`, error => {
+                if (this.sites[i].serviceWorker) {
+                    fs.copyFileSync(`${assetPath}/${this.sites[i].serviceWorker}.mjs`, `${publicPath}/service-worker.js`);
+
+                    fs.unlinkSync(`${assetPath}/offline-backup.mjs`);
+                    fs.unlinkSync(`${assetPath}/offline-first.mjs`);
+                    fs.unlinkSync(`${assetPath}/resources-only.mjs`);
+
+                    fs.readFile(`${publicPath}/service-worker.js`, (error, buffer) => {
                         if (error) {
                             reject(error);
                         }
-                        resolve();
-                    });
-                } else {
-                    fs.rename(`${assetPath}/service-worker.mjs`, `${publicPath}/service-worker.js`, error => {
-                        if (error) {
-                            reject(error);
-                        }
-                        fs.readFile(`${publicPath}/service-worker.js`, (error, buffer) => {
+                        let data = buffer.toString().replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
+                        fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
                             if (error) {
                                 reject(error);
                             }
-                            let data = buffer.toString().replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
-                            fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
-                                if (error) {
-                                    reject(error);
-                                }
-                                resolve();
-                            });
+                            resolve();
                         });
                     });
+                } else {
+                    fs.unlinkSync(`${assetPath}/offline-backup.mjs`);
+                    fs.unlinkSync(`${assetPath}/offline-first.mjs`);
+                    fs.unlinkSync(`${assetPath}/resources-only.mjs`);
+                    resolve();
                 }
             }
         });
