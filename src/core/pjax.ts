@@ -15,8 +15,6 @@ interface NavigaitonRequest {
     url: string;
     history: "push" | "replace";
     requestUid: string;
-    transition: string | null;
-    transitionData: string | null;
     target: HTMLElement | null;
     targetSelector: string;
     tickets: string[];
@@ -88,7 +86,7 @@ class Pjax {
                 this.collectLinks();
                 break;
             case "load":
-                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId, data?.tickets, data?.customPageJumpOffset);
+                this.navigate(data.url, data?.history, data?.selector, data?.navRequestId, data?.tickets, data?.customPageJumpOffset);
                 break;
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
@@ -235,8 +233,6 @@ class Pjax {
      */
     private navigate(
         url: string,
-        transition: string = null,
-        transitionData: string = null,
         history: "push" | "replace" = "push",
         selector: string = null,
         navRequestId: string = null,
@@ -250,8 +246,6 @@ class Pjax {
             url: url,
             history: history,
             requestUid: requestUid,
-            transition: transition,
-            transitionData: transitionData,
             target: document.body.querySelector(`[navigation-request-id="${requestUid}"]`) || null,
             targetSelector: selector,
             tickets: tickets,
@@ -334,8 +328,6 @@ class Pjax {
             type: "load",
             data: {
                 url: target.href,
-                transition: target.getAttribute("pjax-transition"),
-                transitionData: target.getAttribute("pjax-transition-data"),
                 selector: target.getAttribute("pjax-view-id"),
                 navRequestId: navigationUid,
                 customPageJumpOffset: customPageJumpOffset ? parseInt(customPageJumpOffset) : null,

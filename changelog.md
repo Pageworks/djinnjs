@@ -44,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   all console logs are stipped when building for production
 -   removed `uuid()` export from the `Env` class
     -   function was generating UIDs not UUIDs
+-   `transition attribute` support
+-   `transition-data attribute` support
 
 ## [0.0.28] - 2020-05-14
 
