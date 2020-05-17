@@ -16,6 +16,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `customPageJumpOffset` number value to the Pjax `load` message type
 -   `reserveThread()` and `releaseThread()` functions to the `Env` class
 -   public `threadPool` variable to the `Env` class -- tracks number of available threads
+-   service worker rework [#55](https://github.com/Pageworks/djinnjs/issues/55)
+-   `pjax-worker` functionality moved into Service Workers
+-   `offline-first` service worker
+-   `offline-backup` service worker
+-   `resources-only` service worker
+-   new `serviceWorker` config variable, now supports:
+    -   `offline-first` _(default)_
+    -   `offline-backpu`
+    -   `resources-only`
+    -   `true` or `false`
+    -   `null`
+-   added backup `pjax()` fetching to `Pjax` class -- used when service worker is disabled
 
 ### Fixed
 
