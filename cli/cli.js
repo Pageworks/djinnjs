@@ -83,7 +83,6 @@ class DjinnJS {
             }
             await this.scrubScripts();
             await this.injectConfigScriptVariables();
-            await this.injectCachebustURL();
 
             if (!this.silent) {
                 spinner.text = "Minifying JavaScript";
@@ -248,7 +247,11 @@ class DjinnJS {
                         if (error) {
                             reject(error);
                         }
-                        let data = buffer.toString().replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
+
+                        let data = buffer.toString();
+                        data = data.replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
+                        data = data.replace("REPLACE_WITH_CACHEBUST_URL", this.config.cachebustURL);
+
                         fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
                             if (error) {
                                 reject(error);
@@ -262,32 +265,6 @@ class DjinnJS {
                     fs.unlinkSync(`${assetPath}/resources-only.mjs`);
                     resolve();
                 }
-            }
-        });
-    }
-
-    injectCachebustURL() {
-        return new Promise((resolve, reject) => {
-            let completed = 0;
-            for (let i = 0; i < this.sites.length; i++) {
-                const handle = this.sites[i].handle === undefined ? "default" : this.sites[i].handle;
-                const serviceWorker = path.join(__dirname, "temp", handle, "service-worker.js");
-                fs.readFile(serviceWorker, (error, buffer) => {
-                    if (error) {
-                        reject(error);
-                    }
-                    let data = buffer.toString();
-                    data = data.replace("REPLACE_WITH_CACHEBUST_URL", this.config.cachebustURL);
-                    fs.writeFile(serviceWorker, data, error => {
-                        if (error) {
-                            reject(error);
-                        }
-                        completed++;
-                        if (completed === this.sites.length) {
-                            resolve();
-                        }
-                    });
-                });
             }
         });
     }

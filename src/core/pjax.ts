@@ -1,7 +1,7 @@
 import { hookup, message } from "../web_modules/broadcaster";
 import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
-import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching, pageJumpOffset } from "./config";
+import { gaId, followRedirects, doPrefetching, pageJumpOffset } from "./config";
 import { notify } from "../web_modules/@codewithkyle/notifications";
 import { fetchCSS } from "./fetch";
 
@@ -25,7 +25,6 @@ interface NavigaitonRequest {
 
 class Pjax {
     private state: PjaxState;
-    private worker: Worker;
     private serviceWorker: ServiceWorker;
     private navigationRequestQueue: Array<NavigaitonRequest>;
     private io: IntersectionObserver;
@@ -34,7 +33,6 @@ class Pjax {
         this.state = {
             activeRequestUid: null,
         };
-        this.worker = null;
         this.serviceWorker = null;
         this.navigationRequestQueue = [];
         this.io = new IntersectionObserver(this.handleIntersection);
@@ -60,37 +58,6 @@ class Pjax {
         /** Prepare Google Analytics */
         setupGoogleAnalytics(gaId);
 
-        /** Prepare the Pjax Web Worker */
-        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
-        this.worker.onmessage = this.handleWorkerMessage.bind(this);
-
-        /** Attempt to register a service worker */
-        if ("serviceWorker" in navigator && useServiceWorker) {
-            navigator.serviceWorker
-                .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
-                .then(() => {
-                    /** Verify the service worker was registered correctly */
-                    if (navigator.serviceWorker.controller) {
-                        this.serviceWorker = navigator.serviceWorker.controller;
-                        navigator.serviceWorker.onmessage = this.handleServiceWorkerMessage.bind(this);
-
-                        /** Tell the service worker to get the latest cachebust data */
-                        this.serviceWorker.postMessage({
-                            type: "cachebust",
-                            url: window.location.href,
-                        });
-
-                        /** Tell Pjax to check if the current page is stale */
-                        message({
-                            recipient: "pjax",
-                            type: "revision-check",
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error("Registration failed with " + error);
-                });
-        }
         /** Add event listeners */
         window.addEventListener("popstate", this.windowPopstateEvent);
         /** Update the history state with the required `state.url` value */
@@ -105,6 +72,15 @@ class Pjax {
     private inbox(data): void {
         const { type } = data;
         switch (type) {
+            case "init-worker":
+                this.serviceWorker = navigator.serviceWorker.controller;
+                navigator.serviceWorker.onmessage = this.handleServiceWorkerMessage.bind(this);
+                this.serviceWorker.postMessage({
+                    type: "cachebust",
+                    url: window.location.href,
+                });
+                this.checkPageRevision();
+                break;
             case "revision-check":
                 this.checkPageRevision();
                 break;
@@ -200,19 +176,6 @@ class Pjax {
                     });
                 }
                 break;
-            default:
-                console.error(`Undefined Service Worker response message type: ${type}`);
-                break;
-        }
-    }
-
-    /**
-     * Handles messages from the Pjax Web Worker.
-     * @param e - the `MessageEvent` object
-     */
-    private handleWorkerMessage(e: MessageEvent): void {
-        const { type } = e.data;
-        switch (type) {
             case "revision-check":
                 if (e.data.status === "stale") {
                     this.serviceWorker.postMessage({
@@ -226,7 +189,7 @@ class Pjax {
                 this.handlePjaxResponse(e.data.requestId, e.data.status, e.data.url, e.data?.body, e.data?.error);
                 break;
             default:
-                console.error(`Undefined Pjax Worker response message type: ${type}`);
+                console.error(`Undefined Service Worker response message type: ${type}`);
                 break;
         }
     }
@@ -295,7 +258,7 @@ class Pjax {
             customPageJumpOffset: customPageJumpOffset,
         };
         this.navigationRequestQueue.push(navigationRequest);
-        this.worker.postMessage({
+        this.serviceWorker.postMessage({
             type: "pjax",
             requestId: requestUid,
             url: url,
@@ -541,7 +504,7 @@ class Pjax {
      * Sends a `revision-check` message to the Pjax web worker.
      */
     private checkPageRevision(): void {
-        this.worker.postMessage({
+        this.serviceWorker.postMessage({
             type: "revision-check",
             url: window.location.href,
         });
@@ -570,7 +533,7 @@ class Pjax {
         });
 
         /** Send the requested URLs to the Pjax web worker */
-        this.worker.postMessage({
+        this.serviceWorker.postMessage({
             type: "prefetch",
             urls: urls,
         });
@@ -602,7 +565,7 @@ class Pjax {
         });
         if (urls.length) {
             /** Send the requested URLs to the Pjax web worker */
-            this.worker.postMessage({
+            this.serviceWorker.postMessage({
                 type: "prefetch",
                 urls: urls,
             });
