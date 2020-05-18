@@ -21,9 +21,18 @@ module.exports = function valdiateConfig(config, customConfig) {
 
     if (typeof customConfig.src !== "undefined") {
         if (Array.isArray(customConfig.src)) {
+            for (let i = 0; i < customConfig.src.length){
+                if (typeof customConfig.src[i] !== 'string'){
+                    console.log(`Invalid DjinnJS configuration. The src value ${customConfig.src[i]} is not a string.`);
+                    process.exit(1);
+                }
+            }
             config.src = customConfig.src;
-        } else {
+        } else if (typeof customConfig.src === "string") {
             config.src = [customConfig.src];
+        } else {
+            console.log(`Invalid DjinnJS configuration. The src value must be a string or an array of strings.`);
+            process.exit(1);
         }
     }
 
