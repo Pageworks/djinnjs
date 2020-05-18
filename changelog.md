@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   function was generating UIDs not UUIDs
 -   `transition attribute` support
 -   `transition-data attribute` support
+-   support for multi-site configurations
+-   `disableServiceWorker` config value
+-   `disablePrefetching` config value
+-   `disablePjax` config value
 
 ## [0.0.28] - 2020-05-14
 

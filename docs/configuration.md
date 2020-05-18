@@ -17,9 +17,9 @@ DjinnJS will look for a `djinn.js` or a `djinnjs.config.js` config file in the p
 ## CLI
 
 ```bash
-    -c, --config        Path to the config file
-    -h, --handle        The site handle that will be compiled
-    -e, --env           The enviroment settings (env | production)
+    -c  # Path to the config file
+    -h  # The site handle that will be compiled
+    -e  # The enviroment settings (dev | production)
 ```
 
 ## Settings
