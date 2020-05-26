@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   browser support detection [#78](https://github.com/Pageworks/djinnjs/issues/78)
+    -   new `browser` export from `djinnjs/env`
+    -   appends browser name as class to `<HTML>` element
+
 ## [0.0.28] - 2020-05-14
 
 ### Added
