@@ -6,7 +6,7 @@ self.addEventListener("message", event => {
     const { type } = event.data;
     switch (type) {
         case "cachebust":
-            cachebust(event.data.url);
+            cachebust();
             break;
         case "pjax":
             this.pjax(e.data.url, e.data.requestId, e.data.currentUrl, e.data.followRedirects);
@@ -50,7 +50,7 @@ self.addEventListener("fetch", event => {
     }
 });
 
-async function cachebust(url) {
+async function cachebust() {
     const request = await fetch(`/resources-cachebust.json`, {
         cache: "no-cache",
         credentials: "include",

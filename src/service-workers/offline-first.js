@@ -96,16 +96,16 @@ function informClientOfCachebustValues(maximumContentPrompts, contentCacheDurati
     });
 }
 
-async function cachebust(url) {
-    const request = await fetch(`/resources-cachebust.json`, {
+async function bustResources(url) {
+    const resourceRequest = fetch(`/resources-cachebust.json`, {
         cache: "no-cache",
         credentials: "include",
         headers: new Headers({
             Accept: "application/json",
         }),
     });
-    if (request.ok) {
-        const response = await request.json();
+    if (resourceRequest.ok) {
+        const response = await resourceRequest.json();
         resourcesCacheId = `resources-${response.cacheTimestamp}`;
         caches.keys().then(cacheNames => {
             return Promise.all(
@@ -117,16 +117,18 @@ async function cachebust(url) {
             );
         });
     }
+}
 
-    const request2 = await fetch("REPLACE_WITH_CACHEBUST_URL", {
+async function bustContent(url) {
+    const contentRequest = await fetch("REPLACE_WITH_CACHEBUST_URL", {
         cache: "no-cache",
         credentials: "include",
         headers: new Headers({
             Accept: "application/json",
         }),
     });
-    if (request2.ok) {
-        const response = await request2.json();
+    if (contentRequest.ok) {
+        const response = await contentRequest.json();
         contentCacheId = `content-${response.cacheTimestamp}`;
         caches.keys().then(cacheNames => {
             return Promise.all(
@@ -153,6 +155,11 @@ async function cachebust(url) {
         }
         informClientOfCachebustValues(4, 7, url);
     }
+}
+
+async function cachebust(url) {
+    this.bustResources(url);
+    this.bustContent(url);
 }
 
 async function updatePageCache(url, network) {
