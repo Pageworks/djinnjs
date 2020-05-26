@@ -19,7 +19,7 @@ type WebComponentLoad = null | "lazy" | "eager";
 
 class Runtime {
     private _bodyParserWorker: Worker;
-    private _io: IntersectionObserver;
+    private io: IntersectionObserver;
     private _loadingMessage: HTMLElement;
 
     constructor() {
@@ -45,7 +45,7 @@ class Runtime {
             body: document.body.innerHTML,
         });
         this._bodyParserWorker.onmessage = this.handleWorkerMessage.bind(this);
-        this._io = new IntersectionObserver(this.intersectionCallback);
+        this.io = new IntersectionObserver(this.intersectionCallback);
     }
     private handleLoadEvent: EventListener = this.init.bind(this);
 
@@ -142,6 +142,15 @@ class Runtime {
                 newScript.integrity = script.integrity;
                 newScript.nonce = script.nonce;
                 newScript.referrerPolicy = script.referrerPolicy;
+
+                if (newScript.type !== "module") {
+                    if (script.async) {
+                        newScript.async = true;
+                    } else {
+                        newScript.defer = true;
+                    }
+                }
+
                 if (script?.src || script?.id || script.getAttribute("pjax-script-id")) {
                     let scriptSelector = "script";
                     scriptSelector += `[src="${script?.src}"]` || `#${script?.id}` || `[pjax-script-id="${script.getAttribute("pjax-script-id")}"]`;
@@ -226,12 +235,18 @@ class Runtime {
     private handleIntersection(entries: Array<IntersectionObserverEntry>) {
         for (let i = 0; i < entries.length; i++) {
             if (entries[i].isIntersecting) {
-                this._io.unobserve(entries[i].target);
-                const customElement = entries[i].target.tagName.toLowerCase().trim();
+                const element = entries[i].target;
+                const customElement = element.tagName.toLowerCase().trim();
+                const requiredConnectionType = element.getAttribute("connection-type") || "2g";
+
                 if (customElements.get(customElement) === undefined) {
-                    this.upgradeToWebComponent(customElement, entries[i].target);
+                    if (env.checkConnection(requiredConnectionType)) {
+                        this.io.unobserve(element);
+                        this.upgradeToWebComponent(customElement, element);
+                    }
                 } else {
-                    entries[i].target.setAttribute("component-state", "mounted");
+                    this.io.unobserve(element);
+                    element.setAttribute("component-state", "mounted");
                 }
             }
         }
@@ -248,12 +263,13 @@ class Runtime {
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
-            if (loadType === "eager") {
+            const requiredConnectionType = element.getAttribute("connection-type") || "2g";
+            if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);
             } else {
                 element.setAttribute("component-state", "unseen");
-                this._io.observe(customElements[i]);
+                this.io.observe(customElements[i]);
             }
         }
     }

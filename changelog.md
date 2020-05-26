@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   web component `connection-type` attribute support -- defaults to `2g`
+
+### Fixed
+
+-   CSS & JS loading performance [#77](https://github.com/Pageworks/djinnjs/issues/77)
+
 ## [0.0.28] - 2020-05-14
 
 ### Added

@@ -36,7 +36,7 @@ class Env {
             // @ts-ignore
             this.dataSaver = window.navigator.connection.saveData;
             // @ts-ignore
-            navigator.connection.onchange = this.handleNetworkChange;
+            navigator.connection.onchange = this.handleNetworkChange.bind(this);
         }
 
         if ("deviceMemory" in navigator) {
@@ -137,6 +137,34 @@ class Env {
     public setDOMState(newState: DOMState): void {
         this.domState = newState;
         document.documentElement.setAttribute("state", this.domState);
+    }
+
+    public checkConnection(requiredConnection): boolean {
+        let passed = false;
+        switch (requiredConnection) {
+            case "4g":
+                if (this.connection !== "2g" && this.connection !== "slow-2g" && this.connection !== "3g") {
+                    passed = true;
+                }
+                break;
+            case "3g":
+                if (this.connection !== "2g" && this.connection !== "slow-2g") {
+                    passed = true;
+                }
+                break;
+            case "2g":
+                if (this.connection !== "slow-2g") {
+                    passed = true;
+                }
+                break;
+            case "slow-2g":
+                passed = true;
+                break;
+            default:
+                passed = false;
+                break;
+        }
+        return passed;
     }
 }
 export const env: Env = new Env();
