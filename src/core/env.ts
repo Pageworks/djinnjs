@@ -1,5 +1,6 @@
 type DOMState = "soft-loading" | "hard-loading" | "idling" | "page-loading" | "page-loading-complete";
 type NetworkType = "4g" | "3g" | "2g" | "slow-2g";
+type Browser = "chrome" | "safari" | "edge" | "chromium-edge" | "ie" | "firefox" | "unknown" | "opera";
 
 class Env {
     public connection: NetworkType;
@@ -7,6 +8,7 @@ class Env {
     public memory: number | null;
     public domState: DOMState;
     public dataSaver: boolean;
+    public browser: Browser;
     public threadPool: number;
 
     private tickets: Array<string>;
@@ -19,6 +21,8 @@ class Env {
         this.connection = "4g";
         this.domState = "hard-loading";
         this.dataSaver = false;
+        this.browser = "unknown";
+        this.setBrowser();
 
         this.tickets = [];
 
@@ -125,6 +129,51 @@ class Env {
         document.documentElement.setAttribute("state", this.domState);
     }
 
+    private setBrowser() {
+        // @ts-ignore
+        var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0;
+
+        // @ts-ignore
+        var isFirefox = typeof InstallTrigger !== "undefined";
+
+        var isSafari =
+            // @ts-ignore
+            /constructor/i.test(window.HTMLElement) ||
+            (function(p) {
+                return p.toString() === "[object SafariRemoteNotification]";
+                // @ts-ignore
+            })(!window["safari"] || (typeof safari !== "undefined" && safari.pushNotification));
+
+        // @ts-ignore
+        var isIE = /*@cc_on!@*/ false || !!document.documentMode;
+
+        var isEdge = !isIE && !!window.StyleMedia;
+
+        // @ts-ignore
+        var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+
+        var isEdgeChromium = isChrome && navigator.userAgent.indexOf("Edg") != -1;
+
+        if (isOpera) {
+            this.browser = "opera";
+        } else if (isFirefox) {
+            this.browser = "firefox";
+        } else if (isSafari) {
+            this.browser = "safari";
+        } else if (isIE) {
+            this.browser = "ie";
+        } else if (isEdge) {
+            this.browser = "edge";
+        } else if (isChrome) {
+            this.browser = "chrome";
+        } else if (isEdgeChromium) {
+            this.browser = "chromium-edge";
+        } else {
+            this.browser = "unknown";
+        }
+        document.documentElement.classList.add(this.browser);
+    }
+  
     /**
      * Reserve a thread in the generic thread pool.
      */
@@ -149,3 +198,4 @@ class Env {
 export const env: Env = new Env();
 export const uid: Function = env.uid;
 export const dataSaver: boolean = env.dataSaver;
+export const browser: Browser = env.browser;

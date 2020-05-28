@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+-   browser support detection [#78](https://github.com/Pageworks/djinnjs/issues/78)
+    -   new `browser` export from `djinnjs/env`
+    -   appends browser name as class to `<HTML>` element
 -   `uid()` export to the `Env` class
 -   `tickets` string array value to the Pjax `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
 -   `pageJumpOffset` config variable, defaults to `null` [#42](https://github.com/Pageworks/djinnjs/issues/42)
