@@ -1,0 +1,16 @@
+module.exports = {
+    src: "./src",
+    publicDir: "./public",
+    outDir: "assets",
+    noCachePattern: /(\.json)$|(cachebust\.js)/gi,
+    cachebustURL: "/cachebust.json",
+    serviceWorker: true,
+    silent: true,
+    env: "production",
+    gtagId: "",
+    pjax: true,
+    predictivePrefetching: true,
+    followRedirects: true,
+    usePercentage: false,
+    pageJumpOffset: null,
+};

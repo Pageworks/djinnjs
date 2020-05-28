@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `uid()` export to the `Env` class
+-   `tickets` string array value to the Pjax `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
+-   `pageJumpOffset` config variable, defaults to `null` [#42](https://github.com/Pageworks/djinnjs/issues/42)
+-   `page-jump-offset` attribute allows developers to set dynamic offsets
+-   `customPageJumpOffset` number value to the Pjax `load` message type
+-   `reserveThread()` and `releaseThread()` functions to the `Env` class
+-   public `threadPool` variable to the `Env` class -- tracks number of available threads
+-   service worker rework [#55](https://github.com/Pageworks/djinnjs/issues/55)
+-   `pjax-worker` functionality moved into Service Workers
+-   `offline-first` service worker
+-   `offline-backup` service worker
+-   `resources-only` service worker
+-   new `serviceWorker` config variable, now supports:
+    -   `offline-first` _(default)_
+    -   `offline-backpu`
+    -   `resources-only`
+    -   `true` or `false`
+    -   `null`
+-   added backup `pjax()` fetching to `Pjax` class -- used when service worker is disabled
+
+### Fixed
+
+-   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
+-   page jumps scroll the selected element into the center of the screen
+
+### Removes
+
+-   transition manager
+-   transition config variables
+-   support for custom transitions
+-   transition documentation
+-   removed `debug` export from the `Env` class
+    -   all console logs are stipped when building for production
+-   removed `uuid()` export from the `Env` class
+    -   function was generating UIDs not UUIDs
+-   `transition attribute` support
+-   `transition-data attribute` support
+-   support for multi-site configurations
+-   `disableServiceWorker` config value
+-   `disablePrefetching` config value
+-   `disablePjax` config value
+
 ## [0.0.28] - 2020-05-14
 
 ### Added
