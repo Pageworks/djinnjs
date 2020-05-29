@@ -5,9 +5,9 @@ const path = require("path");
 
 const cwd = process.cwd();
 
-async function minify(handle, publicDir, outDir) {
+async function minify(publicDir, outDir) {
     try {
-        const files = await getFiles(handle);
+        const files = await getFiles();
         await minifyFiles(files, publicDir, outDir);
         return;
     } catch (error) {
@@ -56,9 +56,9 @@ function minifyFiles(files, publicDir, relativeOutDir) {
     });
 }
 
-function getFiles(handle) {
+function getFiles() {
     return new Promise((resolve, reject) => {
-        const tempDir = path.resolve(__dirname, `../temp/${handle}`);
+        const tempDir = path.resolve(__dirname, `../temp`);
         glob(`${tempDir}/*.js`, (error, files) => {
             if (error) {
                 reject(error);

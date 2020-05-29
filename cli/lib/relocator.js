@@ -26,9 +26,9 @@ function copyFiles(files, publicDir, relativeOutDir) {
     });
 }
 
-function getFiles(handle, filetype) {
+function getFiles(filetype) {
     return new Promise((resolve, reject) => {
-        const tempDir = path.resolve(__dirname, `../temp/${handle}`);
+        const tempDir = path.resolve(__dirname, `../temp`);
         glob(`${tempDir}/*.${filetype}`, (error, files) => {
             if (error) {
                 reject(error);
@@ -38,9 +38,9 @@ function getFiles(handle, filetype) {
     });
 }
 
-async function relocator(handle, publicDir, outDir, filetype) {
+async function relocator(publicDir, outDir, filetype) {
     try {
-        const files = await getFiles(handle, filetype);
+        const files = await getFiles(filetype);
         await copyFiles(files, publicDir, outDir);
         return;
     } catch (error) {

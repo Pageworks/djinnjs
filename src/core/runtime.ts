@@ -1,7 +1,7 @@
 import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
-import { djinnjsOutDir, usePjax, usePercentage } from "./config";
+import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker } from "./config";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -113,6 +113,9 @@ class Runtime {
                                 maxAttempts: Infinity,
                             });
                         });
+                    }
+                    if (useServiceWorker && env.threadPool !== 0) {
+                        fetchJS("servicve-worker-bootstrap");
                     }
                     message({
                         recipient: "runtime",
