@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   web component `connection-type` attribute support -- defaults to `2g`
+-   web component `required-connection` attribute support -- defaults to `4g`
 -   browser support detection [#78](https://github.com/Pageworks/djinnjs/issues/78)
     -   new `browser` export from `djinnjs/env`
     -   appends browser name as class to `<HTML>` element

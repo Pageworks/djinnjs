@@ -151,7 +151,7 @@ class Env {
                 passed = true;
                 break;
             default:
-                passed = false;
+                passed = true;
                 break;
         }
         return passed;

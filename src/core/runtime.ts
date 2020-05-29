@@ -18,15 +18,15 @@ interface WorkerResponse {
 type WebComponentLoad = null | "lazy" | "eager";
 
 class Runtime {
-    private _bodyParserWorker: Worker;
+    private bodyParserWorker: Worker;
     private io: IntersectionObserver;
-    private _loadingMessage: HTMLElement;
+    private loadingMessage: HTMLElement;
 
     constructor() {
-        this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.mjs`);
-        this._loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
-        if (this._loadingMessage) {
-            this._loadingMessage.setAttribute("state", "1");
+        this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.mjs`);
+        this.loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
+        if (this.loadingMessage) {
+            this.loadingMessage.setAttribute("state", "1");
         }
         window.addEventListener("load", this.handleLoadEvent);
     }
@@ -35,16 +35,16 @@ class Runtime {
      * Initializes the Runtime class.
      */
     private init(): void {
-        if (this._loadingMessage) {
-            this._loadingMessage.innerHTML = "Collecting resources";
-            this._loadingMessage.setAttribute("state", "2");
+        if (this.loadingMessage) {
+            this.loadingMessage.innerHTML = "Collecting resources";
+            this.loadingMessage.setAttribute("state", "2");
         }
         hookup("runtime", this.inbox.bind(this));
-        this._bodyParserWorker.postMessage({
+        this.bodyParserWorker.postMessage({
             type: "eager",
             body: document.body.innerHTML,
         });
-        this._bodyParserWorker.onmessage = this.handleWorkerMessage.bind(this);
+        this.bodyParserWorker.onmessage = this.handleWorkerMessage.bind(this);
         this.io = new IntersectionObserver(this.intersectionCallback);
     }
     private handleLoadEvent: EventListener = this.init.bind(this);
@@ -82,9 +82,9 @@ class Runtime {
         switch (response.type) {
             case "eager":
                 const loadingMessage = document.body.querySelector("djinnjs-file-loading-value") || null;
-                if (env.domState === "hard-loading" && this._loadingMessage) {
-                    this._loadingMessage.setAttribute("state", "3");
-                    this._loadingMessage.innerHTML = `Loading resources:`;
+                if (env.domState === "hard-loading" && this.loadingMessage) {
+                    this.loadingMessage.setAttribute("state", "3");
+                    this.loadingMessage.innerHTML = `Loading resources:`;
                     if (loadingMessage && usePercentage) {
                         loadingMessage.innerHTML = `0%`;
                         loadingMessage.setAttribute("state", "enabled");
@@ -96,7 +96,7 @@ class Runtime {
                 fetchCSS(response.files).then(() => {
                     env.setDOMState("idling");
                     this.handlePageScrollPosition();
-                    this._bodyParserWorker.postMessage({
+                    this.bodyParserWorker.postMessage({
                         type: "lazy",
                         body: document.body.innerHTML,
                     });
@@ -211,7 +211,7 @@ class Runtime {
      * @param requestUid - the navigation request unique id
      */
     private parseHTML(body: string, requestUid: string): void {
-        this._bodyParserWorker.postMessage({
+        this.bodyParserWorker.postMessage({
             type: "parse",
             body: body,
             requestUid: requestUid,
@@ -240,7 +240,7 @@ class Runtime {
             if (entries[i].isIntersecting) {
                 const element = entries[i].target;
                 const customElement = element.tagName.toLowerCase().trim();
-                const requiredConnectionType = element.getAttribute("connection-type") || "2g";
+                const requiredConnectionType = element.getAttribute("required-connection") || "4g";
 
                 if (customElements.get(customElement) === undefined) {
                     if (env.checkConnection(requiredConnectionType)) {
@@ -266,7 +266,7 @@ class Runtime {
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
-            const requiredConnectionType = element.getAttribute("connection-type") || "2g";
+            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
             if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);
