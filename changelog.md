@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   web component `required-connection` attribute support -- defaults to `4g`
 -   browser support detection [#78](https://github.com/Pageworks/djinnjs/issues/78)
     -   new `browser` export from `djinnjs/env`
     -   appends browser name as class to `<HTML>` element
@@ -32,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `true` or `false`
     -   `null`
 -   added backup `pjax()` fetching to `Pjax` class -- used when service worker is disabled
+-   web component `required-connection` attribute support -- defaults to `4g`
+-   new `removeable` attribute -- removeable web components will be removed when the user chooses to continue with the lightweight version of the site
 
 ### Fixed
 

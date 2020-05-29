@@ -48,6 +48,7 @@ class Env {
     private handleNetworkChange: EventListener = () => {
         // @ts-ignore
         this.connection = window.navigator.connection.effectiveType;
+        sessionStorage.removeItem("connection-choice");
     };
 
     /**
@@ -129,6 +130,10 @@ class Env {
         document.documentElement.setAttribute("state", this.domState);
     }
 
+    /**
+     * Checks if the provided connection is greater than or equal to the current conneciton.
+     * @param requiredConnection - network connection string
+     */
     public checkConnection(requiredConnection): boolean {
         let passed = false;
         switch (requiredConnection) {

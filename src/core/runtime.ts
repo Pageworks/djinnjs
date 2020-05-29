@@ -2,6 +2,7 @@ import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
 import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker } from "./config";
+import { notify } from "../web_modules/@codewithkyle/notifications";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -56,11 +57,15 @@ class Runtime {
     private inbox(data): void {
         const { type } = data;
         switch (type) {
+            case "completed":
+                break;
             case "load":
                 fetchCSS(data.resources);
                 break;
             case "mount-components":
-                this.handleWebComponents();
+                this.handleConnection().then(() => {
+                    this.handleWebComponents();
+                });
                 break;
             case "parse":
                 this.parseHTML(data.body, data.requestUid);
@@ -115,7 +120,7 @@ class Runtime {
                         });
                     }
                     if (useServiceWorker && env.threadPool !== 0) {
-                        fetchJS("servicve-worker-bootstrap");
+                        fetchJS("service-worker-bootstrap");
                     }
                     message({
                         recipient: "runtime",
@@ -128,6 +133,72 @@ class Runtime {
                 break;
             default:
                 return;
+        }
+    }
+
+    private handleConnection() {
+        return new Promise(resolve => {
+            const sessionChoice = sessionStorage.getItem("connection-choice");
+            if (sessionChoice === "1") {
+                this.removeRequiredConnections();
+                resolve();
+                return;
+            } else if (sessionChoice === "2") {
+                this.removePurgeableComponents();
+                resolve();
+                return;
+            }
+
+            if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+                notify({
+                    message: "You are viewing the lightweight verison of this website. Would you like to load the full experience over your current connection?",
+                    duration: Infinity,
+                    closeable: false,
+                    force: true,
+                    buttons: [
+                        {
+                            label: "Yes",
+                            callback: () => {
+                                sessionStorage.setItem("connection-choice", "1");
+                                this.removeRequiredConnections();
+                                resolve();
+                            },
+                        },
+                        {
+                            label: "No",
+                            callback: () => {
+                                sessionStorage.setItem("connection-choice", "0");
+                                this.removePurgeableComponents();
+                                resolve();
+                            },
+                        },
+                    ],
+                });
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    private removeRequiredConnections() {
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][required-connection]`));
+        for (let i = 0; i < webComponentElements.length; i++) {
+            const element = webComponentElements[i];
+            element.removeAttribute("required-connection");
+        }
+    }
+
+    private removePurgeableComponents() {
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removeable]`));
+        for (let i = 0; i < webComponentElements.length; i++) {
+            const element = webComponentElements[i];
+            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            if (customElements.get(element.tagName.toLowerCase().trim()) === undefined) {
+                if (!env.checkConnection(requiredConnectionType)) {
+                    this.io.unobserve(element);
+                    element.remove();
+                }
+            }
         }
     }
 
