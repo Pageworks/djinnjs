@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `null`
 -   added backup `pjax()` fetching to `Pjax` class -- used when service worker is disabled
 -   web component `required-connection` attribute support -- defaults to `4g`
--   new `removeable` attribute -- removeable web components will be removed when the user chooses to continue with the lightweight version of the site
+-   new `removable` attribute -- removeable web components will be removed when the user chooses to continue with the lightweight version of the site
 
 ### Fixed
 

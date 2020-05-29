@@ -189,7 +189,7 @@ class Runtime {
     }
 
     private removePurgeableComponents() {
-        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removeable]`));
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removable]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
             const requiredConnectionType = element.getAttribute("required-connection") || "4g";
