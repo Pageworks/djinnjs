@@ -151,7 +151,7 @@ class Runtime {
 
             if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
                 notify({
-                    message: "You are viewing the lightweight verison of this website. Would you like to load the full experience over your current connection?",
+                    message: "You are viewing the lightweight verison of this website. Would you like to load the full experience instead?",
                     duration: Infinity,
                     closeable: false,
                     force: true,
