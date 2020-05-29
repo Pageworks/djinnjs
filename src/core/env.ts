@@ -131,12 +131,12 @@ class Env {
 
     private setBrowser() {
         // @ts-ignore
-        var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0;
+        const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0;
 
         // @ts-ignore
-        var isFirefox = typeof InstallTrigger !== "undefined";
+        const isFirefox = typeof InstallTrigger !== "undefined";
 
-        var isSafari =
+        const isSafari =
             // @ts-ignore
             /constructor/i.test(window.HTMLElement) ||
             (function(p) {
@@ -145,14 +145,14 @@ class Env {
             })(!window["safari"] || (typeof safari !== "undefined" && safari.pushNotification));
 
         // @ts-ignore
-        var isIE = /*@cc_on!@*/ false || !!document.documentMode;
+        const isIE = /*@cc_on!@*/ false || !!document.documentMode;
 
-        var isEdge = !isIE && !!window.StyleMedia;
+        const isEdge = !isIE && !!window.StyleMedia;
 
         // @ts-ignore
-        var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 
-        var isEdgeChromium = isChrome && navigator.userAgent.indexOf("Edg") != -1;
+        const isEdgeChromium = isChrome && navigator.userAgent.indexOf("Edg") != -1;
 
         if (isOpera) {
             this.browser = "opera";
@@ -173,7 +173,7 @@ class Env {
         }
         document.documentElement.classList.add(this.browser);
     }
-  
+
     /**
      * Reserve a thread in the generic thread pool.
      */
