@@ -31,9 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `true` or `false`
     -   `null`
 -   added backup `pjax()` fetching to `Pjax` class -- used when service worker is disabled
+-   web component `required-connection` attribute support -- defaults to `4g`
+-   new `removable` attribute -- removeable web components will be removed when the user chooses to continue with the lightweight version of the site
 
 ### Fixed
 
+-   CSS & JS loading performance [#77](https://github.com/Pageworks/djinnjs/issues/77)
 -   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
 -   page jumps scroll the selected element into the center of the screen
 
