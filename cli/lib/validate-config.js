@@ -21,8 +21,8 @@ module.exports = function valdiateConfig(config, customConfig) {
 
     if (typeof customConfig.src !== "undefined") {
         if (Array.isArray(customConfig.src)) {
-            for (let i = 0; i < customConfig.src.length){
-                if (typeof customConfig.src[i] !== 'string'){
+            for (let i = 0; i < customConfig.src.length; i++) {
+                if (typeof customConfig.src[i] !== "string") {
                     console.log(`Invalid DjinnJS configuration. The src value ${customConfig.src[i]} is not a string.`);
                     process.exit(1);
                 }
@@ -62,7 +62,7 @@ module.exports = function valdiateConfig(config, customConfig) {
         if (customConfig.serviceWorker === null) {
             config.serviceWorker = false;
         } else if (typeof customConfig.serviceWorker === "boolean") {
-            if (customConfig.serviceWorker) {
+            if (customConfig.serviceWorker === true) {
                 config.serviceWorker = "offline-first";
             } else {
                 config.serviceWorker = false;
@@ -86,6 +86,8 @@ module.exports = function valdiateConfig(config, customConfig) {
             console.log(`Invalid DjinnJS configuration. The serviceWorker value must be a boolean, null, or a string: 'offline-first', 'offline-backup', 'resources-only'`);
             process.exit(1);
         }
+    } else {
+        config.serviceWorker = "offline-first";
     }
 
     switch (typeof customConfig.gtagId) {

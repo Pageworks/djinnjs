@@ -27,6 +27,10 @@ class Env {
         this.tickets = [];
 
         this.init();
+
+        setTimeout(() => {
+            console.log(this);
+        }, 5000);
     }
 
     private init(): void {
@@ -183,7 +187,7 @@ class Env {
         const isEdge = !isIE && !!window.StyleMedia;
 
         // @ts-ignore
-        const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        const isChrome = !!window.chrome;
 
         const isEdgeChromium = isChrome && navigator.userAgent.indexOf("Edg") != -1;
 

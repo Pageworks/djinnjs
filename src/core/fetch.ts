@@ -77,14 +77,13 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 if (!isUrl) {
                     el.setAttribute("file", `${filename}.css`);
                 }
-                el.rel = "preload";
+                el.rel = "stylesheet";
                 if (!isUrl) {
                     el.href = `${window.location.origin}/${djinnjsOutDir}/${filename}.css`;
                 } else {
                     el.href = `${filename}.css`;
                 }
                 el.addEventListener("load", () => {
-                    el.rel = "stylesheet";
                     loaded++;
                     if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
                         if (usePercentage) {

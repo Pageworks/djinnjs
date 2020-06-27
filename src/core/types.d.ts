@@ -9,3 +9,5 @@ export type WorkerResponse = {
     requestUid: string | null;
     pjaxFiles: PjaxResources;
 };
+
+export type WebComponentLoad = null | "lazy" | "eager";

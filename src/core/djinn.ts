@@ -1,11 +1,16 @@
 import { usePjax, useServiceWorker, djinnjsOutDir, usePercentage } from "./config";
-import { WorkerResponse } from "./types";
+import { WorkerResponse, PjaxResources } from "./types";
 
-export class Djinn {
+declare const globalMessage: Function;
+declare const globalHookup: Function;
+
+let env = null;
+let webComponentManager = null;
+
+class Djinn {
     private worker: Worker;
     private loadingMessage: HTMLElement;
     private fetchCSS: Function;
-    private env: any;
 
     constructor() {
         this.worker = null;
@@ -21,6 +26,9 @@ export class Djinn {
     private workerInbox(e: MessageEvent) {
         const response: WorkerResponse = e.data;
         switch (response.type) {
+            case "parse":
+                this.handlePjaxResponse(response.pjaxFiles, response.requestUid);
+                break;
             case "lazy":
                 this.handleLazyResponse(response.files);
                 break;
@@ -30,16 +38,63 @@ export class Djinn {
         }
     }
 
+    private inbox(data) {
+        switch (data.type) {
+            case "mount-components":
+                webComponentManager.collectWebComponents();
+                break;
+            case "mount-inline-scripts":
+                this.mountInlineScripts(data.selector);
+                break;
+            case "parse":
+                this.loadCSS(data.body, data.requestUid);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private async mountInlineScripts(selector) {
+        const module = await import(`${location.origin}/${djinnjsOutDir}/djinn-utils.mjs`);
+        module.handleInlineScripts(selector);
+    }
+
+    private async handlePjaxResponse(data: PjaxResources, requestUid: string) {
+        await this.fetchCSS(data.eager);
+        globalMessage({
+            recipient: "pjax",
+            type: "css-ready",
+            data: {
+                requestUid: requestUid,
+            },
+        });
+        await this.fetchCSS(data.lazy);
+    }
+
     private async handleLazyResponse(files) {
         await this.fetchCSS(files);
+
         const envModule = await import(`${location.origin}/${djinnjsOutDir}/env.mjs`);
-        // @ts-ignore
-        this.env = new envModule.Env();
-        this.env.setDOMState("idling");
-        if (this.env.connection !== "2g" && this.env.connection !== "slow-2g" && usePjax) {
+        env = envModule.env;
+        env.setDOMState("idling");
+
+        const wcmModule = await import(`${location.origin}/${djinnjsOutDir}/web-component-manager.mjs`);
+        webComponentManager = new wcmModule.WebComponentManager();
+        webComponentManager.collectWebComponents();
+
+        await import(`${location.origin}/${djinnjsOutDir}/broadcaster.mjs`);
+        globalHookup("runtime", this.inbox.bind(this));
+
+        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
             await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);
+            globalMessage({
+                recipient: "pjax",
+                type: "init",
+                maxAttempts: Infinity,
+            });
         }
-        if (useServiceWorker && this.env.threadPool !== 0) {
+
+        if (useServiceWorker && env.threadPool !== 0) {
             await import(`${location.origin}/${djinnjsOutDir}/service-worker-bootstrap.mjs`);
         }
     }
@@ -89,4 +144,15 @@ export class Djinn {
             body: document.body.innerHTML,
         });
     };
+
+    public loadCSS(body: string, requestUid: string): void {
+        this.worker.postMessage({
+            type: "parse",
+            body: body,
+            requestUid: requestUid,
+        });
+    }
 }
+const djinnjs = new Djinn();
+const loadCSS: (body: string, requestUid: string) => void = djinnjs.loadCSS.bind(djinnjs);
+export { djinnjs, loadCSS };

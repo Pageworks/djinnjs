@@ -250,7 +250,7 @@ class DjinnJS {
                 data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.config.predictivePrefetching);
                 data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.config.followRedirects);
                 data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.config.usePercentage);
-                data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.config.serviceWorker);
+                data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', `${this.config.serviceWorker ? true : false}`);
                 data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.config.pageJumpOffset);
                 fs.writeFile(runtimeFile, data, error => {
                     if (error) {
