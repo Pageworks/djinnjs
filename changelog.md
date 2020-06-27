@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   added backup `pjax()` fetching to `Pjax` class -- used when service worker is disabled
 -   web component `required-connection` attribute support -- defaults to `4g`
 -   new `removable` attribute -- removeable web components will be removed when the user chooses to continue with the lightweight version of the site
+-   replaced `eager-load-css` attribute with `eager-css` attribute
+-   replaced `lazy-load-css` attribute with `lazy-css` attribute
 
 ### Fixed
 
@@ -56,6 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `disableServiceWorker` config value
 -   `disablePrefetching` config value
 -   `disablePjax` config value
+-   `eager-load-css` attribute -- use `eager-css` instead
+-   `lazy-load-css` attribute -- use `lazy-css` instead
 
 ## [0.0.28] - 2020-05-14
 

@@ -2,8 +2,6 @@ import { hookup, message } from "../web_modules/broadcaster";
 import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { gaId, followRedirects, doPrefetching, pageJumpOffset } from "./config";
-import { notify } from "../web_modules/@codewithkyle/notifications";
-import { fetchCSS } from "./fetch";
 
 interface PjaxState {
     activeRequestUid: string;
@@ -60,7 +58,6 @@ class Pjax {
         window.addEventListener("popstate", this.windowPopstateEvent);
         /** Update the history state with the required `state.url` value */
         window.history.replaceState({ url: window.location.href }, document.title, window.location.href);
-        fetchCSS("pjax-notification");
     }
 
     /**
@@ -140,19 +137,9 @@ class Pjax {
                 let promptCount = parseInt(sessionStorage.getItem("prompts"));
                 promptCount = promptCount + 1;
                 sessionStorage.setItem("prompts", `${promptCount}`);
-                notify({
-                    message: "A new version of this page is available.",
-                    closeable: true,
-                    force: true,
-                    duration: Infinity,
-                    buttons: [
-                        {
-                            label: "Reload",
-                            callback: () => {
-                                window.location.reload();
-                            },
-                        },
-                    ],
+                message({
+                    recipient: "user-input",
+                    type: "stale-notification",
                 });
                 break;
             case "cachebust":

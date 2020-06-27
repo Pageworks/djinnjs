@@ -2,7 +2,6 @@ import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
 import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker } from "./config";
-import { notify } from "../web_modules/@codewithkyle/notifications";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -24,7 +23,7 @@ class Runtime {
     private loadingMessage: HTMLElement;
 
     constructor() {
-        this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.mjs`);
+        this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
         this.loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
         if (this.loadingMessage) {
             this.loadingMessage.setAttribute("state", "1");
@@ -57,6 +56,14 @@ class Runtime {
     private inbox(data): void {
         const { type } = data;
         switch (type) {
+            case "use-full":
+                sessionStorage.setItem("connection-choice", "1");
+                this.removeRequiredConnections();
+                break;
+            case "use-lightweight":
+                sessionStorage.setItem("connection-choice", "0");
+                this.removePurgeableComponents();
+                break;
             case "completed":
                 break;
             case "load":
@@ -150,29 +157,9 @@ class Runtime {
             }
 
             if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
-                notify({
-                    message: "You are viewing the lightweight verison of this website. Would you like to load the full experience instead?",
-                    duration: Infinity,
-                    closeable: false,
-                    force: true,
-                    buttons: [
-                        {
-                            label: "Yes",
-                            callback: () => {
-                                sessionStorage.setItem("connection-choice", "1");
-                                this.removeRequiredConnections();
-                                resolve();
-                            },
-                        },
-                        {
-                            label: "No",
-                            callback: () => {
-                                sessionStorage.setItem("connection-choice", "0");
-                                this.removePurgeableComponents();
-                                resolve();
-                            },
-                        },
-                    ],
+                message({
+                    recipient: "user-input",
+                    type: "lightweight-check",
                 });
             } else {
                 resolve();
