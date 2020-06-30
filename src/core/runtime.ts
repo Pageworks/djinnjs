@@ -21,6 +21,7 @@ class Runtime {
     private bodyParserWorker: Worker;
     private io: IntersectionObserver;
     private loadingMessage: HTMLElement;
+    private inboxUid: string;
 
     constructor() {
         this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
@@ -39,7 +40,7 @@ class Runtime {
             this.loadingMessage.innerHTML = "Collecting resources";
             this.loadingMessage.setAttribute("state", "2");
         }
-        hookup("runtime", this.inbox.bind(this));
+        this.inboxUid = hookup("runtime", this.inbox.bind(this));
         this.bodyParserWorker.postMessage({
             type: "eager",
             body: document.body.innerHTML,
@@ -60,7 +61,7 @@ class Runtime {
                 sessionStorage.setItem("connection-choice", "1");
                 this.removeRequiredConnections();
                 break;
-            case "use-lightweight":
+            case "use-lite":
                 sessionStorage.setItem("connection-choice", "0");
                 this.removePurgeableComponents();
                 break;
@@ -160,6 +161,7 @@ class Runtime {
                 message({
                     recipient: "user-input",
                     type: "lightweight-check",
+                    senderId: this.inboxUid,
                 });
             } else {
                 resolve();

@@ -11,6 +11,7 @@ class Djinn {
     private worker: Worker;
     private loadingMessage: HTMLElement;
     private fetchCSS: Function;
+    private inboxUid: string;
 
     constructor() {
         this.worker = null;
@@ -40,6 +41,14 @@ class Djinn {
 
     private inbox(data) {
         switch (data.type) {
+            case "use-full":
+                sessionStorage.setItem("connection-choice", "1");
+                webComponentManager.collectWebComponents();
+                break;
+            case "use-lite":
+                sessionStorage.setItem("connection-choice", "0");
+                webComponentManager.collectWebComponents();
+                break;
             case "mount-components":
                 webComponentManager.collectWebComponents();
                 break;
@@ -78,12 +87,12 @@ class Djinn {
         env = envModule.env;
         env.setDOMState("idling");
 
+        await import(`${location.origin}/${djinnjsOutDir}/broadcaster.mjs`);
+        this.inboxUid = globalHookup("runtime", this.inbox.bind(this));
+
         const wcmModule = await import(`${location.origin}/${djinnjsOutDir}/web-component-manager.mjs`);
         webComponentManager = new wcmModule.WebComponentManager();
-        webComponentManager.collectWebComponents();
-
-        await import(`${location.origin}/${djinnjsOutDir}/broadcaster.mjs`);
-        globalHookup("runtime", this.inbox.bind(this));
+        webComponentManager.collectWebComponents(this.inboxUid);
 
         if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
             await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);

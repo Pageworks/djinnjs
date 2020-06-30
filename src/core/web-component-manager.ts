@@ -32,7 +32,7 @@ export class WebComponentManager {
         }
     }
 
-    public collectWebComponents() {
+    public collectWebComponents(inboxUid: string) {
         const sessionChoice = sessionStorage.getItem("connection-choice");
         if (sessionChoice === "1") {
             this.removeRequiredConnections();
@@ -48,6 +48,7 @@ export class WebComponentManager {
             message({
                 recipient: "user-input",
                 type: "lightweight-check",
+                senderId: inboxUid,
             });
         } else {
             this.handleWebComponents();
