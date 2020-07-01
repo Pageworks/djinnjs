@@ -42,11 +42,11 @@ class Djinn {
     private inbox(data) {
         switch (data.type) {
             case "use-full":
-                sessionStorage.setItem("connection-choice", "1");
+                sessionStorage.setItem("connection-choice", "full");
                 webComponentManager.collectWebComponents();
                 break;
             case "use-lite":
-                sessionStorage.setItem("connection-choice", "0");
+                sessionStorage.setItem("connection-choice", "lite");
                 webComponentManager.collectWebComponents();
                 break;
             case "mount-components":
@@ -92,7 +92,7 @@ class Djinn {
         const wcmModule = await import(`${location.origin}/${djinnjsOutDir}/web-component-manager.mjs`);
         webComponentManager = new wcmModule.WebComponentManager();
         env.setDOMState("idling");
-        webComponentManager.handleWebComponents();
+        webComponentManager.handleWebComponents(this.inboxUid);
 
         if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
             await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);

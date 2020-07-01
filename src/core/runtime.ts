@@ -58,12 +58,12 @@ class Runtime {
         const { type } = data;
         switch (type) {
             case "use-full":
-                sessionStorage.setItem("connection-choice", "1");
-                this.removeRequiredConnections();
+                sessionStorage.setItem("connection-choice", "full");
+                this.collectWebComponents();
                 break;
             case "use-lite":
-                sessionStorage.setItem("connection-choice", "0");
-                this.removePurgeableComponents();
+                sessionStorage.setItem("connection-choice", "lite");
+                this.collectWebComponents();
                 break;
             case "completed":
                 break;
@@ -71,9 +71,7 @@ class Runtime {
                 fetchCSS(data.resources);
                 break;
             case "mount-components":
-                this.handleConnection().then(() => {
-                    this.handleWebComponents();
-                });
+                this.collectWebComponents();
                 break;
             case "parse":
                 this.parseHTML(data.body, data.requestUid);
@@ -118,6 +116,19 @@ class Runtime {
             case "lazy":
                 fetchCSS(response.files).then(() => {
                     this.handleWebComponents();
+                    if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+                        if (!env.dataSaver) {
+                            message({
+                                recipient: "user-input",
+                                type: "lightweight-check",
+                                senderId: this.inboxUid,
+                                maxAttempts: Infinity,
+                            });
+                        } else {
+                            sessionStorage.setItem("connection-choice", "lite");
+                            this.removePurgeableComponents();
+                        }
+                    }
                     if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
                         fetchJS("pjax").then(() => {
                             message({
@@ -144,36 +155,21 @@ class Runtime {
         }
     }
 
-    private handleConnection() {
-        return new Promise(resolve => {
-            const sessionChoice = sessionStorage.getItem("connection-choice");
-            if (sessionChoice === "1") {
-                this.removeRequiredConnections();
-                resolve();
-                return;
-            } else if (sessionChoice === "2") {
-                this.removePurgeableComponents();
-                resolve();
-                return;
-            }
-
-            if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
-                message({
-                    recipient: "user-input",
-                    type: "lightweight-check",
-                    senderId: this.inboxUid,
-                });
-            } else {
-                resolve();
-            }
-        });
+    private collectWebComponents() {
+        const sessionChoice = sessionStorage.getItem("connection-choice");
+        if (sessionChoice === "full") {
+            this.removeRequiredConnections();
+        } else if (sessionChoice === "lite") {
+            this.removePurgeableComponents();
+        }
+        this.handleWebComponents();
     }
 
     private removeRequiredConnections() {
-        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][required-connection]`));
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
-            element.removeAttribute("required-connection");
+            element.setAttribute("required-connection", "slow-2g");
         }
     }
 

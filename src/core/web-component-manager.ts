@@ -11,10 +11,10 @@ export class WebComponentManager {
     }
 
     private removeRequiredConnections() {
-        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][required-connection]`));
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
-            element.removeAttribute("required-connection");
+            element.setAttribute("required-connection", "slow-2g");
         }
     }
 
@@ -32,27 +32,14 @@ export class WebComponentManager {
         }
     }
 
-    public collectWebComponents(inboxUid: string) {
+    public collectWebComponents() {
         const sessionChoice = sessionStorage.getItem("connection-choice");
-        if (sessionChoice === "1") {
+        if (sessionChoice === "full") {
             this.removeRequiredConnections();
-            this.handleWebComponents();
-            return;
-        } else if (sessionChoice === "2") {
+        } else if (sessionChoice === "lite") {
             this.removePurgeableComponents();
-            this.handleWebComponents();
-            return;
         }
-
-        if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
-            message({
-                recipient: "user-input",
-                type: "lightweight-check",
-                senderId: inboxUid,
-            });
-        } else {
-            this.handleWebComponents();
-        }
+        this.handleWebComponents();
     }
 
     /**
@@ -87,10 +74,14 @@ export class WebComponentManager {
      * @see https://v8.dev/features/dynamic-import
      */
     private async upgradeToWebComponent(customElementTagName: string, customElement: Element) {
-        const ticket = env.startLoading();
-        await fetchJS(customElementTagName);
-        customElement.setAttribute("component-state", "mounted");
-        env.stopLoading(ticket);
+        if (customElements.get(customElementTagName) === undefined) {
+            const ticket = env.startLoading();
+            await fetchJS(customElementTagName);
+            customElement.setAttribute("component-state", "mounted");
+            env.stopLoading(ticket);
+        } else {
+            customElement.setAttribute("component-state", "mounted");
+        }
     }
 
     /**
@@ -98,19 +89,33 @@ export class WebComponentManager {
      * If the custom element is tagged with `loading="eager"` upgrade the custom element otherwise track the
      * custom element with the `IntersectionObserver` API.
      */
-    public handleWebComponents(): void {
+    public handleWebComponents(inboxUid: string = null): void {
         const customElements = Array.from(document.body.querySelectorAll("[web-component]:not([component-state])"));
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
             const requiredConnectionType = element.getAttribute("required-connection") || "4g";
-            console.log(`Required connection: ${requiredConnectionType}`);
             if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);
             } else {
                 element.setAttribute("component-state", "unseen");
                 this.io.observe(customElements[i]);
+            }
+        }
+        if (inboxUid) {
+            if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+                if (!env.dataSaver) {
+                    message({
+                        recipient: "user-input",
+                        type: "lightweight-check",
+                        senderId: inboxUid,
+                        maxAttempts: Infinity,
+                    });
+                } else {
+                    sessionStorage.setItem("connection-choice", "lite");
+                    this.removePurgeableComponents();
+                }
             }
         }
     }
