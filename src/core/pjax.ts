@@ -1,7 +1,7 @@
 import { hookup, message } from "../web_modules/broadcaster";
 import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
-import { gaId, followRedirects, doPrefetching, pageJumpOffset, djinnjsOutDir } from "./config";
+import { gaId, followRedirects, doPrefetching, pageJumpOffset, djinnjsOutDir, useServiceWorker } from "./config";
 
 interface PjaxState {
     activeRequestUid: string;
@@ -24,6 +24,8 @@ class Pjax {
     private worker: Worker;
     private navigationRequestQueue: Array<NavigaitonRequest>;
     private io: IntersectionObserver;
+    private serviceWorker: ServiceWorker;
+    private inboxUid: string;
 
     constructor() {
         this.state = {
@@ -49,7 +51,7 @@ class Pjax {
         }
 
         /** Hookup Pjax's inbox */
-        hookup("pjax", this.inbox.bind(this));
+        this.inboxUid = hookup("pjax", this.inbox.bind(this));
 
         /** Prepare Google Analytics */
         setupGoogleAnalytics(gaId);
@@ -103,6 +105,10 @@ class Pjax {
             case "init":
                 this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
                 this.worker.onmessage = this.handleWorkerMessage.bind(this);
+                if (useServiceWorker) {
+                    this.serviceWorker = navigator.serviceWorker.controller;
+                    navigator.serviceWorker.onmessage = this.serviceWorkerInbox.bind(this);
+                }
                 this.checkPageRevision();
                 /** Tell Pjax to hijack all viable links */
                 message({
@@ -120,11 +126,7 @@ class Pjax {
         }
     }
 
-    /**
-     * Handles messages from the Service Worker.
-     * @param e - the `MessageEvent` object
-     */
-    private handleWorkerMessage(e: MessageEvent): void {
+    private serviceWorkerInbox(e: MessageEvent) {
         const { type } = e.data;
         switch (type) {
             case "page-refresh":
@@ -141,7 +143,7 @@ class Pjax {
                 const currentPromptCount = sessionStorage.getItem("prompts");
                 if (parseInt(currentPromptCount) >= e.data.max) {
                     sessionStorage.setItem("prompts", "0");
-                    this.worker.postMessage({
+                    this.serviceWorker.postMessage({
                         type: "clear-content-cache",
                     });
                 }
@@ -150,14 +152,26 @@ class Pjax {
                 const neededDifference = e.data.contentCacheExpires * 24 * 60 * 60 * 1000;
                 if (difference >= neededDifference) {
                     localStorage.setItem("contentCache", `${Date.now()}`);
-                    this.worker.postMessage({
+                    this.serviceWorker.postMessage({
                         type: "clear-content-cache",
                     });
                 }
                 break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Handles messages from the Service Worker.
+     * @param e - the `MessageEvent` object
+     */
+    private handleWorkerMessage(e: MessageEvent): void {
+        const { type } = e.data;
+        switch (type) {
             case "revision-check":
                 if (e.data.status === "stale") {
-                    this.worker.postMessage({
+                    this.serviceWorker.postMessage({
                         type: "page-refresh",
                         url: e.data.url,
                         network: env.connection,
