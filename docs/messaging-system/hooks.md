@@ -66,3 +66,23 @@ inbox(data){
 }
 const inboxUid = hookup('pjax', this.inbox.bind(this));
 ```
+
+The Pjax class will also send a `stale-notification` message to the `user-input` inbox when Djinn is using the `offline-first` service worker (default) and the current page is stale.
+
+```javascript
+inbox(data){
+    const { type } = data;
+    switch (type) {
+        case 'stale-notification':
+            // TODO: prompt the user that a new version of the page is available
+            const userResponse = getUserInput();
+            if (userResponse === 'refresh-page'){
+                location.reload();
+            }
+            break;
+        default:
+            return;
+    }
+}
+const inboxUid = hookup('user-input', this.inbox.bind(this));
+```
