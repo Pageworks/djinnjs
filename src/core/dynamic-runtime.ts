@@ -85,14 +85,14 @@ class Djinn {
 
         const envModule = await import(`${location.origin}/${djinnjsOutDir}/env.mjs`);
         env = envModule.env;
-        env.setDOMState("idling");
 
         await import(`${location.origin}/${djinnjsOutDir}/broadcaster.mjs`);
         this.inboxUid = globalHookup("runtime", this.inbox.bind(this));
 
         const wcmModule = await import(`${location.origin}/${djinnjsOutDir}/web-component-manager.mjs`);
         webComponentManager = new wcmModule.WebComponentManager();
-        webComponentManager.collectWebComponents(this.inboxUid);
+        env.setDOMState("idling");
+        webComponentManager.handleWebComponents();
 
         if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
             await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);

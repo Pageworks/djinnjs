@@ -86,10 +86,11 @@ export class WebComponentManager {
      * @todo Switch to dynamic importing once Edge becomes chromium
      * @see https://v8.dev/features/dynamic-import
      */
-    private upgradeToWebComponent(customElementTagName: string, customElement: Element): void {
-        fetchJS(customElementTagName).then(() => {
-            customElement.setAttribute("component-state", "mounted");
-        });
+    private async upgradeToWebComponent(customElementTagName: string, customElement: Element) {
+        const ticket = env.startLoading();
+        await fetchJS(customElementTagName);
+        customElement.setAttribute("component-state", "mounted");
+        env.stopLoading(ticket);
     }
 
     /**
@@ -97,12 +98,13 @@ export class WebComponentManager {
      * If the custom element is tagged with `loading="eager"` upgrade the custom element otherwise track the
      * custom element with the `IntersectionObserver` API.
      */
-    private handleWebComponents(): void {
+    public handleWebComponents(): void {
         const customElements = Array.from(document.body.querySelectorAll("[web-component]:not([component-state])"));
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
             const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            console.log(`Required connection: ${requiredConnectionType}`);
             if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);

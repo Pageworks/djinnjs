@@ -27,10 +27,6 @@ class Env {
         this.tickets = [];
 
         this.init();
-
-        setTimeout(() => {
-            console.log(this);
-        }, 5000);
     }
 
     private init(): void {
@@ -41,6 +37,7 @@ class Env {
             this.dataSaver = window.navigator.connection.saveData;
             // @ts-ignore
             navigator.connection.onchange = this.handleNetworkChange.bind(this);
+            console.log(this.connection);
         }
 
         if ("deviceMemory" in navigator) {

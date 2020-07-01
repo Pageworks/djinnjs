@@ -18,6 +18,15 @@ class CustomElementComponent extends HTMLElement {
         // Do something after web component is connected
     }
 }
-customElements.defind('custom-element', CustomElementComponent);
+customElements.defind("custom-element", CustomElementComponent);
 ```
 
+# Connection Based Loading
+
+Prevent Web Components from loading on low-end connections using the `required-connection` attribute, the value must be a valid [Connection Type](https://wicg.github.io/netinfo/#effectiveconnectiontype-enum). Be default all Web Components require a `4g` connection.
+
+```html
+<custom-element web-component required-connection="3g">
+    ...snip...
+</custom-element>
+```
