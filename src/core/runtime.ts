@@ -20,15 +20,10 @@ type WebComponentLoad = null | "lazy" | "eager";
 class Runtime {
     private bodyParserWorker: Worker;
     private io: IntersectionObserver;
-    private loadingMessage: HTMLElement;
     private inboxUid: string;
 
     constructor() {
         this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
-        this.loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
-        if (this.loadingMessage) {
-            this.loadingMessage.setAttribute("state", "1");
-        }
         window.addEventListener("load", this.handleLoadEvent);
     }
 
@@ -36,10 +31,6 @@ class Runtime {
      * Initializes the Runtime class.
      */
     private init(): void {
-        if (this.loadingMessage) {
-            this.loadingMessage.innerHTML = "Collecting resources";
-            this.loadingMessage.setAttribute("state", "2");
-        }
         this.inboxUid = hookup("runtime", this.inbox.bind(this));
         this.bodyParserWorker.postMessage({
             type: "eager",
@@ -93,15 +84,11 @@ class Runtime {
         switch (response.type) {
             case "eager":
                 const loadingMessage = document.body.querySelector("djinnjs-file-loading-value") || null;
-                if (env.domState === "hard-loading" && this.loadingMessage) {
-                    this.loadingMessage.setAttribute("state", "3");
-                    this.loadingMessage.innerHTML = `Loading resources:`;
+                if (env.domState === "hard-loading" && loadingMessage) {
                     if (loadingMessage && usePercentage) {
                         loadingMessage.innerHTML = `0%`;
-                        loadingMessage.setAttribute("state", "enabled");
                     } else if (loadingMessage) {
                         loadingMessage.innerHTML = `0/${response.files.length}`;
-                        loadingMessage.setAttribute("state", "enabled");
                     }
                 }
                 fetchCSS(response.files).then(() => {

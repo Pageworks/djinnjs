@@ -253,7 +253,7 @@ class DjinnJS {
                 data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.config.usePercentage);
                 data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', `${this.config.serviceWorker ? true : false}`);
                 data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.config.pageJumpOffset);
-                data = data.replace('"REPLACE_WITH_MINIMUM_CONNECTION"', this.config.minimumConnection);
+                data = data.replace("REPLACE_WITH_MINIMUM_CONNECTION", this.config.minimumConnection);
                 fs.writeFile(runtimeFile, data, error => {
                     if (error) {
                         reject(error);

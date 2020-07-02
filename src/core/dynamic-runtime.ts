@@ -9,7 +9,6 @@ let webComponentManager = null;
 
 class Djinn {
     private worker: Worker;
-    private loadingMessage: HTMLElement;
     private fetchCSS: Function;
     private inboxUid: string;
 
@@ -17,11 +16,6 @@ class Djinn {
         this.worker = null;
 
         window.addEventListener("load", this.handleLoadEvent);
-
-        this.loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
-        if (this.loadingMessage) {
-            this.loadingMessage.setAttribute("state", "1");
-        }
     }
 
     private workerInbox(e: MessageEvent) {
@@ -123,15 +117,11 @@ class Djinn {
 
     private async handleEagerResponse(files) {
         const loadingMessage = document.body.querySelector("djinnjs-file-loading-value") || null;
-        if (document.documentElement.getAttribute("state") === "hard-loading" && this.loadingMessage) {
-            this.loadingMessage.setAttribute("state", "3");
-            this.loadingMessage.innerHTML = `Loading resources:`;
+        if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
             if (loadingMessage && usePercentage) {
                 loadingMessage.innerHTML = `0%`;
-                loadingMessage.setAttribute("state", "enabled");
             } else if (loadingMessage) {
                 loadingMessage.innerHTML = `0/${files.length}`;
-                loadingMessage.setAttribute("state", "enabled");
             }
         }
         const fetchModule = await import(`${location.origin}/${djinnjsOutDir}/fetch.mjs`);
