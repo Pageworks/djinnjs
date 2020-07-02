@@ -2,6 +2,7 @@ import { env } from "./env";
 import { fetchJS } from "./fetch";
 import { WebComponentLoad } from "./types";
 import { message } from "../web_modules/broadcaster";
+import { minimumConnection } from "./config";
 
 export class WebComponentManager {
     private io: IntersectionObserver;
@@ -22,7 +23,7 @@ export class WebComponentManager {
         const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removable]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
-            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
             if (customElements.get(element.tagName.toLowerCase().trim()) === undefined) {
                 if (!env.checkConnection(requiredConnectionType)) {
                     this.io.unobserve(element);
@@ -51,7 +52,7 @@ export class WebComponentManager {
             if (entries[i].isIntersecting) {
                 const element = entries[i].target;
                 const customElement = element.tagName.toLowerCase().trim();
-                const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+                const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
 
                 if (customElements.get(customElement) === undefined) {
                     if (env.checkConnection(requiredConnectionType)) {
@@ -94,7 +95,7 @@ export class WebComponentManager {
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
-            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
             if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);

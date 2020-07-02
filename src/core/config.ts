@@ -6,3 +6,4 @@ export const followRedirects = "REPLACE_WITH_FOLLOW_REDIRECT_STATUS";
 export const usePercentage = "REPLACE_WITH_USE_PERCENTAGE";
 export const useServiceWorker = "REPLACE_WITH_USE_SERVICE_WORKER";
 export const pageJumpOffset = "REPLACE_WITH_PAGE_JUMP_OFFSET";
+export const minimumConnection = "REPLACE_WITH_MINIMUM_CONNECTION";

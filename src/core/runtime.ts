@@ -1,7 +1,7 @@
 import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
-import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker } from "./config";
+import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker, minimumConnection } from "./config";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -177,7 +177,7 @@ class Runtime {
         const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removable]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
-            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
             if (customElements.get(element.tagName.toLowerCase().trim()) === undefined) {
                 if (!env.checkConnection(requiredConnectionType)) {
                     this.io.unobserve(element);
@@ -296,7 +296,7 @@ class Runtime {
             if (entries[i].isIntersecting) {
                 const element = entries[i].target;
                 const customElement = element.tagName.toLowerCase().trim();
-                const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+                const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
 
                 if (customElements.get(customElement) === undefined) {
                     if (env.checkConnection(requiredConnectionType)) {
@@ -322,7 +322,7 @@ class Runtime {
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
-            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
             if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);

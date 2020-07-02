@@ -47,6 +47,7 @@ module.exports = {
     followRedirects: true,
     usePercentage: false,
     pageJumpOffset: null,
+    minimumConnection: "4g,
 };
 ```
 
@@ -149,3 +150,9 @@ A boolean. This value is used to determine if the `<file-loading-value>` element
 Default: `null`
 
 A number. When `null` page jumps scroll the element into the center of the viewport. When a number is provided the element is scrolled to the top of the viewport then the offset is added. Positive numbers move the element up, negative numbers move the element down.
+
+#### minimumConnection
+
+Default: `"4g"`
+
+A [Effective Connection Type](https://wicg.github.io/netinfo/#effectiveconnectiontype-enum). This value will be used as the default `required-connection` attribute when loading Web Components.

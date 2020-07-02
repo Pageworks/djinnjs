@@ -14,4 +14,5 @@ module.exports = {
     followRedirects: true,
     usePercentage: false,
     pageJumpOffset: null,
+    minimumConnection: "4g",
 };

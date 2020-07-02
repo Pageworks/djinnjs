@@ -174,6 +174,34 @@ module.exports = function valdiateConfig(config, customConfig) {
             process.exit(1);
     }
 
+    switch (typeof customConfig.minimumConnection) {
+        case "string":
+            switch (customConfig.minimumConnection) {
+                case "4g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                case "3g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                case "2g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                case "slow-2g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                default:
+                    console.log(`Invalid DjinnJS configuration. The minimumConnection must be 4g, 3g, 2g, or slow-2g.`);
+                    process.exit(1);
+                    break;
+            }
+            break;
+        case "undefined":
+            break;
+        default:
+            console.log(`Invalid DjinnJS configuration. The minimumConnection value must be a string.`);
+            process.exit(1);
+    }
+
     let env;
     if (typeof customConfig.env === "string") {
         env = customConfig.env;
