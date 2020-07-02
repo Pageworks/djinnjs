@@ -37,6 +37,7 @@ module.exports = {
     outDir: "assets",
     noCachePattern: /(\.json)$|(cachebust\.js)/gi,
     cachebustURL: "/cachebust.json",
+    resourcePattern: /(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi,
     serviceWorker: true,
     silent: true,
     env: "production",
@@ -90,6 +91,12 @@ A URL pathname string. This is the location of the cache bust file used to cache
 `maximumContentPrompts` is the number of times a user will be prompted with an update message before the Service Worker clears the entire content cache.
 
 `contentCacheDuration` is the number of days the offline content cache will be used before the Service Worker clears the entire content cache.
+
+#### resourcePattern
+
+Default: `/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi`
+
+A RegExp pattern. This RegExp pattern is used to determine if the requested file should be stored within the resources cache.
 
 #### serviceWorker
 

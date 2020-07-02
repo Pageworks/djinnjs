@@ -15,7 +15,7 @@ self.addEventListener("message", event => {
 });
 
 self.addEventListener("fetch", event => {
-    const isResource = event.request.url.match(/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi);
+    const isResource = event.request.url.match(new RegExp(REPLACE_WITH_RESOURCE_PATTERN));
     if (isResource) {
         const cacheName = resourcesCacheId;
         event.respondWith(

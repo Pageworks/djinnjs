@@ -8,6 +8,13 @@ module.exports = function valdiateConfig(config, customConfig) {
         process.exit(1);
     }
 
+    if (customConfig.resourcePattern instanceof RegExp) {
+        config.resourcePattern = customConfig.resourcePattern;
+    } else if (typeof customConfig.resourcePattern !== "undefined") {
+        console.log(`Invalid DjinnJS configuration. The resourcePattern value must be a regular expression pattern.`);
+        process.exit(1);
+    }
+
     switch (typeof customConfig.cachebustURL) {
         case "string":
             config.cachebustURL = customConfig.cachebustURL;

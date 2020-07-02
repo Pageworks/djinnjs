@@ -4,6 +4,7 @@ module.exports = {
     outDir: "assets",
     noCachePattern: /(\.json)$|(cachebust\.js)/gi,
     cachebustURL: "/cachebust.json",
+    resourcePattern: /(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi,
     serviceWorker: true,
     silent: true,
     env: "production",

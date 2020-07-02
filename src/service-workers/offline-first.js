@@ -9,7 +9,7 @@ self.addEventListener("fetch", event => {
         // Use a passthrough to ignore the caching system
         event.respondWith(fetch(event.request));
     } else {
-        const isResource = event.request.url.match(/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi);
+        const isResource = event.request.url.match(new RegExp(REPLACE_WITH_RESOURCE_PATTERN));
         const cacheName = isResource ? resourcesCacheId : contentCacheId;
 
         event.respondWith(

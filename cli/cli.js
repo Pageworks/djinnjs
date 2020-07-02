@@ -219,6 +219,7 @@ class DjinnJS {
                     let data = buffer.toString();
                     data = data.replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
                     data = data.replace("REPLACE_WITH_CACHEBUST_URL", this.config.cachebustURL);
+                    data = data.replace("REPLACE_WITH_RESOURCE_PATTERN", this.config.resourcePattern);
 
                     fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
                         if (error) {
