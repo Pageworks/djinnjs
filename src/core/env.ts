@@ -1,30 +1,30 @@
-import { environment } from "./config";
-
 type DOMState = "soft-loading" | "hard-loading" | "idling" | "page-loading" | "page-loading-complete";
 type NetworkType = "4g" | "3g" | "2g" | "slow-2g";
+type Browser = "chrome" | "safari" | "edge" | "chromium-edge" | "ie" | "firefox" | "unknown" | "opera";
 
 class Env {
-    public isDebug: boolean;
     public connection: NetworkType;
     public cpu: number;
     public memory: number | null;
-    public isProduciton: boolean;
     public domState: DOMState;
     public dataSaver: boolean;
+    public browser: Browser;
+    public threadPool: number;
 
-    private _tickets: Array<string>;
+    private tickets: Array<string>;
 
     constructor() {
         this.memory = 4;
-        this.cpu = window.navigator.hardwareConcurrency;
+        this.cpu = window.navigator?.hardwareConcurrency || 2;
+        // Automatically removing 2 since DjinnJS has 2 critical web workers
+        this.threadPool = this.cpu - 2;
         this.connection = "4g";
-        // @ts-ignore
-        this.isProduciton = environment === "production";
-        this.isDebug = !this.isProduciton;
         this.domState = "hard-loading";
         this.dataSaver = false;
+        this.browser = "unknown";
+        this.setBrowser();
 
-        this._tickets = [];
+        this.tickets = [];
 
         this.init();
     }
@@ -36,28 +36,19 @@ class Env {
             // @ts-ignore
             this.dataSaver = window.navigator.connection.saveData;
             // @ts-ignore
-            navigator.connection.onchange = this.handleNetworkChange;
+            navigator.connection.onchange = this.handleNetworkChange.bind(this);
         }
 
         if ("deviceMemory" in navigator) {
             // @ts-ignore
             this.memory = window.navigator.deviceMemory;
         }
-
-        if (document.documentElement.getAttribute("debug")) {
-            this.isDebug = true;
-        }
-
-        if (window.location.search) {
-            if (new URL(window.location.href).searchParams.get("debug")) {
-                this.isDebug = true;
-            }
-        }
     }
 
     private handleNetworkChange: EventListener = () => {
         // @ts-ignore
         this.connection = window.navigator.connection.effectiveType;
+        sessionStorage.removeItem("connection-choice");
     };
 
     /**
@@ -65,19 +56,19 @@ class Env {
      * @param ticket - the `string` the was provided by the `startLoading()` method.
      */
     public stopLoading(ticket: string): void {
-        if ((!ticket && this.isDebug) || (typeof ticket !== "string" && this.isDebug)) {
+        if (!ticket || typeof ticket !== "string") {
             console.error(`A ticket with the typeof 'string' is required to end the loading state.`);
             return;
         }
 
-        for (let i = 0; i < this._tickets.length; i++) {
-            if (this._tickets[i] === ticket) {
-                this._tickets.splice(i, 1);
+        for (let i = 0; i < this.tickets.length; i++) {
+            if (this.tickets[i] === ticket) {
+                this.tickets.splice(i, 1);
                 break;
             }
         }
 
-        if (this._tickets.length === 0 && this.domState !== "hard-loading") {
+        if (this.tickets.length === 0 && this.domState === "soft-loading") {
             this.domState = "idling";
             document.documentElement.setAttribute("state", this.domState);
         }
@@ -92,8 +83,8 @@ class Env {
             this.domState = "soft-loading";
             document.documentElement.setAttribute("state", this.domState);
         }
-        const ticket = this.uuid();
-        this._tickets.push(ticket);
+        const ticket = this.uid();
+        this.tickets.push(ticket);
         return ticket;
     }
 
@@ -106,7 +97,7 @@ class Env {
         this.domState = "page-loading-complete";
         document.documentElement.setAttribute("state", this.domState);
         setTimeout(() => {
-            if (this._tickets.length) {
+            if (this.tickets.length) {
                 this.domState = "soft-loading";
                 document.documentElement.setAttribute("state", this.domState);
             } else {
@@ -121,7 +112,7 @@ class Env {
      * This method does not follow RFC 4122 and does not guarantee a universally unique ID.
      * @see https://tools.ietf.org/html/rfc4122
      */
-    public uuid(): string {
+    public uid(): string {
         return new Array(4)
             .fill(0)
             .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
@@ -138,8 +129,106 @@ class Env {
         this.domState = newState;
         document.documentElement.setAttribute("state", this.domState);
     }
+
+    /**
+     * Checks if the provided connection is greater than or equal to the current conneciton.
+     * @param requiredConnection - network connection string
+     */
+    public checkConnection(requiredConnection): boolean {
+        let passed = false;
+        switch (requiredConnection) {
+            case "4g":
+                if (this.connection !== "2g" && this.connection !== "slow-2g" && this.connection !== "3g") {
+                    passed = true;
+                }
+                break;
+            case "3g":
+                if (this.connection !== "2g" && this.connection !== "slow-2g") {
+                    passed = true;
+                }
+                break;
+            case "2g":
+                if (this.connection !== "slow-2g") {
+                    passed = true;
+                }
+                break;
+            case "slow-2g":
+                passed = true;
+                break;
+            default:
+                passed = true;
+                break;
+        }
+        return passed;
+    }
+
+    private setBrowser() {
+        // @ts-ignore
+        const isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(" OPR/") >= 0;
+
+        // @ts-ignore
+        const isFirefox = typeof InstallTrigger !== "undefined";
+
+        const isSafari =
+            // @ts-ignore
+            /constructor/i.test(window.HTMLElement) ||
+            (function(p) {
+                return p.toString() === "[object SafariRemoteNotification]";
+                // @ts-ignore
+            })(!window["safari"] || (typeof safari !== "undefined" && safari.pushNotification));
+
+        // @ts-ignore
+        const isIE = /*@cc_on!@*/ false || !!document.documentMode;
+
+        const isEdge = !isIE && !!window.StyleMedia;
+
+        // @ts-ignore
+        const isChrome = !!window.chrome;
+
+        const isEdgeChromium = isChrome && navigator.userAgent.indexOf("Edg") != -1;
+
+        if (isOpera) {
+            this.browser = "opera";
+        } else if (isFirefox) {
+            this.browser = "firefox";
+        } else if (isSafari) {
+            this.browser = "safari";
+        } else if (isIE) {
+            this.browser = "ie";
+        } else if (isEdge) {
+            this.browser = "edge";
+        } else if (isChrome) {
+            this.browser = "chrome";
+        } else if (isEdgeChromium) {
+            this.browser = "chromium-edge";
+        } else {
+            this.browser = "unknown";
+        }
+        document.documentElement.classList.add(this.browser);
+    }
+
+    /**
+     * Reserve a thread in the generic thread pool.
+     */
+    public reserveThread(): Promise<string> {
+        return new Promise((resolve, reject) => {
+            if (this.threadPool - 1 < 0) {
+                reject("Thread pool is empty");
+            } else {
+                this.threadPool--;
+                resolve();
+            }
+        });
+    }
+
+    /**
+     * Release a thread after terminating a Worker.
+     */
+    public releaseThread() {
+        this.threadPool++;
+    }
 }
 export const env: Env = new Env();
-export const debug: boolean = env.isDebug;
-export const uuid: Function = env.uuid;
+export const uid: Function = env.uid;
 export const dataSaver: boolean = env.dataSaver;
+export const browser: Browser = env.browser;

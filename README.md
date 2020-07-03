@@ -1,6 +1,6 @@
 # DjinnJS
 
-DjinnJS is an ES Module framework designed to assist developers in building performance-focused websites and web applications. Check out the project on [GitHub](https://github.com/Pageworks/djinnjs) or [NPM](https://www.npmjs.com/package/djinnjs).
+DjinnJS is an ES Module based JavaScript framework designed to assist developers in building performance-focused websites and web applications.
 
 ## Features
 
@@ -33,7 +33,7 @@ module.exports = {
 Include the runtime JavaScript:
 
 ```html
-<script type="module" src="/assets/runtime.mjs"></script>
+<script type="module" src="/assets/bootstrap.mjs"></script>
 ```
 
 Inlcude the noscript CSS file:
@@ -42,16 +42,6 @@ Inlcude the noscript CSS file:
 <noscript>
     <link rel="stylesheet" href="/assets/noscript.css" />
 </noscript>
-```
-
-Include the Web Component polyfill:
-
-```html
-<script>
-    if (typeof CustomElementRegistry === "undefined") {
-        document.write('<script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-bundle.js"><\/script>');
-    }
-</script>
 ```
 
 Run the DjinnJS command:
@@ -72,7 +62,7 @@ djinnjs
 
 -   Modern browsers
 -   [Electron](https://electronjs.org/)
--   Edge (IE 12) with [polyfills](https://github.com/webcomponents/polyfills/tree/master/packages/webcomponentsjs)
+-   Edge (IE 12)
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/electron/electron_48x48.png" alt="Electron" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/) |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -81,17 +71,6 @@ djinnjs
 ## Contributing
 
 We welcome all contributions. Please read our [contributing guideline](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md) first. You can submit any changes as [pull requests](https://github.com/Pageworks/djinnjs/pulls) or as [GitHub issues](https://github.com/Pageworks/djinnjs/issues). If you'd like to fix bugs or add new features, check out the [developer guide](https://djinnjs.com/developer-guide) and please follow our [Pull Request](https://djinnjs.com/contributing#branch-organization) principle.
-
-## Links
-
--   [Overview](https://djinnjs.com/)
--   [Configuration](https://djinnjs.com/configuration)
--   [Getting Started](https://djinnjs.com/getting-started)
--   [Pjax](https://djinnjs.com/pjax)
--   [Transitions](https://djinnjs.com/transitions)
--   [Code of Conduct](https://djinnjs.com/code-of-conduct)
--   [Contributing](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md)
--   [Developer Guide](https://djinnjs.com/developer-guide)
 
 ## References
 

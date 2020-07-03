@@ -1,7 +1,7 @@
 import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
-import { djinnjsOutDir, usePjax, usePercentage } from "./config";
+import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker, minimumConnection } from "./config";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -18,16 +18,12 @@ interface WorkerResponse {
 type WebComponentLoad = null | "lazy" | "eager";
 
 class Runtime {
-    private _bodyParserWorker: Worker;
-    private _io: IntersectionObserver;
-    private _loadingMessage: HTMLElement;
+    private bodyParserWorker: Worker;
+    private io: IntersectionObserver;
+    private inboxUid: string;
 
     constructor() {
-        this._bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.mjs`);
-        this._loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
-        if (this._loadingMessage) {
-            this._loadingMessage.setAttribute("state", "1");
-        }
+        this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
         window.addEventListener("load", this.handleLoadEvent);
     }
 
@@ -35,17 +31,13 @@ class Runtime {
      * Initializes the Runtime class.
      */
     private init(): void {
-        if (this._loadingMessage) {
-            this._loadingMessage.innerHTML = "Collecting resources";
-            this._loadingMessage.setAttribute("state", "2");
-        }
-        hookup("runtime", this.inbox.bind(this));
-        this._bodyParserWorker.postMessage({
+        this.inboxUid = hookup("runtime", this.inbox.bind(this));
+        this.bodyParserWorker.postMessage({
             type: "eager",
             body: document.body.innerHTML,
         });
-        this._bodyParserWorker.onmessage = this.handleWorkerMessage.bind(this);
-        this._io = new IntersectionObserver(this.intersectionCallback);
+        this.bodyParserWorker.onmessage = this.handleWorkerMessage.bind(this);
+        this.io = new IntersectionObserver(this.intersectionCallback);
     }
     private handleLoadEvent: EventListener = this.init.bind(this);
 
@@ -56,11 +48,21 @@ class Runtime {
     private inbox(data): void {
         const { type } = data;
         switch (type) {
+            case "use-full":
+                sessionStorage.setItem("connection-choice", "full");
+                this.collectWebComponents();
+                break;
+            case "use-lite":
+                sessionStorage.setItem("connection-choice", "lite");
+                this.collectWebComponents();
+                break;
+            case "completed":
+                break;
             case "load":
                 fetchCSS(data.resources);
                 break;
             case "mount-components":
-                this.handleWebComponents();
+                this.collectWebComponents();
                 break;
             case "parse":
                 this.parseHTML(data.body, data.requestUid);
@@ -82,21 +84,17 @@ class Runtime {
         switch (response.type) {
             case "eager":
                 const loadingMessage = document.body.querySelector("djinnjs-file-loading-value") || null;
-                if (env.domState === "hard-loading" && this._loadingMessage) {
-                    this._loadingMessage.setAttribute("state", "3");
-                    this._loadingMessage.innerHTML = `Loading resources:`;
+                if (env.domState === "hard-loading" && loadingMessage) {
                     if (loadingMessage && usePercentage) {
                         loadingMessage.innerHTML = `0%`;
-                        loadingMessage.setAttribute("state", "enabled");
                     } else if (loadingMessage) {
                         loadingMessage.innerHTML = `0/${response.files.length}`;
-                        loadingMessage.setAttribute("state", "enabled");
                     }
                 }
                 fetchCSS(response.files).then(() => {
                     env.setDOMState("idling");
                     this.handlePageScrollPosition();
-                    this._bodyParserWorker.postMessage({
+                    this.bodyParserWorker.postMessage({
                         type: "lazy",
                         body: document.body.innerHTML,
                     });
@@ -105,6 +103,19 @@ class Runtime {
             case "lazy":
                 fetchCSS(response.files).then(() => {
                     this.handleWebComponents();
+                    if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+                        if (!env.dataSaver) {
+                            message({
+                                recipient: "user-input",
+                                type: "lightweight-check",
+                                senderId: this.inboxUid,
+                                maxAttempts: Infinity,
+                            });
+                        } else {
+                            sessionStorage.setItem("connection-choice", "lite");
+                            this.removePurgeableComponents();
+                        }
+                    }
                     if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
                         fetchJS("pjax").then(() => {
                             message({
@@ -113,6 +124,9 @@ class Runtime {
                                 maxAttempts: Infinity,
                             });
                         });
+                    }
+                    if (useServiceWorker && env.threadPool !== 0) {
+                        fetchJS("service-worker-bootstrap");
                     }
                     message({
                         recipient: "runtime",
@@ -125,6 +139,38 @@ class Runtime {
                 break;
             default:
                 return;
+        }
+    }
+
+    private collectWebComponents() {
+        const sessionChoice = sessionStorage.getItem("connection-choice");
+        if (sessionChoice === "full") {
+            this.removeRequiredConnections();
+        } else if (sessionChoice === "lite") {
+            this.removePurgeableComponents();
+        }
+        this.handleWebComponents();
+    }
+
+    private removeRequiredConnections() {
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component]`));
+        for (let i = 0; i < webComponentElements.length; i++) {
+            const element = webComponentElements[i];
+            element.setAttribute("required-connection", "slow-2g");
+        }
+    }
+
+    private removePurgeableComponents() {
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removable]`));
+        for (let i = 0; i < webComponentElements.length; i++) {
+            const element = webComponentElements[i];
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
+            if (customElements.get(element.tagName.toLowerCase().trim()) === undefined) {
+                if (!env.checkConnection(requiredConnectionType)) {
+                    this.io.unobserve(element);
+                    element.remove();
+                }
+            }
         }
     }
 
@@ -142,6 +188,15 @@ class Runtime {
                 newScript.integrity = script.integrity;
                 newScript.nonce = script.nonce;
                 newScript.referrerPolicy = script.referrerPolicy;
+
+                if (newScript.type !== "module") {
+                    if (script.async) {
+                        newScript.async = true;
+                    } else {
+                        newScript.defer = true;
+                    }
+                }
+
                 if (script?.src || script?.id || script.getAttribute("pjax-script-id")) {
                     let scriptSelector = "script";
                     scriptSelector += `[src="${script?.src}"]` || `#${script?.id}` || `[pjax-script-id="${script.getAttribute("pjax-script-id")}"]`;
@@ -199,7 +254,7 @@ class Runtime {
      * @param requestUid - the navigation request unique id
      */
     private parseHTML(body: string, requestUid: string): void {
-        this._bodyParserWorker.postMessage({
+        this.bodyParserWorker.postMessage({
             type: "parse",
             body: body,
             requestUid: requestUid,
@@ -226,12 +281,18 @@ class Runtime {
     private handleIntersection(entries: Array<IntersectionObserverEntry>) {
         for (let i = 0; i < entries.length; i++) {
             if (entries[i].isIntersecting) {
-                this._io.unobserve(entries[i].target);
-                const customElement = entries[i].target.tagName.toLowerCase().trim();
+                const element = entries[i].target;
+                const customElement = element.tagName.toLowerCase().trim();
+                const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
+
                 if (customElements.get(customElement) === undefined) {
-                    this.upgradeToWebComponent(customElement, entries[i].target);
+                    if (env.checkConnection(requiredConnectionType)) {
+                        this.io.unobserve(element);
+                        this.upgradeToWebComponent(customElement, element);
+                    }
                 } else {
-                    entries[i].target.setAttribute("component-state", "mounted");
+                    this.io.unobserve(element);
+                    element.setAttribute("component-state", "mounted");
                 }
             }
         }
@@ -248,12 +309,13 @@ class Runtime {
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
-            if (loadType === "eager") {
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
+            if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);
             } else {
                 element.setAttribute("component-state", "unseen");
-                this._io.observe(customElements[i]);
+                this.io.observe(customElements[i]);
             }
         }
     }

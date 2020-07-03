@@ -2,26 +2,25 @@ const glob = require("glob");
 const fs = require("fs");
 const path = require("path");
 
-async function scrubber(sources, outDir) {
+async function scrubber(sources) {
     try {
         const projectFiles = await getProjectFiles(sources);
         const coreFiles = await getCoreFiles();
-        await createTempDirectory(outDir);
         const files = [...projectFiles, ...coreFiles];
-        await scrubFiles(files, outDir);
+        await scrubFiles(files);
         return;
     } catch (error) {
         throw error;
     }
 }
 
-function scrubFiles(files, handle) {
+function scrubFiles(files) {
     return new Promise((resolve, reject) => {
         if (files.length === 0) {
             resolve();
         }
         let scrubbed = 0;
-        const outDir = path.resolve(__dirname, `../temp/${handle}`);
+        const outDir = path.resolve(__dirname, `../temp`);
         for (let i = 0; i < files.length; i++) {
             const filePath = files[i];
             const filename = filePath.replace(/.*[\/\\]/g, "");
@@ -59,20 +58,6 @@ function scrubFiles(files, handle) {
                 reject(`Two files exist with the same name: ${filename}`);
                 break;
             }
-        }
-    });
-}
-
-function createTempDirectory(outDir) {
-    return new Promise((resolve, reject) => {
-        const dir = path.resolve(__dirname, `../temp/${outDir}`);
-        if (!fs.existsSync(dir)) {
-            fs.mkdir(dir, error => {
-                if (error) {
-                    reject(error);
-                }
-                resolve();
-            });
         }
     });
 }

@@ -9,7 +9,7 @@ self.addEventListener("fetch", event => {
         // Use a passthrough to ignore the caching system
         event.respondWith(fetch(event.request));
     } else {
-        const isResource = event.request.url.match(/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$/gi);
+        const isResource = event.request.url.match(new RegExp(REPLACE_WITH_RESOURCE_PATTERN));
         const cacheName = isResource ? resourcesCacheId : contentCacheId;
 
         event.respondWith(
@@ -82,65 +82,6 @@ function informClientOfCachebustValues(maximumContentPrompts, contentCacheDurati
     });
 }
 
-async function cachebust(url) {
-    const request = await fetch(`/resources-cachebust.json`, {
-        cache: "no-cache",
-        credentials: "include",
-        headers: new Headers({
-            Accept: "application/json",
-        }),
-    });
-    if (request.ok) {
-        const response = await request.json();
-        resourcesCacheId = `resources-${response.cacheTimestamp}`;
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (new RegExp(/resources/i).test(cacheName) && cacheName !== resourcesCacheId) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        });
-    }
-
-    const request2 = await fetch("REPLACE_WITH_CACHEBUST_URL", {
-        cache: "no-cache",
-        credentials: "include",
-        headers: new Headers({
-            Accept: "application/json",
-        }),
-    });
-    if (request2.ok) {
-        const response = await request2.json();
-        contentCacheId = `content-${response.cacheTimestamp}`;
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        });
-        informClientOfCachebustValues(response.maximumContentPrompts, response.contentCacheDuration, url);
-    } else {
-        if (contentCacheId === "content-initial") {
-            contentCacheId = `content-${Date.now()}`;
-            caches.keys().then(cacheNames => {
-                return Promise.all(
-                    cacheNames.map(cacheName => {
-                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
-                            return caches.delete(cacheName);
-                        }
-                    })
-                );
-            });
-        }
-        informClientOfCachebustValues(4, 7, url);
-    }
-}
-
 async function updatePageCache(url, network) {
     try {
         const request = new Request(url);
@@ -177,4 +118,70 @@ async function updatePageCache(url, network) {
     } catch (error) {
         console.error(error);
     }
+}
+
+async function bustResources() {
+    const resourceRequest = await fetch(`/resources-cachebust.json`, {
+        cache: "no-cache",
+        credentials: "include",
+        headers: new Headers({
+            Accept: "application/json",
+        }),
+    });
+    if (resourceRequest.ok) {
+        const response = await resourceRequest.json();
+        resourcesCacheId = `resources-${response.cacheTimestamp}`;
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (new RegExp(/resources/i).test(cacheName) && cacheName !== resourcesCacheId) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        });
+    }
+}
+
+async function bustContent(url) {
+    const contentRequest = await fetch("REPLACE_WITH_CACHEBUST_URL", {
+        cache: "no-cache",
+        credentials: "include",
+        headers: new Headers({
+            Accept: "application/json",
+        }),
+    });
+    if (contentRequest.ok) {
+        const response = await contentRequest.json();
+        contentCacheId = `content-${response.cacheTimestamp}`;
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        });
+        informClientOfCachebustValues(response.maximumContentPrompts, response.contentCacheDuration, url);
+    } else {
+        if (contentCacheId === "content-initial") {
+            contentCacheId = `content-${Date.now()}`;
+            caches.keys().then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (new RegExp(/content/i).test(cacheName) && cacheName !== contentCacheId) {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            });
+        }
+        informClientOfCachebustValues(4, 7, url);
+    }
+}
+
+async function cachebust(url) {
+    bustResources();
+    bustContent(url);
 }

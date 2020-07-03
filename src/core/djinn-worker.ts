@@ -3,21 +3,21 @@
  * @param body - the body text to be parsed
  */
 async function parseLazyLoadedCSS(body: string) {
-    const matches = body.match(/(lazy-load-css\=[\'\"].*?[\'\"])/gi);
+    const matches = body.match(/(lazy-css\=[\'\"].*?[\'\"])/gi);
     if (matches === null || matches.length === 0) {
         return [];
     }
     const files: Array<string> = [];
     if (matches) {
         matches.map((match: string) => {
-            const clean = match.replace(/(lazy-load-css\=[\'\"])|[\'\"]$/g, "");
+            const clean = match.replace(/(lazy-css\=[\'\"])|[\'\"]$/g, "");
             const filenames = clean.trim().split(/\s+/g);
             if (filenames) {
                 filenames.map(filename => {
                     const cleanFilename = filename
                         .trim()
                         .toLowerCase()
-                        .replace(/(\.css)$|(\.scss)$/g, "");
+                        .replace(/(\.css)$/g, "");
                     if (cleanFilename !== "") {
                         files.push(cleanFilename);
                     }
@@ -44,21 +44,21 @@ async function parseLazyLoadedCSS(body: string) {
  * @param body - the body text to be parsed
  */
 async function parseEagerLoadedCSS(body: string) {
-    const matches = body.match(/(eager-load-css\=[\'\"].*?[\'\"])/gi);
+    const matches = body.match(/(eager-css\=[\'\"].*?[\'\"])/gi);
     if (matches === null || matches.length === 0) {
         return [];
     }
     const files: Array<string> = [];
     if (matches) {
         matches.map((match: string) => {
-            const clean = match.replace(/(eager-load-css\=[\'\"])|[\'\"]$/g, "");
+            const clean = match.replace(/(eager-css\=[\'\"])|[\'\"]$/g, "");
             const filenames = clean.trim().split(/\s+/g);
             if (filenames) {
                 filenames.map(filename => {
                     const cleanFilename = filename
                         .trim()
                         .toLowerCase()
-                        .replace(/(\.css)$|(\.scss)$/g, "");
+                        .replace(/(\.css)$/g, "");
                     if (cleanFilename !== "") {
                         files.push(cleanFilename);
                     }

@@ -21,9 +21,8 @@ class PjaxWorker {
                 this.pjax(e.data.url, e.data.requestId, e.data.currentUrl, e.data.followRedirects);
                 break;
             case "prefetch":
-                const existingQueue = this.prefetch.length;
                 this.prefetchQueue = [...this.prefetchQueue, ...e.data.urls];
-                if (!existingQueue) {
+                if (!this.prefetchQueue.length) {
                     this.prefetch();
                 }
                 break;

@@ -1,16 +1,13 @@
-import { env } from "./env";
 import { djinnjsOutDir, usePercentage } from "./config";
 
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
- * @param filenames - a filename `sting` or an array of `string` JS filenames or a URL -- exclude the extension
+ * @param filenames - a file name `sting` or `string[]` excluding the extension -- also supports full URL strings
  */
 export function fetchJS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {
-        const ticket = env.startLoading();
         const resourceList = filenames instanceof Array ? filenames : [filenames];
         if (resourceList.length === 0) {
-            env.stopLoading(ticket);
             resolve();
         }
 
@@ -37,14 +34,12 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
                 el.addEventListener("load", () => {
                     loaded++;
                     if (loaded === resourceList.length) {
-                        env.stopLoading(ticket);
                         resolve();
                     }
                 });
                 el.addEventListener("error", () => {
                     loaded++;
                     if (loaded === resourceList.length) {
-                        env.stopLoading(ticket);
                         resolve();
                     }
                 });
@@ -52,7 +47,6 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
             } else {
                 loaded++;
                 if (loaded === resourceList.length) {
-                    env.stopLoading(ticket);
                     resolve();
                 }
             }
@@ -66,10 +60,8 @@ export function fetchJS(filenames: string | Array<string>): Promise<{}> {
  */
 export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
     return new Promise(resolve => {
-        const ticket = env.startLoading();
         const resourceList = filenames instanceof Array ? filenames : [filenames];
         if (resourceList.length === 0) {
-            env.stopLoading(ticket);
             resolve();
         }
 
@@ -93,7 +85,7 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 }
                 el.addEventListener("load", () => {
                     loaded++;
-                    if (env.domState === "hard-loading" && loadingMessage) {
+                    if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
                         if (usePercentage) {
                             loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
                         } else {
@@ -101,13 +93,12 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                         }
                     }
                     if (loaded === resourceList.length) {
-                        env.stopLoading(ticket);
                         resolve();
                     }
                 });
                 el.addEventListener("error", () => {
                     loaded++;
-                    if (env.domState === "hard-loading" && loadingMessage) {
+                    if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
                         if (usePercentage) {
                             loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
                         } else {
@@ -115,14 +106,13 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                         }
                     }
                     if (loaded === resourceList.length) {
-                        env.stopLoading(ticket);
                         resolve();
                     }
                 });
                 document.head.append(el);
             } else {
                 loaded++;
-                if (env.domState === "hard-loading" && loadingMessage) {
+                if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
                     if (usePercentage) {
                         loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
                     } else {
@@ -130,7 +120,6 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                     }
                 }
                 if (loaded === resourceList.length) {
-                    env.stopLoading(ticket);
                     resolve();
                 }
             }

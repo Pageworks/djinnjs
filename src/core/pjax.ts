@@ -1,10 +1,7 @@
 import { hookup, message } from "../web_modules/broadcaster";
-import { debug, env, uuid } from "./env";
+import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
-import { transitionManager } from "./transition-manager";
-import { djinnjsOutDir, gaId, useServiceWorker, followRedirects, doPrefetching } from "./config";
-import { notify } from "../web_modules/@codewithkyle/notifications";
-import { fetchCSS } from "./fetch";
+import { gaId, followRedirects, doPrefetching, pageJumpOffset, djinnjsOutDir, useServiceWorker } from "./config";
 
 interface PjaxState {
     activeRequestUid: string;
@@ -16,25 +13,25 @@ interface NavigaitonRequest {
     url: string;
     history: "push" | "replace";
     requestUid: string;
-    transition: string | null;
-    transitionData: string | null;
     target: HTMLElement | null;
     targetSelector: string;
+    tickets: string[];
+    customPageJumpOffset: number;
 }
 
 class Pjax {
     private state: PjaxState;
     private worker: Worker;
-    private serviceWorker: ServiceWorker;
     private navigationRequestQueue: Array<NavigaitonRequest>;
     private io: IntersectionObserver;
+    private serviceWorker: ServiceWorker;
+    private inboxUid: string;
 
     constructor() {
         this.state = {
             activeRequestUid: null,
         };
         this.worker = null;
-        this.serviceWorker = null;
         this.navigationRequestQueue = [];
         this.io = new IntersectionObserver(this.handleIntersection);
         this.init();
@@ -54,49 +51,15 @@ class Pjax {
         }
 
         /** Hookup Pjax's inbox */
-        hookup("pjax", this.inbox.bind(this));
+        this.inboxUid = hookup("pjax", this.inbox.bind(this));
 
         /** Prepare Google Analytics */
         setupGoogleAnalytics(gaId);
 
-        /** Prepare the Pjax Web Worker */
-        this.worker = new Worker(`${window.location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
-        this.worker.onmessage = this.handleWorkerMessage.bind(this);
-
-        /** Attempt to register a service worker */
-        if ("serviceWorker" in navigator && useServiceWorker) {
-            navigator.serviceWorker
-                .register(`${window.location.origin}/service-worker.js`, { scope: "/" })
-                .then(() => {
-                    /** Verify the service worker was registered correctly */
-                    if (navigator.serviceWorker.controller) {
-                        this.serviceWorker = navigator.serviceWorker.controller;
-                        navigator.serviceWorker.onmessage = this.handleServiceWorkerMessage.bind(this);
-
-                        /** Tell the service worker to get the latest cachebust data */
-                        this.serviceWorker.postMessage({
-                            type: "cachebust",
-                            url: window.location.href,
-                        });
-
-                        /** Tell Pjax to check if the current page is stale */
-                        message({
-                            recipient: "pjax",
-                            type: "revision-check",
-                        });
-                    }
-                })
-                .catch(error => {
-                    if (debug) {
-                        console.error("Registration failed with " + error);
-                    }
-                });
-        }
         /** Add event listeners */
         window.addEventListener("popstate", this.windowPopstateEvent);
         /** Update the history state with the required `state.url` value */
         window.history.replaceState({ url: window.location.href }, document.title, window.location.href);
-        fetchCSS("pjax-notification");
     }
 
     /**
@@ -113,12 +76,12 @@ class Pjax {
                 this.collectLinks();
                 break;
             case "load":
-                this.navigate(data.url, data?.transition, data?.transitionData, data?.history, data?.selector, data?.navRequestId);
+                this.navigate(data.url, data?.history, data?.selector, data?.navRequestId, data?.tickets, data?.customPageJumpOffset);
                 break;
             case "finalize-pjax":
                 this.updateHistory(data.title, data.url, data.history);
                 if (new RegExp("#").test(data.url)) {
-                    this.scrollToHash(data.url);
+                    this.scrollToHash(data.url, data.customPageJumpOffset);
                 }
                 this.collectLinks();
                 this.checkPageRevision();
@@ -140,6 +103,13 @@ class Pjax {
                 }
                 break;
             case "init":
+                this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
+                this.worker.onmessage = this.handleWorkerMessage.bind(this);
+                if (useServiceWorker) {
+                    this.serviceWorker = navigator.serviceWorker.controller;
+                    navigator.serviceWorker.onmessage = this.serviceWorkerInbox.bind(this);
+                }
+                this.checkPageRevision();
                 /** Tell Pjax to hijack all viable links */
                 message({
                     recipient: "pjax",
@@ -156,30 +126,16 @@ class Pjax {
         }
     }
 
-    /**
-     * Handles messages from the Service Worker.
-     * @param e - the `MessageEvent` object
-     */
-    private handleServiceWorkerMessage(e: MessageEvent): void {
+    private serviceWorkerInbox(e: MessageEvent) {
         const { type } = e.data;
         switch (type) {
             case "page-refresh":
                 let promptCount = parseInt(sessionStorage.getItem("prompts"));
                 promptCount = promptCount + 1;
                 sessionStorage.setItem("prompts", `${promptCount}`);
-                notify({
-                    message: "A new version of this page is available.",
-                    closeable: true,
-                    force: true,
-                    duration: Infinity,
-                    buttons: [
-                        {
-                            label: "Reload",
-                            callback: () => {
-                                window.location.reload();
-                            },
-                        },
-                    ],
+                message({
+                    recipient: "user-input",
+                    type: "stale-notification",
                 });
                 break;
             case "cachebust":
@@ -202,15 +158,12 @@ class Pjax {
                 }
                 break;
             default:
-                if (debug) {
-                    console.error(`Undefined Service Worker response message type: ${type}`);
-                }
                 break;
         }
     }
 
     /**
-     * Handles messages from the Pjax Web Worker.
+     * Handles messages from the Service Worker.
      * @param e - the `MessageEvent` object
      */
     private handleWorkerMessage(e: MessageEvent): void {
@@ -229,49 +182,69 @@ class Pjax {
                 this.handlePjaxResponse(e.data.requestId, e.data.status, e.data.url, e.data?.body, e.data?.error);
                 break;
             default:
-                if (debug) {
-                    console.error(`Undefined Pjax Worker response message type: ${type}`);
-                }
+                console.error(`Undefined Service Worker response message type: ${type}`);
                 break;
         }
     }
 
-    private scrollToHash(url: string): void {
+    private scrollToHash(url: string, customPageJumpOffset: number): void {
         const hash = url.match(/\#.*/)[0];
         const element = document.body.querySelector(hash);
-        if (element) {
-            element.scrollIntoView();
+
+        if (!element) {
             return;
+        }
+
+        if (pageJumpOffset === null && customPageJumpOffset === null) {
+            element.scrollIntoView({
+                behavior: "auto",
+                block: "center",
+            });
+            return;
+        }
+
+        element.scrollIntoView({
+            behavior: "auto",
+            block: "start",
+        });
+        if (customPageJumpOffset !== null) {
+            window.scrollBy({
+                behavior: "auto",
+                top: customPageJumpOffset,
+                left: 0,
+            });
+        } else {
+            window.scrollBy({
+                behavior: "auto",
+                // @ts-ignore
+                top: pageJumpOffset,
+                left: 0,
+            });
         }
     }
 
     /**
      * Creates and sends a navigation request to the Pjax web worker and queues navigation request.
-     * @param url - the URL of the requested page
-     * @param transition - the name of the desired transition effect
-     * @param transitionData - optional data that could modify the transition
-     * @param history - how Pjax should handle the windows history manipulation
-     * @param selector - the `pjax-id` attribute value
      */
     private navigate(
         url: string,
-        transition: string = null,
-        transitionData: string = null,
         history: "push" | "replace" = "push",
         selector: string = null,
-        navRequestId: string = null
+        navRequestId: string = null,
+        tickets: Array<string> = [],
+        customPageJumpOffset: number = null
     ): void {
         env.startPageTransition();
-        const requestUid = navRequestId || uuid();
+        const requestUid = navRequestId || uid();
         this.state.activeRequestUid = requestUid;
         const navigationRequest: NavigaitonRequest = {
             url: url,
             history: history,
             requestUid: requestUid,
-            transition: transition,
-            transitionData: transitionData,
             target: document.body.querySelector(`[navigation-request-id="${requestUid}"]`) || null,
             targetSelector: selector,
+            tickets: tickets,
+            customPageJumpOffset: customPageJumpOffset,
         };
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
@@ -333,27 +306,25 @@ class Pjax {
 
     /**
      * Called when the `click` event fires on a Pjax tracked anchor element.
-     * @param e - click `Event`
      */
-    private hijackRequest(e: Event): void {
+    private handleLinkClick: EventListener = (e: Event) => {
         e.preventDefault();
         const target = e.currentTarget as HTMLAnchorElement;
-        const navigationUid = uuid();
+        const navigationUid = uid();
         target.setAttribute("navigation-request-id", navigationUid);
+        const customPageJumpOffset = target.getAttribute("page-jump-offset");
         /** Tell Pjax to load the clicked elements page */
         message({
             recipient: "pjax",
             type: "load",
             data: {
                 url: target.href,
-                transition: target.getAttribute("pjax-transition"),
-                transitionData: target.getAttribute("pjax-transition-data"),
                 selector: target.getAttribute("pjax-view-id"),
                 navRequestId: navigationUid,
+                customPageJumpOffset: customPageJumpOffset ? parseInt(customPageJumpOffset) : null,
             },
         });
-    }
-    private handleLinkClick: EventListener = this.hijackRequest.bind(this);
+    };
 
     /**
      * Collect all anchor elements with a `href` attribute and add a click event listener.
@@ -389,41 +360,16 @@ class Pjax {
             } else if (status === "hash-change") {
                 location.hash = url.match(/\#.*/g)[0].replace("#", "");
             } else if (status === "ok") {
-                const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("pjax-temp-document");
-                tempDocument.documentElement.innerHTML = body;
-
-                let selector;
-                let currentMain;
-                if (request.targetSelector !== null) {
-                    selector = `[pjax-id="${request.targetSelector}"]`;
-                    currentMain = document.body.querySelector(selector);
-                } else {
-                    selector = "main";
-                    currentMain = document.body.querySelector(selector);
-                    const mainId = currentMain.getAttribute("pjax-id");
-                    if (mainId) {
-                        selector = `[pjax-id="${mainId}"]`;
-                    }
-                }
-
-                const incomingMain = tempDocument.querySelector(selector);
-
-                if (incomingMain && currentMain) {
-                    /** Tells the runtime class to parse the incoming HTML for any new CSS files */
-                    message({
-                        recipient: "runtime",
-                        type: "parse",
-                        data: {
-                            body: incomingMain.innerHTML,
-                            requestUid: requestId,
-                        },
-                    });
-                    request.body = incomingMain.innerHTML;
-                    request.title = tempDocument.title;
-                } else {
-                    console.error("Failed to find matching elements.");
-                    window.location.href = url;
-                }
+                /** Tells the runtime class to parse the incoming HTML for any new CSS files */
+                message({
+                    recipient: "runtime",
+                    type: "parse",
+                    data: {
+                        body: body,
+                        requestUid: requestId,
+                    },
+                });
+                request.body = body;
             } else {
                 console.error(`Failed to fetch page: ${url}. Server responded with: ${error}`);
                 window.location.href = url;
@@ -443,38 +389,73 @@ class Pjax {
     private swapPjaxContent(requestUid: string) {
         const request = this.getNavigaitonRequest(requestUid);
         if (request.requestUid === this.state.activeRequestUid) {
-            env.endPageTransition();
-
             let selector;
+            let currentMain: HTMLElement;
             if (request.targetSelector !== null) {
                 selector = `[pjax-id="${request.targetSelector}"]`;
+                currentMain = document.body.querySelector(selector);
             } else {
                 selector = "main";
+                currentMain = document.body.querySelector(selector);
+                const mainId = currentMain.getAttribute("pjax-id");
+                if (mainId) {
+                    selector = `[pjax-id="${mainId}"]`;
+                }
             }
 
-            transitionManager(selector, request.body, request.transition, request.target).then(() => {
-                document.title = request.title;
-                message({
-                    recipient: "pjax",
-                    type: "finalize-pjax",
-                    data: {
-                        url: request.url,
-                        title: request.title,
-                        history: request.history,
-                    },
-                });
-                message({
-                    recipient: "runtime",
-                    type: "mount-components",
-                });
-                message({
-                    recipient: "runtime",
-                    type: "mount-inline-scripts",
-                    data: {
-                        selector: selector,
-                    },
-                });
+            if (!currentMain) {
+                console.error(`${location.href} is missing selector ${selector}`);
+                window.location.href = request.url;
+                return;
+            }
+
+            currentMain.innerHTML = "";
+            const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("pjax-temp-document");
+            tempDocument.documentElement.innerHTML = request.body;
+            const incomingMain = tempDocument.querySelector(selector) as HTMLElement;
+
+            if (!incomingMain) {
+                console.error(`New page is missing selector ${selector}`);
+                window.location.href = request.url;
+                return;
+            }
+
+            currentMain.innerHTML = incomingMain.innerHTML;
+            document.title = tempDocument.title;
+
+            window.scroll({
+                top: 0,
+                left: 0,
+                behavior: "auto",
             });
+
+            for (let i = 0; i < request.tickets.length; i++) {
+                env.stopLoading(request.tickets[i]);
+            }
+
+            message({
+                recipient: "pjax",
+                type: "finalize-pjax",
+                data: {
+                    url: request.url,
+                    title: tempDocument.title,
+                    history: request.history,
+                    customPageJumpOffset: request.customPageJumpOffset,
+                },
+            });
+            message({
+                recipient: "runtime",
+                type: "mount-components",
+            });
+            message({
+                recipient: "runtime",
+                type: "mount-inline-scripts",
+                data: {
+                    selector: selector,
+                },
+            });
+
+            env.endPageTransition();
         }
         this.removeNavigationRequest(request.requestUid);
     }
@@ -538,7 +519,6 @@ class Pjax {
             urls.push(link.href);
         });
 
-        /** Send the requested URLs to the Pjax web worker */
         this.worker.postMessage({
             type: "prefetch",
             urls: urls,

@@ -7,6 +7,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2020-07-03
+
+### ⚠️ Breaking Changes ⚠️
+
+### Added
+
+-   browser support detection [#78](https://github.com/Pageworks/djinnjs/issues/78)
+    -   new `browser` export from `djinnjs/env`
+    -   appends browser name as class to `<HTML>` element
+-   `uid()` export to the `Env` class
+-   `tickets` string array value to the Pjax `load` message type [#72](https://github.com/Pageworks/djinnjs/issues/72)
+-   `pageJumpOffset` config variable, defaults to `null` [#42](https://github.com/Pageworks/djinnjs/issues/42)
+-   `page-jump-offset` attribute allows developers to set dynamic offsets
+-   `customPageJumpOffset` number value to the Pjax `load` message type
+-   `reserveThread()` and `releaseThread()` functions to the `Env` class
+-   public `threadPool` variable to the `Env` class -- tracks number of available threads
+-   service worker rework [#55](https://github.com/Pageworks/djinnjs/issues/55)
+-   `offline-first` service worker
+-   `offline-backup` service worker
+-   `resources-only` service worker
+-   new `serviceWorker` config variable, now supports:
+    -   `offline-first` _(default)_
+    -   `offline-backup`
+    -   `resources-only`
+    -   `true` or `false`
+    -   `null`
+-   web component `required-connection` attribute support -- defaults to `4g`
+-   new `removable` attribute -- removable web components will be removed when the user chooses to continue with the lightweight version of the site
+-   replaced `eager-load-css` attribute with `eager-css` attribute
+-   replaced `lazy-load-css` attribute with `lazy-css` attribute
+-   dynamic Web Component polyfill
+-   dynamic Intersection Observer polyfill
+
+### Fixed
+
+-   CSS & JS loading performance [#77](https://github.com/Pageworks/djinnjs/issues/77)
+-   web component load/unload race conditions [#75](https://github.com/Pageworks/djinnjs/issues/75)
+-   page jumps scroll the selected element into the center of the screen
+
+### Removes
+
+-   transition manager
+-   transition config variables
+-   support for custom transitions
+-   transition documentation
+-   removed `debug` export from the `Env` class
+    -   all console logs are stipped when building for production
+-   removed `uuid()` export from the `Env` class
+    -   function was generating UIDs not UUIDs
+-   `transition attribute` support
+-   `transition-data attribute` support
+-   support for multi-site configurations
+-   `disableServiceWorker` config value -- use `serviceWorker` instead
+-   `disablePrefetching` config value -- use `predictivePrefetching` instead
+-   `disablePjax` config value -- use `pjax` instead
+-   `eager-load-css` attribute -- use `eager-css` instead
+-   `lazy-load-css` attribute -- use `lazy-css` instead
+
 ## [0.0.28] - 2020-05-14
 
 ### Added
@@ -379,7 +437,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Base DjinnJS configuration file
     -   Intial DjinnJS compiler scripts
 
-[unreleased]: https://github.com/pageworks/djinnjs/compare/v0.0.28...HEAD
+[unreleased]: https://github.com/pageworks/djinnjs/compare/master...develop
+[0.1.0]: https://github.com/pageworks/djinnjs/compare/v0.0.28...v0.1.0
 [0.0.28]: https://github.com/pageworks/djinnjs/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/pageworks/djinnjs/compare/v0.0.26...v0.0.27
 [0.0.26]: https://github.com/pageworks/djinnjs/compare/v0.0.24...v0.0.26
