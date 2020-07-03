@@ -90,15 +90,16 @@ class Djinn {
 
         if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
             await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);
+        }
+
+        if (useServiceWorker && env.threadPool !== 0) {
+            await import(`${location.origin}/${djinnjsOutDir}/service-worker-bootstrap.mjs`);
+        } else {
             globalMessage({
                 recipient: "pjax",
                 type: "init",
                 maxAttempts: Infinity,
             });
-        }
-
-        if (useServiceWorker && env.threadPool !== 0) {
-            await import(`${location.origin}/${djinnjsOutDir}/service-worker-bootstrap.mjs`);
         }
     }
 
