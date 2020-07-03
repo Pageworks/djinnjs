@@ -1,8 +1,7 @@
 import { env } from "./env";
 import { hookup, message } from "../web_modules/broadcaster";
 import { fetchCSS, fetchJS } from "./fetch";
-import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker } from "./config";
-import { notify } from "../web_modules/@codewithkyle/notifications";
+import { djinnjsOutDir, usePjax, usePercentage, useServiceWorker, minimumConnection } from "./config";
 
 interface PjaxResources {
     eager: Array<string>;
@@ -21,14 +20,10 @@ type WebComponentLoad = null | "lazy" | "eager";
 class Runtime {
     private bodyParserWorker: Worker;
     private io: IntersectionObserver;
-    private loadingMessage: HTMLElement;
+    private inboxUid: string;
 
     constructor() {
-        this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/runtime-worker.mjs`);
-        this.loadingMessage = document.body.querySelector("djinnjs-file-loading-message") || null;
-        if (this.loadingMessage) {
-            this.loadingMessage.setAttribute("state", "1");
-        }
+        this.bodyParserWorker = new Worker(`${window.location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
         window.addEventListener("load", this.handleLoadEvent);
     }
 
@@ -36,11 +31,7 @@ class Runtime {
      * Initializes the Runtime class.
      */
     private init(): void {
-        if (this.loadingMessage) {
-            this.loadingMessage.innerHTML = "Collecting resources";
-            this.loadingMessage.setAttribute("state", "2");
-        }
-        hookup("runtime", this.inbox.bind(this));
+        this.inboxUid = hookup("runtime", this.inbox.bind(this));
         this.bodyParserWorker.postMessage({
             type: "eager",
             body: document.body.innerHTML,
@@ -57,15 +48,21 @@ class Runtime {
     private inbox(data): void {
         const { type } = data;
         switch (type) {
+            case "use-full":
+                sessionStorage.setItem("connection-choice", "full");
+                this.collectWebComponents();
+                break;
+            case "use-lite":
+                sessionStorage.setItem("connection-choice", "lite");
+                this.collectWebComponents();
+                break;
             case "completed":
                 break;
             case "load":
                 fetchCSS(data.resources);
                 break;
             case "mount-components":
-                this.handleConnection().then(() => {
-                    this.handleWebComponents();
-                });
+                this.collectWebComponents();
                 break;
             case "parse":
                 this.parseHTML(data.body, data.requestUid);
@@ -87,15 +84,11 @@ class Runtime {
         switch (response.type) {
             case "eager":
                 const loadingMessage = document.body.querySelector("djinnjs-file-loading-value") || null;
-                if (env.domState === "hard-loading" && this.loadingMessage) {
-                    this.loadingMessage.setAttribute("state", "3");
-                    this.loadingMessage.innerHTML = `Loading resources:`;
+                if (env.domState === "hard-loading" && loadingMessage) {
                     if (loadingMessage && usePercentage) {
                         loadingMessage.innerHTML = `0%`;
-                        loadingMessage.setAttribute("state", "enabled");
                     } else if (loadingMessage) {
                         loadingMessage.innerHTML = `0/${response.files.length}`;
-                        loadingMessage.setAttribute("state", "enabled");
                     }
                 }
                 fetchCSS(response.files).then(() => {
@@ -110,6 +103,19 @@ class Runtime {
             case "lazy":
                 fetchCSS(response.files).then(() => {
                     this.handleWebComponents();
+                    if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+                        if (!env.dataSaver) {
+                            message({
+                                recipient: "user-input",
+                                type: "lightweight-check",
+                                senderId: this.inboxUid,
+                                maxAttempts: Infinity,
+                            });
+                        } else {
+                            sessionStorage.setItem("connection-choice", "lite");
+                            this.removePurgeableComponents();
+                        }
+                    }
                     if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
                         fetchJS("pjax").then(() => {
                             message({
@@ -136,55 +142,21 @@ class Runtime {
         }
     }
 
-    private handleConnection() {
-        return new Promise(resolve => {
-            const sessionChoice = sessionStorage.getItem("connection-choice");
-            if (sessionChoice === "1") {
-                this.removeRequiredConnections();
-                resolve();
-                return;
-            } else if (sessionChoice === "2") {
-                this.removePurgeableComponents();
-                resolve();
-                return;
-            }
-
-            if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
-                notify({
-                    message: "You are viewing the lightweight verison of this website. Would you like to load the full experience instead?",
-                    duration: Infinity,
-                    closeable: false,
-                    force: true,
-                    buttons: [
-                        {
-                            label: "Yes",
-                            callback: () => {
-                                sessionStorage.setItem("connection-choice", "1");
-                                this.removeRequiredConnections();
-                                resolve();
-                            },
-                        },
-                        {
-                            label: "No",
-                            callback: () => {
-                                sessionStorage.setItem("connection-choice", "0");
-                                this.removePurgeableComponents();
-                                resolve();
-                            },
-                        },
-                    ],
-                });
-            } else {
-                resolve();
-            }
-        });
+    private collectWebComponents() {
+        const sessionChoice = sessionStorage.getItem("connection-choice");
+        if (sessionChoice === "full") {
+            this.removeRequiredConnections();
+        } else if (sessionChoice === "lite") {
+            this.removePurgeableComponents();
+        }
+        this.handleWebComponents();
     }
 
     private removeRequiredConnections() {
-        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][required-connection]`));
+        const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
-            element.removeAttribute("required-connection");
+            element.setAttribute("required-connection", "slow-2g");
         }
     }
 
@@ -192,7 +164,7 @@ class Runtime {
         const webComponentElements = Array.from(document.body.querySelectorAll(`[web-component][removable]`));
         for (let i = 0; i < webComponentElements.length; i++) {
             const element = webComponentElements[i];
-            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
             if (customElements.get(element.tagName.toLowerCase().trim()) === undefined) {
                 if (!env.checkConnection(requiredConnectionType)) {
                     this.io.unobserve(element);
@@ -311,7 +283,7 @@ class Runtime {
             if (entries[i].isIntersecting) {
                 const element = entries[i].target;
                 const customElement = element.tagName.toLowerCase().trim();
-                const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+                const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
 
                 if (customElements.get(customElement) === undefined) {
                     if (env.checkConnection(requiredConnectionType)) {
@@ -337,7 +309,7 @@ class Runtime {
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
             const loadType = element.getAttribute("loading") as WebComponentLoad;
-            const requiredConnectionType = element.getAttribute("required-connection") || "4g";
+            const requiredConnectionType = element.getAttribute("required-connection") || minimumConnection;
             if (loadType === "eager" && env.checkConnection(requiredConnectionType)) {
                 const customElement = element.tagName.toLowerCase().trim();
                 this.upgradeToWebComponent(customElement, element);

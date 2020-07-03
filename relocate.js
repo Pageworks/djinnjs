@@ -50,24 +50,3 @@ fs.copyFile("./node_modules/wwibs/wwibs-worker.min.js", "./broadcaster-worker.mi
         console.log(error);
     }
 });
-
-function moveCssToDist() {
-    const pathToSrc = path.join(__dirname, "./src");
-    const pathToDist = path.join(__dirname, "./dist");
-    glob(`${pathToSrc}/**/*.css`, (error, srcFiles) => {
-        if (error) {
-            console.log(error);
-            return;
-        }
-
-        if (!srcFiles.length) {
-            return;
-        }
-
-        for (let i = 0; i < srcFiles.length; i++) {
-            const filename = srcFiles[i].replace(/.*[\/\\]/, "");
-            fs.copyFileSync(srcFiles[i], `${pathToDist}/${filename}`);
-        }
-    });
-}
-moveCssToDist();
