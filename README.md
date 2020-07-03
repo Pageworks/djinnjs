@@ -33,7 +33,7 @@ module.exports = {
 Include the runtime JavaScript:
 
 ```html
-<script type="module" src="/assets/runtime.mjs"></script>
+<script type="module" src="/assets/bootstrap.mjs"></script>
 ```
 
 Inlcude the noscript CSS file:
@@ -42,16 +42,6 @@ Inlcude the noscript CSS file:
 <noscript>
     <link rel="stylesheet" href="/assets/noscript.css" />
 </noscript>
-```
-
-Include the Web Component polyfill:
-
-```html
-<script>
-    if (typeof CustomElementRegistry === "undefined") {
-        document.write('<script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.4.0/webcomponents-bundle.js"><\/script>');
-    }
-</script>
 ```
 
 Run the DjinnJS command:
@@ -81,17 +71,6 @@ djinnjs
 ## Contributing
 
 We welcome all contributions. Please read our [contributing guideline](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md) first. You can submit any changes as [pull requests](https://github.com/Pageworks/djinnjs/pulls) or as [GitHub issues](https://github.com/Pageworks/djinnjs/issues). If you'd like to fix bugs or add new features, check out the [developer guide](https://djinnjs.com/developer-guide) and please follow our [Pull Request](https://djinnjs.com/contributing#branch-organization) principle.
-
-## Links
-
--   [Overview](https://djinnjs.com/)
--   [Configuration](https://djinnjs.com/configuration)
--   [Getting Started](https://djinnjs.com/getting-started)
--   [Pjax](https://djinnjs.com/pjax)
--   [Transitions](https://djinnjs.com/transitions)
--   [Code of Conduct](https://djinnjs.com/code-of-conduct)
--   [Contributing](https://github.com/Pageworks/djinnjs-docs/blob/master/docs/contributing.md)
--   [Developer Guide](https://djinnjs.com/developer-guide)
 
 ## References
 

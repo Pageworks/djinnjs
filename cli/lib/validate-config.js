@@ -8,6 +8,13 @@ module.exports = function valdiateConfig(config, customConfig) {
         process.exit(1);
     }
 
+    if (customConfig.resourcePattern instanceof RegExp) {
+        config.resourcePattern = customConfig.resourcePattern;
+    } else if (typeof customConfig.resourcePattern !== "undefined") {
+        console.log(`Invalid DjinnJS configuration. The resourcePattern value must be a regular expression pattern.`);
+        process.exit(1);
+    }
+
     switch (typeof customConfig.cachebustURL) {
         case "string":
             config.cachebustURL = customConfig.cachebustURL;
@@ -21,8 +28,8 @@ module.exports = function valdiateConfig(config, customConfig) {
 
     if (typeof customConfig.src !== "undefined") {
         if (Array.isArray(customConfig.src)) {
-            for (let i = 0; i < customConfig.src.length){
-                if (typeof customConfig.src[i] !== 'string'){
+            for (let i = 0; i < customConfig.src.length; i++) {
+                if (typeof customConfig.src[i] !== "string") {
                     console.log(`Invalid DjinnJS configuration. The src value ${customConfig.src[i]} is not a string.`);
                     process.exit(1);
                 }
@@ -62,7 +69,7 @@ module.exports = function valdiateConfig(config, customConfig) {
         if (customConfig.serviceWorker === null) {
             config.serviceWorker = false;
         } else if (typeof customConfig.serviceWorker === "boolean") {
-            if (customConfig.serviceWorker) {
+            if (customConfig.serviceWorker === true) {
                 config.serviceWorker = "offline-first";
             } else {
                 config.serviceWorker = false;
@@ -86,6 +93,8 @@ module.exports = function valdiateConfig(config, customConfig) {
             console.log(`Invalid DjinnJS configuration. The serviceWorker value must be a boolean, null, or a string: 'offline-first', 'offline-backup', 'resources-only'`);
             process.exit(1);
         }
+    } else {
+        config.serviceWorker = "offline-first";
     }
 
     switch (typeof customConfig.gtagId) {
@@ -162,6 +171,34 @@ module.exports = function valdiateConfig(config, customConfig) {
             break;
         default:
             console.log(`Invalid DjinnJS configuration. The silent value must be a boolean.`);
+            process.exit(1);
+    }
+
+    switch (typeof customConfig.minimumConnection) {
+        case "string":
+            switch (customConfig.minimumConnection) {
+                case "4g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                case "3g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                case "2g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                case "slow-2g":
+                    config.minimumConnection = customConfig.minimumConnection;
+                    break;
+                default:
+                    console.log(`Invalid DjinnJS configuration. The minimumConnection must be 4g, 3g, 2g, or slow-2g.`);
+                    process.exit(1);
+                    break;
+            }
+            break;
+        case "undefined":
+            break;
+        default:
+            console.log(`Invalid DjinnJS configuration. The minimumConnection value must be a string.`);
             process.exit(1);
     }
 

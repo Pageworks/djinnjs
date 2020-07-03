@@ -1,9 +1,7 @@
 import { hookup, message } from "../web_modules/broadcaster";
 import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
-import { gaId, followRedirects, doPrefetching, pageJumpOffset } from "./config";
-import { notify } from "../web_modules/@codewithkyle/notifications";
-import { fetchCSS } from "./fetch";
+import { gaId, followRedirects, doPrefetching, pageJumpOffset, djinnjsOutDir, useServiceWorker } from "./config";
 
 interface PjaxState {
     activeRequestUid: string;
@@ -23,15 +21,17 @@ interface NavigaitonRequest {
 
 class Pjax {
     private state: PjaxState;
-    private serviceWorker: ServiceWorker;
+    private worker: Worker;
     private navigationRequestQueue: Array<NavigaitonRequest>;
     private io: IntersectionObserver;
+    private serviceWorker: ServiceWorker;
+    private inboxUid: string;
 
     constructor() {
         this.state = {
             activeRequestUid: null,
         };
-        this.serviceWorker = null;
+        this.worker = null;
         this.navigationRequestQueue = [];
         this.io = new IntersectionObserver(this.handleIntersection);
         this.init();
@@ -51,7 +51,7 @@ class Pjax {
         }
 
         /** Hookup Pjax's inbox */
-        hookup("pjax", this.inbox.bind(this));
+        this.inboxUid = hookup("pjax", this.inbox.bind(this));
 
         /** Prepare Google Analytics */
         setupGoogleAnalytics(gaId);
@@ -60,7 +60,6 @@ class Pjax {
         window.addEventListener("popstate", this.windowPopstateEvent);
         /** Update the history state with the required `state.url` value */
         window.history.replaceState({ url: window.location.href }, document.title, window.location.href);
-        fetchCSS("pjax-notification");
     }
 
     /**
@@ -70,15 +69,6 @@ class Pjax {
     private inbox(data): void {
         const { type } = data;
         switch (type) {
-            case "init-worker":
-                this.serviceWorker = navigator.serviceWorker.controller;
-                navigator.serviceWorker.onmessage = this.handleServiceWorkerMessage.bind(this);
-                this.serviceWorker.postMessage({
-                    type: "cachebust",
-                    url: window.location.href,
-                });
-                this.checkPageRevision();
-                break;
             case "revision-check":
                 this.checkPageRevision();
                 break;
@@ -113,6 +103,13 @@ class Pjax {
                 }
                 break;
             case "init":
+                this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
+                this.worker.onmessage = this.handleWorkerMessage.bind(this);
+                if (useServiceWorker) {
+                    this.serviceWorker = navigator.serviceWorker.controller;
+                    navigator.serviceWorker.onmessage = this.serviceWorkerInbox.bind(this);
+                }
+                this.checkPageRevision();
                 /** Tell Pjax to hijack all viable links */
                 message({
                     recipient: "pjax",
@@ -129,36 +126,22 @@ class Pjax {
         }
     }
 
-    /**
-     * Handles messages from the Service Worker.
-     * @param e - the `MessageEvent` object
-     */
-    private handleServiceWorkerMessage(e: MessageEvent): void {
+    private serviceWorkerInbox(e: MessageEvent) {
         const { type } = e.data;
         switch (type) {
             case "page-refresh":
                 let promptCount = parseInt(sessionStorage.getItem("prompts"));
                 promptCount = promptCount + 1;
                 sessionStorage.setItem("prompts", `${promptCount}`);
-                notify({
-                    message: "A new version of this page is available.",
-                    closeable: true,
-                    force: true,
-                    duration: Infinity,
-                    buttons: [
-                        {
-                            label: "Reload",
-                            callback: () => {
-                                window.location.reload();
-                            },
-                        },
-                    ],
+                message({
+                    recipient: "user-input",
+                    type: "stale-notification",
                 });
                 break;
             case "cachebust":
                 sessionStorage.setItem("maxPrompts", `${e.data.max}`);
                 const currentPromptCount = sessionStorage.getItem("prompts");
-                if (parseInt(currentPromptCount) >= e.data.max && this.serviceWorker) {
+                if (parseInt(currentPromptCount) >= e.data.max) {
                     sessionStorage.setItem("prompts", "0");
                     this.serviceWorker.postMessage({
                         type: "clear-content-cache",
@@ -167,15 +150,27 @@ class Pjax {
                 const contentCacheTimestap = parseInt(localStorage.getItem("contentCache"));
                 const difference = Date.now() - contentCacheTimestap;
                 const neededDifference = e.data.contentCacheExpires * 24 * 60 * 60 * 1000;
-                if (difference >= neededDifference && this.serviceWorker) {
+                if (difference >= neededDifference) {
                     localStorage.setItem("contentCache", `${Date.now()}`);
                     this.serviceWorker.postMessage({
                         type: "clear-content-cache",
                     });
                 }
                 break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Handles messages from the Service Worker.
+     * @param e - the `MessageEvent` object
+     */
+    private handleWorkerMessage(e: MessageEvent): void {
+        const { type } = e.data;
+        switch (type) {
             case "revision-check":
-                if (e.data.status === "stale" && this.serviceWorker) {
+                if (e.data.status === "stale") {
                     this.serviceWorker.postMessage({
                         type: "page-refresh",
                         url: e.data.url,
@@ -252,17 +247,13 @@ class Pjax {
             customPageJumpOffset: customPageJumpOffset,
         };
         this.navigationRequestQueue.push(navigationRequest);
-        if (this.serviceWorker) {
-            this.serviceWorker.postMessage({
-                type: "pjax",
-                requestId: requestUid,
-                url: url,
-                currentUrl: location.href,
-                followRedirects: followRedirects,
-            });
-        } else {
-            this.pjax(url, requestUid, location.href, followRedirects);
-        }
+        this.worker.postMessage({
+            type: "pjax",
+            requestId: requestUid,
+            url: url,
+            currentUrl: location.href,
+            followRedirects: followRedirects,
+        });
     }
 
     /**
@@ -500,12 +491,10 @@ class Pjax {
      * Sends a `revision-check` message to the Pjax web worker.
      */
     private checkPageRevision(): void {
-        if (this.serviceWorker) {
-            this.serviceWorker.postMessage({
-                type: "revision-check",
-                url: window.location.href,
-            });
-        }
+        this.worker.postMessage({
+            type: "revision-check",
+            url: window.location.href,
+        });
     }
 
     /** Collect primary navigation links and tell the Pjax web worker to prefetch the pages. */
@@ -530,13 +519,10 @@ class Pjax {
             urls.push(link.href);
         });
 
-        /** Send the requested URLs to the Pjax web worker */
-        if (this.serviceWorker) {
-            this.serviceWorker.postMessage({
-                type: "prefetch",
-                urls: urls,
-            });
-        }
+        this.worker.postMessage({
+            type: "prefetch",
+            urls: urls,
+        });
 
         /** Require at least a 4g connection while respecting the users data  */
         if (env.connection === "3g") {
@@ -563,58 +549,14 @@ class Pjax {
                 urls.push(link.href);
             }
         });
-        if (urls.length && this.serviceWorker) {
+        if (urls.length) {
             /** Send the requested URLs to the Pjax web worker */
-            this.serviceWorker.postMessage({
+            this.worker.postMessage({
                 type: "prefetch",
                 urls: urls,
             });
         }
     }
     private handleIntersection: IntersectionObserverCallback = this.prefetchLink.bind(this);
-
-    /**
-     * Fallback pjax fetch function, used when service worker is disabled.
-     */
-    private async pjax(url, requestId, currentUrl, followRedirects) {
-        // Handle external links
-        if (new RegExp(self.location.origin).test(url) === false) {
-            this.handlePjaxResponse(requestId, "external", url);
-            return;
-        }
-
-        // Handle page jumps
-        if (new RegExp(/\#/g).test(url)) {
-            const cleanUrl = url.replace(/\#.*/g, "");
-            const cleanCurrentUrl = currentUrl.replace(/\#.*/g, "");
-            if (cleanUrl === cleanCurrentUrl) {
-                this.handlePjaxResponse(requestId, "hash-change", url);
-                return;
-            }
-        }
-
-        try {
-            const request = await fetch(url, {
-                method: "GET",
-                credentials: "include",
-                headers: new Headers({
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-Pjax": "true",
-                }),
-            });
-            if (request.ok && request.headers?.get("Content-Type")?.match(/(text\/html)/gi)) {
-                if (request.redirected && !followRedirects) {
-                    this.handlePjaxResponse(requestId, "error", url, null, "Request resulted in a redirect and following redirects is disabled");
-                    return;
-                }
-                const response = await request.text();
-                this.handlePjaxResponse(requestId, "ok", url, response);
-            } else {
-                this.handlePjaxResponse(requestId, "error", url, null, request.statusText);
-            }
-        } catch (error) {
-            this.handlePjaxResponse(requestId, "error", url, null, error);
-        }
-    }
 }
 new Pjax();
