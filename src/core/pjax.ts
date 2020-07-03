@@ -33,6 +33,7 @@ class Pjax {
         };
         this.worker = null;
         this.navigationRequestQueue = [];
+        this.serviceWorker = null;
         this.io = new IntersectionObserver(this.handleIntersection);
         this.init();
     }
@@ -105,7 +106,7 @@ class Pjax {
             case "init":
                 this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
                 this.worker.onmessage = this.handleWorkerMessage.bind(this);
-                if (useServiceWorker) {
+                if (useServiceWorker && typeof navigator.serviceWorker !== "undefined") {
                     this.serviceWorker = navigator.serviceWorker.controller;
                     navigator.serviceWorker.onmessage = this.serviceWorkerInbox.bind(this);
                 }
@@ -143,18 +144,22 @@ class Pjax {
                 const currentPromptCount = sessionStorage.getItem("prompts");
                 if (parseInt(currentPromptCount) >= e.data.max) {
                     sessionStorage.setItem("prompts", "0");
-                    this.serviceWorker.postMessage({
-                        type: "clear-content-cache",
-                    });
+                    if (this.serviceWorker) {
+                        this.serviceWorker.postMessage({
+                            type: "clear-content-cache",
+                        });
+                    }
                 }
                 const contentCacheTimestap = parseInt(localStorage.getItem("contentCache"));
                 const difference = Date.now() - contentCacheTimestap;
                 const neededDifference = e.data.contentCacheExpires * 24 * 60 * 60 * 1000;
                 if (difference >= neededDifference) {
                     localStorage.setItem("contentCache", `${Date.now()}`);
-                    this.serviceWorker.postMessage({
-                        type: "clear-content-cache",
-                    });
+                    if (this.serviceWorker) {
+                        this.serviceWorker.postMessage({
+                            type: "clear-content-cache",
+                        });
+                    }
                 }
                 break;
             default:
@@ -170,7 +175,7 @@ class Pjax {
         const { type } = e.data;
         switch (type) {
             case "revision-check":
-                if (e.data.status === "stale") {
+                if (e.data.status === "stale" && this.serviceWorker) {
                     this.serviceWorker.postMessage({
                         type: "page-refresh",
                         url: e.data.url,
