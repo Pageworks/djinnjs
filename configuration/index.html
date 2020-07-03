@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>Dev Docs</title>
+        <title>undefined</title>
 
         <link href="/normalize.css" rel="stylesheet" />
         <link href="/reset.css" rel="stylesheet" />
@@ -17,10 +17,11 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
         <script defer src="/nav.js"></script>
+        <script defer src="/page-jump-generator.js"></script>
     </head>
     <body>
         <main>
-            <aside><nav><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/installation" data-slug="/installation"><span>installation</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/importing-resources" data-slug="/core/importing-resources"><span>importing resources</span></a><a href="/core/lazy-loading" data-slug="/core/lazy-loading"><span>lazy loading</span></a><a href="/core/pjax" data-slug="/core/pjax"><span>pjax</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/requesting-css" data-slug="/core/requesting-css"><span>requesting css</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/demo-project" data-slug="/guides/demo-project"><span>demo project</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><header>loading states</header><a href="/loading-states/hard" data-slug="/loading-states/hard"><span>hard</span></a><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a><header>messaging system</header><a href="/messaging-system/actor-model" data-slug="/messaging-system/actor-model"><span>actor model</span></a><a href="/messaging-system/actors" data-slug="/messaging-system/actors"><span>actors</span></a><a href="/messaging-system/broadcaster" data-slug="/messaging-system/broadcaster"><span>broadcaster</span></a><a href="/messaging-system/hooks" data-slug="/messaging-system/hooks"><span>hooks</span></a><a href="/messaging-system/sending-messages" data-slug="/messaging-system/sending-messages"><span>sending messages</span></a><header>page transitions</header><a href="/page-transitions/custom" data-slug="/page-transitions/custom"><span>custom</span></a><a href="/page-transitions/default" data-slug="/page-transitions/default"><span>default</span></a></nav></aside>
+            <aside><nav><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/installation" data-slug="/installation"><span>installation</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/importing-resources" data-slug="/core/importing-resources"><span>importing resources</span></a><a href="/core/lazy-loading" data-slug="/core/lazy-loading"><span>lazy loading</span></a><a href="/core/pjax" data-slug="/core/pjax"><span>pjax</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/requesting-css" data-slug="/core/requesting-css"><span>requesting css</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/demo-project" data-slug="/guides/demo-project"><span>demo project</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><header>loading states</header><a href="/loading-states/hard" data-slug="/loading-states/hard"><span>hard</span></a><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a><header>messaging system</header><a href="/messaging-system/actor-model" data-slug="/messaging-system/actor-model"><span>actor model</span></a><a href="/messaging-system/actors" data-slug="/messaging-system/actors"><span>actors</span></a><a href="/messaging-system/broadcaster" data-slug="/messaging-system/broadcaster"><span>broadcaster</span></a><a href="/messaging-system/hooks" data-slug="/messaging-system/hooks"><span>hooks</span></a><a href="/messaging-system/sending-messages" data-slug="/messaging-system/sending-messages"><span>sending messages</span></a></nav></aside>
             <article><h1 id="configuration">Configuration</h1>
 <p>Out of the box, DjinnJS does not require a config file. It assumes your source code lives at <code>./src</code>, your public directory is <code>./public</code>, and the <code>./public/assets</code> directory can be deleted and rebuilt by DjinnJS automatically. If the default values are incorrect for your project please proceed with creating a custom configuration file.</p>
 <h2 id="configfile">Config File</h2>
@@ -31,9 +32,9 @@
 }
 </code></pre>
 <h2 id="cli">CLI</h2>
-<pre><code class="bash language-bash">    -c, --config        Path to the config file
-    -h, --handle        The site handle that will be compiled
-    -e, --env           The enviroment settings (env | production)
+<pre><code class="bash language-bash">    -c  # Path to the config file
+    -h  # The site handle that will be compiled
+    -e  # The enviroment settings (dev | production)
 </code></pre>
 <h2 id="settings">Settings</h2>
 <p>Below is a config example displaying every configurable option.</p>
@@ -42,27 +43,23 @@
 </blockquote>
 <h4 id="djinnjsconfigjs">djinnjs.config.js</h4>
 <pre><code class="javascript language-javascript">module.exports = {
-    src: './src',
-    publicDir: './public',
-    outDir: 'assets',
+    src: "./src",
+    publicDir: "./public",
+    outDir: "assets",
     noCachePattern: /(\.json)$|(cachebust\.js)/gi,
-    cachebustURL: '/cachebust.json',
-    disableServiceWorker: false,
+    cachebustURL: "/cachebust.json",
+    resourcePattern: /(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi,
+    serviceWorker: true,
     silent: true,
-    env: 'production',
-    gtagId: '',
-    defaultTransition: 'fade',
-    disablePrefetching: false,
+    env: "production",
+    gtagId: "",
+    pjax: true,
+    predictivePrefetching: true,
     followRedirects: true,
-    disablePjax: false,
     usePercentage: false,
-    transitions: [
-        {
-            handle: '',
-            file: '',
-        }
-    ]
-}
+    pageJumpOffset: null,
+    minimumConnection: "4g,
+};
 </code></pre>
 <h4 id="src">src</h4>
 <p>Default: <code>"./src"</code></p>
@@ -87,9 +84,12 @@
 </code></pre>
 <p><code>maximumContentPrompts</code> is the number of times a user will be prompted with an update message before the Service Worker clears the entire content cache.</p>
 <p><code>contentCacheDuration</code> is the number of days the offline content cache will be used before the Service Worker clears the entire content cache.</p>
-<h4 id="disableserviceworker">disableServiceWorker</h4>
-<p>Default: <code>false</code></p>
-<p>A boolean. When disabled the Service Worker will not be placed in the public directory. The Service Worker is required for the offline-first content strategy.</p>
+<h4 id="resourcepattern">resourcePattern</h4>
+<p>Default: <code>/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi</code></p>
+<p>A RegExp pattern. This RegExp pattern is used to determine if the requested file should be stored within the resources cache.</p>
+<h4 id="serviceworker">serviceWorker</h4>
+<p>Default: <code>true</code></p>
+<p>A boolean. When <code>false</code> the Service Worker will not be placed in the public directory.</p>
 <h4 id="silent">silent</h4>
 <p>Default: <code>true</code></p>
 <p>A boolean. When disabled DjinnJS will log additional console logs.</p>
@@ -98,23 +98,24 @@
 <p>A string. This value is used to determine if the JavaScript should be minified and is used by the <code>Env</code> class when setting <code>env.isProduction</code>.</p>
 <h4 id="gtagid">gtagId</h4>
 <p>A string. This is the ID used for Googles <a href="https://developers.google.com/analytics/devguides/collection/gtagjs">gtag.js</a>.</p>
-<h4 id="defaulttransition">defaultTransition</h4>
-<p>Default: <code>"fade"</code></p>
-<p>A transition handle string. This value is used to determine what the default page transition effect will be for the site. <a href="/transitions">Click here</a> for more information about page transitions.</p>
-<h4 id="disableprefetching">disablePrefetching</h4>
-<p>Default: <code>false</code></p>
-<p>A boolean. When set to <code>true</code> Pjax will not prefetch and cache links.</p>
+<h4 id="predictiveprefetching">predictivePrefetching</h4>
+<p>Default: <code>true</code></p>
+<p>A boolean. When set to <code>true</code> Pjax will prefetch and cache links based on the users device metrics &amp; active connection.</p>
 <h4 id="followredirects">followRedirects</h4>
 <p>Default: <code>true</code></p>
 <p>A boolean. When set to <code>false</code> Pjax will not follow redirects and will resort to native browser navigation.</p>
-<h4 id="disablepjax">disablePjax</h4>
-<p>Default: <code>false</code></p>
-<p>A boolean. When set to <code>true</code> Pjax will not load.</p>
+<h4 id="pjax">pjax</h4>
+<p>Default: <code>true</code></p>
+<p>A boolean. When set to <code>false</code> Pjax will not load.</p>
 <h4 id="usepercentage">usePercentage</h4>
 <p>Default: <code>false</code></p>
 <p>A boolean. This value is used to determine if the <code>&lt;file-loading-value&gt;</code> element should be injected with the X/Y format or the X% format.</p>
-<h4 id="transitions">transitions</h4>
-<p>An array of transitions. See <a href="/transitions">this page</a> for more information about creating custom page transitions.</p></article>
+<h4 id="pagejumpoffset">pageJumpOffset</h4>
+<p>Default: <code>null</code></p>
+<p>A number. When <code>null</code> page jumps scroll the element into the center of the viewport. When a number is provided the element is scrolled to the top of the viewport then the offset is added. Positive numbers move the element up, negative numbers move the element down.</p>
+<h4 id="minimumconnection">minimumConnection</h4>
+<p>Default: <code>"4g"</code></p>
+<p>A <a href="https://wicg.github.io/netinfo/#effectiveconnectiontype-enum">Effective Connection Type</a>. This value will be used as the default <code>required-connection</code> attribute when loading Web Components.</p></article>
         </main>
     </body>
 </html>
