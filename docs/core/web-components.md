@@ -10,8 +10,6 @@ In the example below the `<custom-element>` will be upgraded into a Web Componen
 </custom-element>
 ```
 
-#### custom-element.mjs
-
 ```javascript
 class CustomElementComponent extends HTMLElement {
     connectedCallback() {
