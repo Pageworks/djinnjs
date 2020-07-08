@@ -22,8 +22,6 @@ Setup an [NPM link](https://docs.npmjs.com/cli/link.html):
 npm link
 ```
 
-Create a [sample project](/guides/demo-project).
-
 Link the local version of DjinnJS as a dependency for the sample project:
 
 ```bash
@@ -60,7 +58,7 @@ In `changelog.md` add your changes below the **Unreleased** heading using the fo
 Run the following command to lint your code:
 
 ```bash
-npm run lint
+npm run prerelease
 ```
 
 Pull Requests that fail linting will be rejected.
