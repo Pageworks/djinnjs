@@ -3,14 +3,14 @@
 When creating Web Component actors an Actor class is available to be extended. In the example below the `connected()` and `disconnected()` methods are optional and the `constructor()` must be called along with providing and inbox alias to the `super()` method.
 
 ```javascript
-import { Actor } from 'djinnjs/actor';
+import { Actor } from "djinnjs/actor";
 class CustomActorComponent extends Actor {
-    constructor(){
+    constructor() {
         // Super requires the inboxes alias
-        super('custom-actor');
+        super("custom-actor");
     }
 
-    inbox(data){ 
+    inbox(data) {
         const { type } = data;
         switch (type) {
             default:
@@ -18,11 +18,11 @@ class CustomActorComponent extends Actor {
         }
     }
 
-    connected(){
+    connected() {
         // Do something with the Web Components connectedCallback() method
     }
 
-    disconnected(){
+    disconnected() {
         // Do something with the Web Components disconnectedCallback() method
     }
 }

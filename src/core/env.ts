@@ -232,3 +232,6 @@ export const env: Env = new Env();
 export const uid: Function = env.uid;
 export const dataSaver: boolean = env.dataSaver;
 export const browser: Browser = env.browser;
+export const checkConnection: Function = env.checkConnection.bind(env);
+export const reserveThread: Function = env.reserveThread.bind(env);
+export const releaseThread: Function = env.releaseThread.bind(env);

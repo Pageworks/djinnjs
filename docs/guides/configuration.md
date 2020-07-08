@@ -1,10 +1,10 @@
 # Configuration
 
-Out of the box, DjinnJS does not require a config file. It assumes your source code lives at `./src`, your public directory is `./public`, and the `./public/assets` directory can be deleted and rebuilt by DjinnJS automatically. If the default values are incorrect for your project please proceed with creating a custom configuration file.
+Out of the box, DjinnJS does not require a config file. It assumes your source code lives at `./src`, your public directory is `./public`, and the `./public/assets` directory can be deleted and rebuilt by DjinnJS automatically. If the default values do not work for your project proceed with creating a custom configuration file.
 
 ## Config File
 
-DjinnJS will look for a `djinn.js` or a `djinnjs.config.js` config file in the projects root directory. You can use a different config file using the `-c` or `--config` flags.
+DjinnJS will look for a `djinn.js` or a `djinnjs.config.js` config file in the project's root directory. You can use a different config file using the `-c` flag.
 
 #### package.json
 
@@ -19,7 +19,7 @@ DjinnJS will look for a `djinn.js` or a `djinnjs.config.js` config file in the p
 ```bash
     -c  # Path to the config file
     -h  # The site handle that will be compiled
-    -e  # The enviroment settings (dev | production)
+    -e  # The environment context (dev | production)
 ```
 
 ## Settings
@@ -125,7 +125,7 @@ A string. This is the ID used for Googles [gtag.js](https://developers.google.co
 
 Default: `true`
 
-A boolean. When set to `true` Pjax will prefetch and cache links based on the users device metrics & active connection.
+A boolean. When set to `true` Pjax will prefetch and cache links based on the user's device metrics & active connection.
 
 #### followRedirects
 

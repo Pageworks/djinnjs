@@ -21,14 +21,14 @@ type settings = {
 **Example**
 
 ```javascript
-import { message } from 'djinnjs/broadcaster';
+import { message } from "djinnjs/broadcaster";
 
 message({
-    recipient: 'inbox-alias',
-    type: 'message',
+    recipient: "inbox-alias",
+    type: "message",
     data: {
-        message: 'This is an example'
-    }
+        message: "This is an example",
+    },
 });
 ```
 
