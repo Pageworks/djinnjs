@@ -22,37 +22,45 @@
     <body>
         <main>
             <aside><nav><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/inline-scripts" data-slug="/core/inline-scripts"><span>inline scripts</span></a><a href="/core/messaging" data-slug="/core/messaging"><span>messaging</span></a><a href="/core/pjax" data-slug="/core/pjax"><span>pjax</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/requesting-css" data-slug="/core/requesting-css"><span>requesting css</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/configuration" data-slug="/guides/configuration"><span>configuration</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-loading" data-slug="/guides/lazy-loading"><span>lazy loading</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a><header>loading states</header><a href="/loading-states/hard" data-slug="/loading-states/hard"><span>hard</span></a><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a><header>messaging system</header><a href="/messaging-system/actors" data-slug="/messaging-system/actors"><span>actors</span></a><a href="/messaging-system/broadcaster" data-slug="/messaging-system/broadcaster"><span>broadcaster</span></a><a href="/messaging-system/hooks" data-slug="/messaging-system/hooks"><span>hooks</span></a><a href="/messaging-system/sending-messages" data-slug="/messaging-system/sending-messages"><span>sending messages</span></a></nav></aside>
-            <article><h1 id="requestingcss">Requesting CSS</h1>
-<p>There are two ways to request CSS, the <code>eager-css</code> and <code>lazy-css</code> attributes. Both attributes accept several filenames separated by whitespace.</p>
-<h2 id="eager">Eager</h2>
-<p><code>eager-css</code> attribute is used to request critical CSS. These are the files that must load before the <code>hard-loading</code> state can transition into <code>soft-loading</code>. Try to limit the number of critical CSS files that are requested to only elements visible above the fold.</p>
-<pre><code class="html language-html">&lt;header eager-css="header buttons"&gt;
-    ...snip...
-&lt;/header&gt;
+            <article><h1 id="quickstartguide">Quick Start Guide</h1>
+<p>Get up and running with DjinnJS in <strong>less than 5 minutes</strong>. Before continuning make sure <a href="https://nodejs.org/en/">Node.js</a> is installed on your machine.</p>
+<h3 id="1installdjinnjs">1. Install DjinnJS</h3>
+<p>For additional information refer to the <a href="/guides/installation">installation guide</a>.</p>
+<h3 id="2configuredjinnjs">2. Configure DjinnJS</h3>
+<p>If your project requires different settings than the <a href="/guides/configuration">default configuration</a> settings create a custom configuraiton file.</p>
+<h3 id="3preparethehtmldocument">3. Prepare the HTML Document</h3>
+<p>The <code>&lt;main&gt;</code> element is required for <a href="/core/pjax">Pjax</a>. Any content that will be swapped as the page transitions will need to be within the <code>&lt;main&gt;</code> element.</p>
+<pre><code class="html language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+    &lt;head&gt;
+        &lt;meta charset="UTF-8" /&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+        &lt;title&gt;Document&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;main&gt;&lt;/main&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
 </code></pre>
-<h2 id="lazy">Lazy</h2>
-<p><code>lazy-css</code> attribute is used to request all other CSS files. These files are requested when the DOM state transitions from <code>hard-loading</code> into <code>soft-loading</code>.</p>
-<pre><code class="html language-html">&lt;header eager-css="header buttons"&gt;
-    ...snip...
-&lt;/header&gt;
-&lt;main&gt;
-    &lt;hero-area eager-css="hero-area"&gt;
-        ...snip...
-    &lt;/hero-area&gt;
-    &lt;!-- Below the fold --&gt;
-    &lt;section lazy-css="content"&gt;
-        ...snip...
-    &lt;/section&gt;
+<h3 id="4loadcssfiles">4. Load CSS Files</h3>
+<p>Tell DjinnJS what and when to load CSS files using the <code>eager-css</code> and <code>lazy-css</code> attributes. The attributes can be used on any element within the documents body. <a href="/core/requesting-css">Learn more about requesting CSS</a>.</p>
+<pre><code class="html language-html">&lt;main eager-css="normalize layout buttons headings"&gt;
+    &lt;div lazy-css="content"&gt;&lt;/div&gt;
 &lt;/main&gt;
 </code></pre>
-<h2 id="manual">Manual</h2>
-<p>CSS can be manually loaded using JavaScript and the <code>fetchCSS</code> function.</p>
-<pre><code class="javascript language-javascript">import { fetchCSS } from "djinnjs/fetch";
-
-fetchCSS(["file1", "file2"]).then(() =&gt; {
-    console.log("All CSS files have loaded");
-});
-</code></pre></article>
+<h3 id="5createwebcomponents">5. Create Web Components</h3>
+<p>Tell DjinnJS that a <a href="https://html.spec.whatwg.org/multipage/custom-elements.html">Custom Elements</a> can be upgraded into <a href="https://www.webcomponents.org/introduction">Web Components</a> by adding the <code>web-component</code> attribute. <a href="/core/web-components">Lean more about Web Components</a>.</p>
+<pre><code class="html language-html">&lt;custom-element lazy-css="custom-element" web-component&gt;
+    ...snip...
+&lt;/custom-element&gt;
+</code></pre>
+<h4 id="nextsteps">Next Steps</h4>
+<ul>
+<li><a href="/core/messaging">Learn about the messaging system</a></li>
+<li><a href="/core/progressivg-enhancements">Learn about progressivg enhancements</a></li>
+<li><a href="/guides/adding-npm-packages">Learn about importing NPM packages</a></li>
+<li><a href="/guides/frameworks">Learn about utilizing UI Frameworks</a></li>
+</ul></article>
         </main>
     </body>
 </html>

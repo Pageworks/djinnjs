@@ -21,14 +21,21 @@
     </head>
     <body>
         <main>
-            <aside><nav><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/installation" data-slug="/installation"><span>installation</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/importing-resources" data-slug="/core/importing-resources"><span>importing resources</span></a><a href="/core/lazy-loading" data-slug="/core/lazy-loading"><span>lazy loading</span></a><a href="/core/pjax" data-slug="/core/pjax"><span>pjax</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/requesting-css" data-slug="/core/requesting-css"><span>requesting css</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/demo-project" data-slug="/guides/demo-project"><span>demo project</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><header>loading states</header><a href="/loading-states/hard" data-slug="/loading-states/hard"><span>hard</span></a><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a><header>messaging system</header><a href="/messaging-system/actor-model" data-slug="/messaging-system/actor-model"><span>actor model</span></a><a href="/messaging-system/actors" data-slug="/messaging-system/actors"><span>actors</span></a><a href="/messaging-system/broadcaster" data-slug="/messaging-system/broadcaster"><span>broadcaster</span></a><a href="/messaging-system/hooks" data-slug="/messaging-system/hooks"><span>hooks</span></a><a href="/messaging-system/sending-messages" data-slug="/messaging-system/sending-messages"><span>sending messages</span></a></nav></aside>
+            <aside><nav><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/inline-scripts" data-slug="/core/inline-scripts"><span>inline scripts</span></a><a href="/core/messaging" data-slug="/core/messaging"><span>messaging</span></a><a href="/core/pjax" data-slug="/core/pjax"><span>pjax</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/requesting-css" data-slug="/core/requesting-css"><span>requesting css</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/configuration" data-slug="/guides/configuration"><span>configuration</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-loading" data-slug="/guides/lazy-loading"><span>lazy loading</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a><header>loading states</header><a href="/loading-states/hard" data-slug="/loading-states/hard"><span>hard</span></a><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a><header>messaging system</header><a href="/messaging-system/actors" data-slug="/messaging-system/actors"><span>actors</span></a><a href="/messaging-system/broadcaster" data-slug="/messaging-system/broadcaster"><span>broadcaster</span></a><a href="/messaging-system/hooks" data-slug="/messaging-system/hooks"><span>hooks</span></a><a href="/messaging-system/sending-messages" data-slug="/messaging-system/sending-messages"><span>sending messages</span></a></nav></aside>
             <article><h1 id="progressiveenhancements">Progressive Enhancements</h1>
-<p>Use progressive enhancements to keep your project fast and responsive on low-end devices and slow connections. All progressive enhancement checks are provided by the Env class.</p>
+<p>Use progressive enhancements to keep your project fast and responsive on low-end devices and slow connections. Progressive enhancement checks are provided by the Env class.</p>
 <h2 id="networkconnections">Network Connections</h2>
 <p><code>env.connection</code> will return <code>'4g' | '3g' | '2g' | 'slow-2g'</code> based on the users network connection. Due to limited <a href="https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API">Network Information API</a> support <code>4g</code> is the default on most browsers.</p>
+<p>To check if the current connection matches the minimum you're requiring use the <code>checkConnection()</code> function.</p>
+<pre><code class="javascript language-javascript">import { checkConnection } from "djinnjs/env";
+
+if (checkConnection("3g")) {
+    // This code will run on a 3g or 4g connection
+}
+</code></pre>
 <h2 id="datasavermode">Data Saver Mode</h2>
 <p><code>dataSaver</code> will return true when the user has data saver mode enabled on their device.</p>
-<pre><code class="javascript language-javascript">import { dataSaver } from 'djinnjs/env';
+<pre><code class="javascript language-javascript">import { dataSaver } from "djinnjs/env";
 
 if (!dataSaver) {
     // Do or fetch something
@@ -37,29 +44,22 @@ if (!dataSaver) {
 <h2 id="memory">Memory</h2>
 <p><code>env.memory</code> will return the approximate amount of device memory in gigabytes. Due to limited <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/deviceMemory">Navigator.deviceMemory</a> support 4 is the default value.</p>
 <h2 id="cpu">CPU</h2>
-<p><code>env.cpu</code> will return a number indicating the number of logical processor cores. <a href="https://developer.mozilla.org/en-US/docs/Web/API/NavigatorConcurrentHardware/hardwareConcurrency">See here</a> for additional API information.</p>
-<h2 id="example">Example</h2>
-<p>Below is an example of how to use progressive enhancements.</p>
-<pre><code class="javascript language-javascript">import { env, dataSaver } from 'djinnjs/env';
+<p><code>env.cpu</code> will return the number of logical processor cores. <a href="https://developer.mozilla.org/en-US/docs/Web/API/NavigatorConcurrentHardware/hardwareConcurrency">See here</a> for additional API information.</p>
+<h2 id="threadpool">Thread Pool</h2>
+<p><code>env.threadPool</code> will return the number of available logical processor cores currently, they will always return 0 on Safari due to browser limitations.</p>
+<p>To update the thread pool count use the <code>reserveThread()</code> and <code>releaseThread()</code> functions.</p>
+<pre><code class="javascript language-javascript">import { reserveThread, releaseThread } from "djinnjs/env";
+reserveThread()
+    .then(() =&gt; {
+        // TODO: spawn web worker
+    })
+    .catch(() =&gt; {
+        // Thread pool is empty
+    });
 
-class CustomVideoElement extends HTMLElement
-{
-    loadVideo()
-    {
-        // Generate and append iframe element
-    }
-    handleButtonClickEvent = this.loadVideo.bind(this);
-
-    connectedCallback()
-    {
-        if (env.connection === '4g' &amp;&amp; !dataSaver) {
-            this.loadVideo();
-        }
-
-        this.addEventListener('click', this.handleButtonClickEvent);
-    }
+if (webWorkerTermiated) {
+    releaseThread();
 }
-customElements.defind('custo-video-element', CustomVideoElement);
 </code></pre></article>
         </main>
     </body>
