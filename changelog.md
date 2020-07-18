@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2020-07-18
+
+### Fixed
+
+-   fixed a `load` event listener race condition on 2g & slow-2g connections
+
 ## [0.1.1] - 2020-07-03
 
 ### Fixed

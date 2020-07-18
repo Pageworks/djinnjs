@@ -18,7 +18,6 @@ DjinnJS will look for a `djinn.js` or a `djinnjs.config.js` config file in the p
 
 ```bash
     -c  # Path to the config file
-    -h  # The site handle that will be compiled
     -e  # The environment context (dev | production)
 ```
 
@@ -47,7 +46,7 @@ module.exports = {
     followRedirects: true,
     usePercentage: false,
     pageJumpOffset: null,
-    minimumConnection: "4g,
+    minimumConnection: "4g",
 };
 ```
 
