@@ -13,9 +13,12 @@ class Djinn {
     private inboxUid: string;
 
     constructor() {
-        this.worker = null;
-
-        window.addEventListener("load", this.handleLoadEvent);
+        this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
+        this.worker.onmessage = this.workerInbox.bind(this);
+        this.worker.postMessage({
+            type: "eager",
+            body: document.body.innerHTML,
+        });
     }
 
     private workerInbox(e: MessageEvent) {
@@ -135,15 +138,6 @@ class Djinn {
             body: document.body.innerHTML,
         });
     }
-
-    private handleLoadEvent: EventListener = async () => {
-        this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
-        this.worker.onmessage = this.workerInbox.bind(this);
-        this.worker.postMessage({
-            type: "eager",
-            body: document.body.innerHTML,
-        });
-    };
 
     public loadCSS(body: string, requestUid: string): void {
         this.worker.postMessage({
