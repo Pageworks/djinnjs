@@ -408,7 +408,10 @@ class Pjax {
                 currentViews = Array.from(document.documentElement.querySelectorAll("[pjax-id]"));
                 if (currentViews.length) {
                     for (let i = 0; i < currentViews.length; i++) {
-                        selectors.push(`[pjax-id="${currentViews[i].getAttribute("pjax-id")}"]`);
+                        // Don't hotswap views within views
+                        if (currentViews[i]?.parentElement?.closest("[pjax-id]") === null) {
+                            selectors.push(`[pjax-id="${currentViews[i].getAttribute("pjax-id")}"]`);
+                        }
                     }
                 } else {
                     const main = document.documentElement.querySelector("main");
