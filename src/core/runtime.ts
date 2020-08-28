@@ -68,7 +68,7 @@ class Runtime {
                 this.parseHTML(data.body, data.requestUid);
                 break;
             case "mount-inline-scripts":
-                this.handleInlineScripts(data.selector);
+                this.handleInlineScripts(data.selectors);
                 break;
             default:
                 return;
@@ -177,10 +177,13 @@ class Runtime {
     /**
      * Looks through the new HTML for any inline scripts and attempts to append them to the documents head.
      */
-    private handleInlineScripts(selector: string): void {
-        const el = document.body.querySelector(selector);
-        if (el) {
-            el.querySelectorAll("script").forEach(script => {
+    private handleInlineScripts(selectors: Array<string>): void {
+        const views = [];
+        for (let i = 0; i < selectors.length; i++) {
+            views.push(document.documentElement.querySelector(selectors[i]));
+        }
+        for (let i = 0; i < views.length; i++) {
+            views[i].querySelectorAll("script").forEach(script => {
                 const newScript = document.createElement("script");
                 newScript.type = script.type;
                 newScript.noModule = script.noModule;
