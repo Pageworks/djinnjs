@@ -50,7 +50,7 @@ class Djinn {
                 webComponentManager.collectWebComponents();
                 break;
             case "mount-inline-scripts":
-                this.mountInlineScripts(data.selector);
+                this.mountInlineScripts(data.selectors);
                 break;
             case "parse":
                 this.loadCSS(data.body, data.requestUid);
@@ -60,9 +60,9 @@ class Djinn {
         }
     }
 
-    private async mountInlineScripts(selector) {
+    private async mountInlineScripts(selectors) {
         const module = await import(`${location.origin}/${djinnjsOutDir}/djinn-utils.mjs`);
-        module.handleInlineScripts(selector);
+        module.handleInlineScripts(selectors);
     }
 
     private async handlePjaxResponse(data: PjaxResources, requestUid: string) {

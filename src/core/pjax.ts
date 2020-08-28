@@ -394,38 +394,73 @@ class Pjax {
     private swapPjaxContent(requestUid: string) {
         const request = this.getNavigaitonRequest(requestUid);
         if (request.requestUid === this.state.activeRequestUid) {
-            let selector;
-            let currentMain: HTMLElement;
+            let selectors: Array<string> = [];
+            let currentViews: Array<HTMLElement> = [];
             if (request.targetSelector !== null) {
-                selector = `[pjax-id="${request.targetSelector}"]`;
-                currentMain = document.body.querySelector(selector);
+                selectors = [`[pjax-id="${request.targetSelector}"]`];
+                const currentView = document.documentElement.querySelector(selectors[0]);
+                if (!currentView) {
+                    console.error(`${location.href} is missing selector ${selectors[0]}`);
+                    window.location.href = request.url;
+                    return;
+                }
             } else {
-                selector = "main";
-                currentMain = document.body.querySelector(selector);
-                const mainId = currentMain.getAttribute("pjax-id");
-                if (mainId) {
-                    selector = `[pjax-id="${mainId}"]`;
+                currentViews = Array.from(document.documentElement.querySelectorAll("[pjax-id]"));
+                if (currentViews.length) {
+                    for (let i = 0; i < currentViews.length; i++) {
+                        // Don't hotswap views within views
+                        if (currentViews[i]?.parentElement?.closest("[pjax-id]") === null) {
+                            selectors.push(`[pjax-id="${currentViews[i].getAttribute("pjax-id")}"]`);
+                        }
+                    }
+                } else {
+                    const main = document.documentElement.querySelector("main");
+                    if (main) {
+                        selectors = ["main"];
+                        currentViews.push(main);
+                    } else {
+                        selectors = ["body"];
+                        currentViews.push(document.body);
+                    }
                 }
             }
 
-            if (!currentMain) {
-                console.error(`${location.href} is missing selector ${selector}`);
-                window.location.href = request.url;
-                return;
+            for (let i = 0; i < currentViews.length; i++) {
+                currentViews[i].innerHTML = "";
             }
 
-            currentMain.innerHTML = "";
             const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("pjax-temp-document");
             tempDocument.documentElement.innerHTML = request.body;
-            const incomingMain = tempDocument.querySelector(selector) as HTMLElement;
 
-            if (!incomingMain) {
-                console.error(`New page is missing selector ${selector}`);
+            const newViews: Array<HTMLElement> = [];
+            for (let i = 0; i < selectors.length; i++) {
+                const newView = tempDocument.documentElement.querySelector(selectors[i]) as HTMLElement;
+                if (newView) {
+                    newViews.push(newView);
+                } else {
+                    console.error(`${request.url} is missing selector ${selectors[i]}`);
+                    window.location.href = request.url;
+                    return;
+                }
+            }
+
+            if (newViews.length !== currentViews.length) {
+                console.error(`Something went wrong when collecting the views`);
                 window.location.href = request.url;
                 return;
             }
 
-            currentMain.innerHTML = incomingMain.innerHTML;
+            for (let i = 0; i < currentViews.length; i++) {
+                for (let k = 0; k < newViews.length; k++) {
+                    // This will work for body and main elements because the attribute will return null for both
+                    // Since there is only 1 view in the queue when swapping the main or body we are OK to assume they're the same view
+                    if (currentViews[i].getAttribute("pjax-id") === newViews[k].getAttribute("pjax-id")) {
+                        currentViews[i].innerHTML = newViews[k].innerHTML;
+                        break;
+                    }
+                }
+            }
+
             document.title = tempDocument.title;
 
             window.scroll({
@@ -456,7 +491,7 @@ class Pjax {
                 recipient: "runtime",
                 type: "mount-inline-scripts",
                 data: {
-                    selector: selector,
+                    selectors: selectors,
                 },
             });
 

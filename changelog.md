@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2020-08-28
+
+### Added
+
+-   added the ability to swap multiple views during a page transition
+-   added `<body>` fallback when no `pjax-id` attributes or a `<main>` element isn't available
+
 ## [0.1.2] - 2020-07-18
 
 ### Fixed
