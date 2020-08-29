@@ -42,14 +42,23 @@ class Djinn {
         }
         if (useServiceWorker && env.threadPool !== 0) {
             fetchJS("service-worker-bootstrap");
+        } else {
+            const event = new CustomEvent("pjax:init");
+            document.dispatchEvent(event);
         }
     }
 
-    private workerInbox(e: MessageEvent) {
+    private async workerInbox(e: MessageEvent) {
         const response: WorkerResponse = e.data;
         switch (response.type) {
             case "load":
-                this.loadCSSFiles(response.files, response.requestUid);
+                // Request UID is null when this is the applications initial load request
+                if (response.requestUid === null) {
+                    await this.loadCSSFiles(response.files);
+                    this.mountComponents();
+                } else {
+                    this.loadCSSFiles(response.files, response.requestUid);
+                }
                 break;
         }
     }
