@@ -90,7 +90,6 @@ class DjinnJS {
             }
             await this.minifyScript();
             await this.relocateServiceWorker();
-            await this.relocateBroadcastWorker();
 
             if (!this.silent) {
                 spinner.text = "Relocating CSS files";
@@ -185,18 +184,6 @@ class DjinnJS {
                         reject(error);
                     });
             }
-        });
-    }
-
-    relocateBroadcastWorker() {
-        return new Promise((resolve, reject) => {
-            const publicPath = path.resolve(cwd, this.config.publicDir);
-            fs.copyFile(path.resolve(__dirname, "../broadcaster-worker.min.js"), `${publicPath}/broadcaster-worker.min.js`, error => {
-                if (error) {
-                    reject(error);
-                }
-                resolve();
-            });
         });
     }
 

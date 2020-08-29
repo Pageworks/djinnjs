@@ -418,9 +418,9 @@ class Pjax {
             }
 
             this.finalize(request.url, tempDocument.title, request.history, request.customPageJumpOffset);
-            const mountEvent = new CustomEvent("djinn:mount");
+            const mountEvent = new CustomEvent("djinn:mount-components");
             document.dispatchEvent(mountEvent);
-            const scriptEvent = new CustomEvent("djinn:scripts", {
+            const scriptEvent = new CustomEvent("djinn:mount-scripts", {
                 detail: {
                     selectors: selectors,
                 },

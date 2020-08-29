@@ -104,12 +104,14 @@ export class WebComponentManager {
             }
         }
         if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
-            if (!env.dataSaver) {
-                const event = new CustomEvent("djinn:lightweight-check");
-                document.dispatchEvent(event);
-            } else {
-                sessionStorage.setItem("connection-choice", "lite");
-                this.removePurgeableComponents();
+            if (sessionStorage.getItem("connection-choice") === null) {
+                if (!env.dataSaver) {
+                    const event = new CustomEvent("djinn:lightweight-check");
+                    document.dispatchEvent(event);
+                } else {
+                    sessionStorage.setItem("connection-choice", "lite");
+                    this.removePurgeableComponents();
+                }
             }
         }
     }

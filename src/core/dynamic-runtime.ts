@@ -17,16 +17,16 @@ class Djinn {
             body: document.documentElement.innerHTML,
         });
 
-        document.addEventListener("djinn:full", () => {
+        document.addEventListener("djinn:use-full", () => {
             sessionStorage.setItem("connection-choice", "full");
             webComponentManager.collectWebComponents();
         });
-        document.addEventListener("djinn:lite", () => {
+        document.addEventListener("djinn:use-lite", () => {
             sessionStorage.setItem("connection-choice", "lite");
             webComponentManager.collectWebComponents();
         });
-        document.addEventListener("djinn:mount", this.mountComponents);
-        document.addEventListener("djinn:scripts", (e: CustomEvent) => {
+        document.addEventListener("djinn:mount-components", this.mountComponents);
+        document.addEventListener("djinn:mount-scripts", (e: CustomEvent) => {
             this.mountScripts(e.detail.selectors);
         });
         document.addEventListener("djinn:parse", (e: CustomEvent) => {
