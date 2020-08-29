@@ -1,13 +1,7 @@
-export type PjaxResources = {
-    eager: Array<string>;
-    lazy: Array<string>;
-};
-
 export type WorkerResponse = {
-    type: "eager" | "lazy" | "parse";
+    type: "load";
     files: Array<string>;
     requestUid: string | null;
-    pjaxFiles: PjaxResources;
 };
 
 export type WebComponentLoad = null | "lazy" | "eager";

@@ -1,4 +1,3 @@
-import { hookup, message } from "../web_modules/broadcaster";
 import { env, uid } from "./env";
 import { sendPageView, setupGoogleAnalytics } from "./gtags.js";
 import { gaId, followRedirects, doPrefetching, pageJumpOffset, djinnjsOutDir, useServiceWorker } from "./config";
@@ -25,7 +24,6 @@ class Pjax {
     private navigationRequestQueue: Array<NavigaitonRequest>;
     private io: IntersectionObserver;
     private serviceWorker: ServiceWorker;
-    private inboxUid: string;
 
     constructor() {
         this.state = {

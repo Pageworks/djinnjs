@@ -46,3 +46,16 @@ export function handleInlineScripts(selectors: Array<string>): void {
         });
     }
 }
+
+export function scrollOrResetPage(): void {
+    if (window.location.hash) {
+        /** Scroll to hash element */
+        const element = document.body.querySelector(window.location.hash);
+        if (element) {
+            element.scrollIntoView();
+            return;
+        }
+    }
+    /** Scroll to top of page */
+    window.scrollTo(0, 0);
+}
