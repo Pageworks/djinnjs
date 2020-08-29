@@ -12,7 +12,6 @@ module.exports = {
     pjax: true,
     predictivePrefetching: true,
     followRedirects: true,
-    usePercentage: false,
     pageJumpOffset: null,
     minimumConnection: "4g",
 };

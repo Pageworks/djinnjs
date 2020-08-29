@@ -27,7 +27,12 @@ class Djinn {
             webComponentManager.collectWebComponents();
         });
         document.addEventListener("djinn:mount", this.mountComponents);
-        document.addEventListener("djinn:scripts", this.mountScripts);
+        document.addEventListener("djinn:scripts", (e: CustomEvent) => {
+            this.mountScripts(e.detail.selectors);
+        });
+        document.addEventListener("djinn:parse", (e: CustomEvent) => {
+            this.parseCSS(e.detail.body, e.detail.requestUid);
+        });
 
         if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
             fetchJS("pjax").then(() => {
@@ -77,7 +82,4 @@ class Djinn {
         handleInlineScripts(selectors);
     }
 }
-const djinn = new Djinn();
-const mountComponents: Function = djinn.mountComponents;
-const mountScripts: (selectors: Array<string>) => void = djinn.mountScripts;
-export { djinn, mountComponents, mountScripts };
+new Djinn();

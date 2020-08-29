@@ -12,13 +12,6 @@ if (fs.existsSync("./env.d.ts")) {
     fs.unlinkSync("./env.d.ts");
 }
 
-if (fs.existsSync("./actor.js")) {
-    fs.unlinkSync("./actor.js");
-}
-if (fs.existsSync("./actor.d.ts")) {
-    fs.unlinkSync("./actor.d.ts");
-}
-
 if (fs.existsSync("./fetch.js")) {
     fs.unlinkSync("./fetch.js");
 }

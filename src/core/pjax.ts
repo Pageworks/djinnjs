@@ -49,8 +49,26 @@ class Pjax {
             localStorage.setItem("contentCache", `${Date.now()}`);
         }
 
-        /** Hookup Pjax's inbox */
-        this.inboxUid = hookup("pjax", this.inbox.bind(this));
+        document.addEventListener("pjax:revision", this.checkPageRevision);
+        document.addEventListener("pjax:load", (e: CustomEvent) => {
+            this.navigate(e.detail.url, e.detail?.history, e.detail?.selector, e.detail?.navRequestId, e.detail?.tickets, e.detail?.customPageJumpOffset);
+        });
+        document.addEventListener("pjax:continue", (e: CustomEvent) => {
+            this.swapPjaxContent(e.detail.requestUid);
+        });
+        document.addEventListener("pjax:init", () => {
+            this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
+            this.worker.onmessage = this.handleWorkerMessage.bind(this);
+            if (useServiceWorker && typeof navigator.serviceWorker !== "undefined") {
+                this.serviceWorker = navigator.serviceWorker.controller;
+                navigator.serviceWorker.onmessage = this.serviceWorkerInbox.bind(this);
+            }
+            this.checkPageRevision();
+            this.collectLinks();
+            if (doPrefetching) {
+                this.prefetchLinks();
+            }
+        });
 
         /** Prepare Google Analytics */
         setupGoogleAnalytics(gaId);
@@ -61,70 +79,6 @@ class Pjax {
         window.history.replaceState({ url: window.location.href }, document.title, window.location.href);
     }
 
-    /**
-     * The public inbox for the Pjax class. All incoming messages sent through the `Broadcaster` will be received here.
-     * @param data - the `MessageData` passed into the inbox by the `Broadcaster` class
-     */
-    private inbox(data): void {
-        const { type } = data;
-        switch (type) {
-            case "revision-check":
-                this.checkPageRevision();
-                break;
-            case "hijack-links":
-                this.collectLinks();
-                break;
-            case "load":
-                this.navigate(data.url, data?.history, data?.selector, data?.navRequestId, data?.tickets, data?.customPageJumpOffset);
-                break;
-            case "finalize-pjax":
-                this.updateHistory(data.title, data.url, data.history);
-                if (new RegExp("#").test(data.url)) {
-                    this.scrollToHash(data.url, data.customPageJumpOffset);
-                }
-                this.collectLinks();
-                this.checkPageRevision();
-                sendPageView(window.location.pathname, gaId);
-                if (doPrefetching) {
-                    this.prefetchLinks();
-                }
-                message({
-                    recipient: "pjax",
-                    type: "completed",
-                });
-                break;
-            case "css-ready":
-                this.swapPjaxContent(data.requestUid);
-                break;
-            case "prefetch":
-                if (doPrefetching) {
-                    this.prefetchLinks();
-                }
-                break;
-            case "init":
-                this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/pjax-worker.mjs`);
-                this.worker.onmessage = this.handleWorkerMessage.bind(this);
-                if (useServiceWorker && typeof navigator.serviceWorker !== "undefined") {
-                    this.serviceWorker = navigator.serviceWorker.controller;
-                    navigator.serviceWorker.onmessage = this.serviceWorkerInbox.bind(this);
-                }
-                this.checkPageRevision();
-                /** Tell Pjax to hijack all viable links */
-                message({
-                    recipient: "pjax",
-                    type: "hijack-links",
-                });
-                /** Tell Pjax to prefetch links */
-                message({
-                    recipient: "pjax",
-                    type: "prefetch",
-                });
-                break;
-            default:
-                return;
-        }
-    }
-
     private serviceWorkerInbox(e: MessageEvent) {
         const { type } = e.data;
         switch (type) {
@@ -132,10 +86,8 @@ class Pjax {
                 let promptCount = parseInt(sessionStorage.getItem("prompts"));
                 promptCount = promptCount + 1;
                 sessionStorage.setItem("prompts", `${promptCount}`);
-                message({
-                    recipient: "user-input",
-                    type: "stale-notification",
-                });
+                const event = new CustomEvent("pjax:stale");
+                document.dispatchEvent(event);
                 break;
             case "cachebust":
                 sessionStorage.setItem("maxPrompts", `${e.data.max}`);
@@ -163,6 +115,21 @@ class Pjax {
             default:
                 break;
         }
+    }
+
+    private finalize(url: string, title: string, history: "push" | "replace", customPageJumpOffset: number) {
+        this.updateHistory(title, url, history);
+        if (new RegExp("#").test(url)) {
+            this.scrollToHash(url, customPageJumpOffset);
+        }
+        this.collectLinks();
+        this.checkPageRevision();
+        sendPageView(window.location.pathname, gaId);
+        if (doPrefetching) {
+            this.prefetchLinks();
+        }
+        const event = new CustomEvent("pjax:complete");
+        document.dispatchEvent(event);
     }
 
     /**
@@ -266,17 +233,7 @@ class Pjax {
     private hijackPopstate(e: PopStateEvent): void {
         /** Only hijack the event when the `history.state` object contains a URL */
         if (e.state?.url) {
-            /** Tells the Pjax class to load the URL stored in this windows history.
-             * In order to preserve the timeline navigation the history will use `replace` instead of `push`.
-             */
-            message({
-                recipient: "pjax",
-                type: "load",
-                data: {
-                    url: e.state.url,
-                    history: "replace",
-                },
-            });
+            this.navigate(e.state.url, "replace");
         }
     }
     private windowPopstateEvent: EventListener = this.hijackPopstate.bind(this);
@@ -316,17 +273,8 @@ class Pjax {
         const navigationUid = uid();
         target.setAttribute("navigation-request-id", navigationUid);
         const customPageJumpOffset = target.getAttribute("page-jump-offset");
-        /** Tell Pjax to load the clicked elements page */
-        message({
-            recipient: "pjax",
-            type: "load",
-            data: {
-                url: target.href,
-                selector: target.getAttribute("pjax-view-id"),
-                navRequestId: navigationUid,
-                customPageJumpOffset: customPageJumpOffset ? parseInt(customPageJumpOffset) : null,
-            },
-        });
+        const offset = customPageJumpOffset ? parseInt(customPageJumpOffset) : null;
+        this.navigate(target.href, "push", target.getAttribute("pjax-view-id"), null, [], offset);
     };
 
     /**
@@ -363,15 +311,13 @@ class Pjax {
             } else if (status === "hash-change") {
                 location.hash = url.match(/\#.*/g)[0].replace("#", "");
             } else if (status === "ok") {
-                /** Tells the runtime class to parse the incoming HTML for any new CSS files */
-                message({
-                    recipient: "runtime",
-                    type: "parse",
-                    data: {
+                const event = new CustomEvent("djinn:parse", {
+                    detail: {
                         body: body,
                         requestUid: requestId,
                     },
                 });
+                document.dispatchEvent(event);
                 request.body = body;
             } else {
                 console.error(`Failed to fetch page: ${url}. Server responded with: ${error}`);
@@ -471,27 +417,15 @@ class Pjax {
                 env.stopLoading(request.tickets[i]);
             }
 
-            message({
-                recipient: "pjax",
-                type: "finalize-pjax",
-                data: {
-                    url: request.url,
-                    title: tempDocument.title,
-                    history: request.history,
-                    customPageJumpOffset: request.customPageJumpOffset,
-                },
-            });
-            message({
-                recipient: "runtime",
-                type: "mount-components",
-            });
-            message({
-                recipient: "runtime",
-                type: "mount-inline-scripts",
-                data: {
+            this.finalize(request.url, tempDocument.title, request.history, request.customPageJumpOffset);
+            const mountEvent = new CustomEvent("djinn:mount");
+            document.dispatchEvent(mountEvent);
+            const scriptEvent = new CustomEvent("djinn:scripts", {
+                detail: {
                     selectors: selectors,
                 },
             });
+            document.dispatchEvent(scriptEvent);
 
             env.endPageTransition();
         }
