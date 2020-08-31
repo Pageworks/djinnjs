@@ -1,4 +1,4 @@
-import { env } from "./env";
+import { env, dataSaver } from "./env";
 import { fetchCSS, fetchJS } from "./fetch";
 import { djinnjsOutDir, usePjax, useServiceWorker } from "./config";
 import { WebComponentManager } from "./web-component-manager";
@@ -34,7 +34,7 @@ class Djinn {
             this.parseCSS(e.detail.body, e.detail.requestUid);
         });
 
-        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
+        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax && !dataSaver) {
             fetchJS("pjax").then(() => {
                 const event = new CustomEvent("pjax:init");
                 document.dispatchEvent(event);

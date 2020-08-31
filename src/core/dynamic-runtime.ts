@@ -1,5 +1,6 @@
 import { usePjax, useServiceWorker, djinnjsOutDir } from "./config";
 import { WorkerResponse } from "./types";
+import { dataSaver } from "./env";
 
 let env = null;
 let webComponentManager = null;
@@ -59,7 +60,7 @@ class Djinn {
         utils = await import(`${location.origin}/${djinnjsOutDir}/djinn-utils.mjs`);
         utils.scrollOrResetPage();
 
-        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax) {
+        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax && !dataSaver) {
             await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);
         }
 
