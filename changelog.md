@@ -15,10 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `djinn:parse`
     -   `djinn:use-full`
     -   `djinn:use-lite`
-    -   `pajx:init`
-    -   `pajx:load`
-    -   `pajx:revision`
-    -   `pajx:continue`
+    -   `pjax:init`
+    -   `pjax:load`
+    -   `pjax:revision`
+    -   `pjax:continue`
+-   pjax prefetches pages on `mouseenter` event (network & data save mode restrictions still enforced)
 
 ### Removed
 
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `user-input` inbox hooks
 -   `hard-loading` stage of the DjinnJS runtime -- eager CSS **MUST** be loaded via `<link>` elements or injected into the document using `<style>` elements
 -   support for the `hard-loading` animation & elements
+-   pjax no longer queues and prefetches navigation links
 
 ### Depricated
 

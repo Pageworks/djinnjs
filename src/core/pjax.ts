@@ -10,12 +10,11 @@ interface NavigaitonRequest {
     body?: string;
     title?: string;
     url: string;
-    history: "push" | "replace";
-    requestUid: string;
-    target: HTMLElement | null;
-    targetSelector: string;
-    tickets: string[];
-    customPageJumpOffset: number;
+    history?: "push" | "replace";
+    requestUid?: string;
+    targetSelector?: string;
+    tickets?: string[];
+    customPageJumpOffset?: number;
 }
 
 class Pjax {
@@ -51,7 +50,13 @@ class Pjax {
 
         document.addEventListener("pjax:revision", this.checkPageRevision);
         document.addEventListener("pjax:load", (e: CustomEvent) => {
-            this.navigate(e.detail.url, e.detail?.history, e.detail?.selector, e.detail?.navRequestId, e.detail?.tickets, e.detail?.customPageJumpOffset);
+            this.navigate({
+                url: e.detail.url,
+                history: e.detail?.history ?? "push",
+                targetSelector: e.detail?.selector,
+                tickets: e.detail?.tickets ?? [],
+                customPageJumpOffset: e.detail?.customPageJumpOffset,
+            });
         });
         document.addEventListener("pjax:continue", (e: CustomEvent) => {
             this.swapPjaxContent(e.detail.requestUid);
@@ -65,9 +70,6 @@ class Pjax {
             }
             this.checkPageRevision();
             this.collectLinks();
-            if (doPrefetching) {
-                this.prefetchLinks();
-            }
         });
 
         /** Prepare Google Analytics */
@@ -125,9 +127,6 @@ class Pjax {
         this.collectLinks();
         this.checkPageRevision();
         sendPageView(window.location.pathname, gaId);
-        if (doPrefetching) {
-            this.prefetchLinks();
-        }
         const event = new CustomEvent("pjax:complete");
         document.dispatchEvent(event);
     }
@@ -196,47 +195,37 @@ class Pjax {
     /**
      * Creates and sends a navigation request to the Pjax web worker and queues navigation request.
      */
-    private navigate(
-        url: string,
-        history: "push" | "replace" = "push",
-        selector: string = null,
-        navRequestId: string = null,
-        tickets: Array<string> = [],
-        customPageJumpOffset: number = null
-    ): void {
-        env.startPageTransition();
-        const requestUid = navRequestId || uid();
-        this.state.activeRequestUid = requestUid;
-        const navigationRequest: NavigaitonRequest = {
-            url: url,
-            history: history,
-            requestUid: requestUid,
-            target: document.body.querySelector(`[navigation-request-id="${requestUid}"]`) || null,
-            targetSelector: selector,
-            tickets: tickets,
-            customPageJumpOffset: customPageJumpOffset,
+    private navigate(request: NavigaitonRequest): void {
+        const defaultRequest: NavigaitonRequest = {
+            url: null,
+            history: "push",
+            requestUid: uid(),
+            targetSelector: null,
+            tickets: [],
+            customPageJumpOffset: null,
         };
+        env.startPageTransition();
+        const navigationRequest: NavigaitonRequest = Object.assign(defaultRequest, request);
+        this.state.activeRequestUid = navigationRequest.requestUid;
         this.navigationRequestQueue.push(navigationRequest);
         this.worker.postMessage({
             type: "pjax",
-            requestId: requestUid,
-            url: url,
+            requestId: navigationRequest.requestUid,
+            url: navigationRequest.url,
             currentUrl: location.href,
             followRedirects: followRedirects,
         });
     }
 
-    /**
-     * Handles the windows `popstate` event.
-     * @param e - the `PopStateEvent` object
-     */
-    private hijackPopstate(e: PopStateEvent): void {
+    private windowPopstateEvent: EventListener = (e: PopStateEvent) => {
         /** Only hijack the event when the `history.state` object contains a URL */
         if (e.state?.url) {
-            this.navigate(e.state.url, "replace");
+            this.navigate({
+                url: e.state.url,
+                history: "replace",
+            });
         }
-    }
-    private windowPopstateEvent: EventListener = this.hijackPopstate.bind(this);
+    };
 
     /**
      * Handles history manipulation by replacing or pushing the new state into the windows history timeline.
@@ -274,7 +263,23 @@ class Pjax {
         target.setAttribute("navigation-request-id", navigationUid);
         const customPageJumpOffset = target.getAttribute("page-jump-offset");
         const offset = customPageJumpOffset ? parseInt(customPageJumpOffset) : null;
-        this.navigate(target.href, "push", target.getAttribute("pjax-view-id"), null, [], offset);
+        this.navigate({
+            url: target.href,
+            requestUid: navigationUid,
+            targetSelector: target.getAttribute("pjax-view-id"),
+            customPageJumpOffset: offset,
+        });
+    };
+
+    /**
+     * Called when the `mouseenter` event fires on a Pjax tracked anchor element.
+     */
+    private handleLinkPrefetch: EventListener = (e: Event) => {
+        const target = e.currentTarget as HTMLAnchorElement;
+        this.worker.postMessage({
+            type: "prefetch",
+            url: target.href,
+        });
     };
 
     /**
@@ -283,13 +288,19 @@ class Pjax {
      * - any link with a `no-pjax` attribute
      * - any link with a `no-pjax` class
      * - any link with a `target` attribute
+     * - any link with a `download` attribute
      */
     private collectLinks(): void {
-        const unregisteredLinks = Array.from(document.body.querySelectorAll("a[href]:not([pjax-tracked]):not([no-pjax]):not([target]):not(.no-pjax)"));
+        const unregisteredLinks = Array.from(document.body.querySelectorAll("a[href]:not([pjax-tracked]):not([no-pjax]):not([target]):not(.no-pjax):not([download])"));
         if (unregisteredLinks.length) {
             unregisteredLinks.map((link: HTMLAnchorElement) => {
                 link.setAttribute("pjax-tracked", "true");
                 link.addEventListener("click", this.handleLinkClick);
+
+                /** Require at least a 3g connection & respect the users data saver setting */
+                if (doPrefetching && env.connection !== "2g" && env.connection !== "slow-2g" && !env.dataSaver) {
+                    link.addEventListener("mouseenter", this.handleLinkPrefetch);
+                }
             });
         }
     }
@@ -304,7 +315,7 @@ class Pjax {
      * @param error - the error message of the failed request
      */
     private handlePjaxResponse(requestId: string, status: string, url: string, body?: string, error?: string) {
-        const request = this.getNavigaitonRequest(requestId);
+        const request: NavigaitonRequest = this.getNavigaitonRequest(requestId);
         if (requestId === this.state.activeRequestUid) {
             if (status === "external") {
                 window.location.href = url;
@@ -336,7 +347,7 @@ class Pjax {
      * @param requestUid - the navigation request unique id
      */
     private swapPjaxContent(requestUid: string) {
-        const request = this.getNavigaitonRequest(requestUid);
+        const request: NavigaitonRequest = this.getNavigaitonRequest(requestUid);
         if (request.requestUid === this.state.activeRequestUid) {
             let selectors: Array<string> = [];
             let currentViews: Array<HTMLElement> = [];
@@ -466,45 +477,6 @@ class Pjax {
         this.worker.postMessage({
             type: "revision-check",
             url: window.location.href,
-        });
-    }
-
-    /** Collect primary navigation links and tell the Pjax web worker to prefetch the pages. */
-    private prefetchLinks(): void {
-        /** Require a service worker & at least a 3g connection & respect the users data saver setting */
-        if (env.connection === "2g" || env.connection === "slow-2g" || !("serviceWorker" in navigator) || env.dataSaver) {
-            return;
-        }
-        const urls: Array<string> = [];
-
-        /** Header links */
-        const headerLinks = Array.from(document.body.querySelectorAll("header a[href]:not([target]):not([pjax-prefetched]):not(prevent-pjax):not(no-transition)"));
-        headerLinks.map((link: HTMLAnchorElement) => {
-            link.setAttribute("pjax-prefetched", "true");
-            urls.push(link.href);
-        });
-
-        /** All other navigation links */
-        const navLinks = Array.from(document.body.querySelectorAll("nav a[href]:not([target]):not([pjax-prefetched]):not(prevent-pjax):not(no-transition)"));
-        navLinks.map((link: HTMLAnchorElement) => {
-            link.setAttribute("pjax-prefetched", "true");
-            urls.push(link.href);
-        });
-
-        this.worker.postMessage({
-            type: "prefetch",
-            urls: urls,
-        });
-
-        /** Require at least a 4g connection while respecting the users data  */
-        if (env.connection === "3g") {
-            return;
-        }
-
-        const allLinks = Array.from(document.body.querySelectorAll("a[href]:not([target]):not([pjax-prefetched]):not(prevent-pjax):not(no-transition)"));
-        allLinks.map((link: HTMLAnchorElement) => {
-            link.setAttribute("pjax-prefetched", "true");
-            this.io.observe(link);
         });
     }
 
