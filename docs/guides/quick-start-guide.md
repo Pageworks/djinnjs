@@ -50,7 +50,6 @@ Tell DjinnJS that a [Custom Elements](https://html.spec.whatwg.org/multipage/cus
 
 #### Next Steps
 
--   [Learn about the messaging system](/core/messaging)
 -   [Learn about progressivg enhancements](/core/progressivg-enhancements)
 -   [Learn about importing NPM packages](/guides/adding-npm-packages)
 -   [Learn about utilizing UI Frameworks](/guides/frameworks)

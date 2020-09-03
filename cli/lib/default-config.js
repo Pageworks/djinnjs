@@ -14,4 +14,5 @@ module.exports = {
     followRedirects: true,
     pageJumpOffset: null,
     minimumConnection: "4g",
+    precacheURL: "",
 };

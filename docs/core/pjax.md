@@ -33,16 +33,13 @@ In the example below only the content with the `<div>` will be swapped when a us
 
 ## Manual Navigation
 
-Pjax can be told to change pages via [Messaging System](/core/messaging).
+Pjax can be told to change pages using a custom event dispatched on the document.
 
 ```javascript
-import { message } from "djinnjs/broadcaster";
-
-message({
-    recipient: "pjax",
-    type: "load",
-    data: {
-        url: "https://example.com/",
+const event = new CustomEvetn("pjax:load", {
+    details: {
+        url: "/page/to/load",
     },
 });
+document.dispatchEvent(event);
 ```

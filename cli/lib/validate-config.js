@@ -191,6 +191,17 @@ module.exports = function valdiateConfig(config, customConfig) {
             process.exit(1);
     }
 
+    switch (typeof customConfig.precacheURL) {
+        case "string":
+            config.precacheURL = customConfig.precacheURL;
+            break;
+        case "undefined":
+            break;
+        default:
+            console.log(`Invalid DjinnJS configuration. The precacheURL value must be a string.`);
+            process.exit(1);
+    }
+
     let env;
     if (typeof customConfig.env === "string") {
         env = customConfig.env;
