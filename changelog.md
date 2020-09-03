@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   `css` attribute
--   custom event listeners -- attached to the `document`
+-   `css` attribute [#93](https://github.com/Pageworks/djinnjs/issues/93)
+-   custom event listeners -- attached to the `document` [#95](https://github.com/Pageworks/djinnjs/issues/95)
     -   `djinn:mount-components`
     -   `djinn:parse`
     -   `djinn:use-full`
@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `pjax:revision`
     -   `pjax:continue`
 -   pjax prefetches pages on `mouseenter` event (network & data save mode restrictions still enforced)
--   `precacheURL` config option
+-   `precacheURL` config option [#99](https://github.com/Pageworks/djinnjs/issues/99)
 
 ### Removed
 
