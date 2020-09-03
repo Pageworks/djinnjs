@@ -33,9 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   support for the `hard-loading` animation & elements
 -   pjax no longer queues and prefetches navigation links
 -   djinnjs web worker -- replaced regex with query selector
-
-### Depricated
-
 -   `eager-css` attribute
 -   `lazy-css` attribute
 
