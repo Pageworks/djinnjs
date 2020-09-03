@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `hard-loading` stage of the DjinnJS runtime -- eager CSS **MUST** be loaded via `<link>` elements or injected into the document using `<style>` elements
 -   support for the `hard-loading` animation & elements
 -   pjax no longer queues and prefetches navigation links
+-   djinnjs web worker -- replaced regex with query selector
 
 ### Depricated
 

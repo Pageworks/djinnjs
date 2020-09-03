@@ -1,22 +1,15 @@
 import { env, dataSaver } from "./env";
-import { fetchCSS, fetchJS } from "./fetch";
-import { djinnjsOutDir, usePjax, useServiceWorker } from "./config";
+import { fetchJS } from "./fetch";
+import { usePjax, useServiceWorker } from "./config";
 import { WebComponentManager } from "./web-component-manager";
 import { handleInlineScripts } from "./djinn-utils";
-import { WorkerResponse } from "./types";
+import { parse } from "./body-parser";
 
 const webComponentManager = new WebComponentManager();
 
 class Djinn {
-    private worker: Worker;
-
     constructor() {
-        this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
-        this.worker.onmessage = this.workerInbox.bind(this);
-        this.worker.postMessage({
-            type: "parse",
-            body: document.documentElement.innerHTML,
-        });
+        this.init();
 
         document.addEventListener("djinn:use-full", () => {
             sessionStorage.setItem("connection-choice", "full");
@@ -48,46 +41,28 @@ class Djinn {
         }
     }
 
-    private async workerInbox(e: MessageEvent) {
-        const response: WorkerResponse = e.data;
-        switch (response.type) {
-            case "load":
-                // Request UID is null when this is the applications initial load request
-                if (response.requestUid === null) {
-                    await this.loadCSSFiles(response.files);
-                    this.mountComponents();
-                } else {
-                    this.loadCSSFiles(response.files, response.requestUid);
-                }
-                break;
-        }
+    private async init() {
+        await parse(document.documentElement);
+        this.mountComponents();
     }
 
-    private async loadCSSFiles(files: Array<string>, requestUid: string = null) {
-        await fetchCSS(files);
-        if (requestUid) {
-            const event = new CustomEvent("pjax:continue", {
-                detail: {
-                    requestUid: requestUid,
-                },
-            });
-            document.dispatchEvent(event);
-        }
-    }
-
-    public parseCSS(html: string, requestUid: string = null): void {
-        this.worker.postMessage({
-            type: "parse",
-            body: html,
-            requestUid: requestUid,
+    private async parseCSS(html: string, requestUid: string = null) {
+        const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("djinn-temp-document");
+        tempDocument.documentElement.innerHTML = html;
+        await parse(tempDocument.documentElement);
+        const event = new CustomEvent("pjax:continue", {
+            detail: {
+                requestUid: requestUid,
+            },
         });
+        document.dispatchEvent(event);
     }
 
-    public mountComponents() {
+    private mountComponents() {
         webComponentManager.collectWebComponents();
     }
 
-    public mountScripts(selectors) {
+    private mountScripts(selectors) {
         handleInlineScripts(selectors);
     }
 }

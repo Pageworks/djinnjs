@@ -52,6 +52,7 @@ if (verifiedConfigPath) {
 
 const rimraf = require("rimraf");
 const ora = require("ora");
+const glob = require("glob");
 
 const scrub = require("./lib/scrubber");
 const minify = require("./lib/minifier");
@@ -92,6 +93,11 @@ class DjinnJS {
             await this.relocateServiceWorker();
 
             if (!this.silent) {
+                spinner.text = "Relocating WebAssembly files";
+            }
+            await this.relocateWASM();
+
+            if (!this.silent) {
                 spinner.text = "Relocating CSS files";
             }
             await this.relocateCSS();
@@ -115,6 +121,25 @@ class DjinnJS {
             console.log(error);
             console.log("\n");
             process.exit(1);
+        }
+    }
+
+    async relocateWASM() {
+        const distDir = path.resolve(__dirname, "../dist");
+        const files = glob.sync(`${distDir}/**/*.wasm`);
+        const outDir = path.resolve(cwd, this.config.publicDir, this.config.outDir);
+        let relocated = 0;
+        for (let i = 0; i < files.length; i++) {
+            const filename = files[i].replace(/(.*[\/\\])/g, "");
+            fs.copyFile(files[i], `${outDir}/${filename}`, error => {
+                if (error) {
+                    throw error;
+                }
+                relocated++;
+                if (relocated === files.length) {
+                    return;
+                }
+            });
         }
     }
 

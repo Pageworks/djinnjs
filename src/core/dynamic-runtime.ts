@@ -1,23 +1,14 @@
 import { usePjax, useServiceWorker, djinnjsOutDir } from "./config";
-import { WorkerResponse } from "./types";
 import { dataSaver } from "./env";
+import { parse } from "./body-parser";
 
 let env = null;
 let webComponentManager = null;
 let utils = null;
-let fetchCSS = null;
 
 class Djinn {
-    private worker: Worker;
-
     constructor() {
-        this.worker = new Worker(`${location.origin}/${djinnjsOutDir}/djinn-worker.mjs`);
-        this.worker.onmessage = this.workerInbox.bind(this);
-        this.worker.postMessage({
-            type: "parse",
-            body: document.documentElement.innerHTML,
-        });
-
+        this.init();
         document.addEventListener("djinn:use-full", () => {
             sessionStorage.setItem("connection-choice", "full");
             webComponentManager.collectWebComponents();
@@ -35,21 +26,11 @@ class Djinn {
         });
     }
 
-    private async workerInbox(e: MessageEvent) {
-        const response: WorkerResponse = e.data;
-        switch (response.type) {
-            case "load":
-                // Request UID is null when this is the applications initial load request
-                if (response.requestUid === null) {
-                    await this.setup();
-                    await this.loadCSSFiles(response.files, response.requestUid);
-                    await this.finalize();
-                    this.mountComponents();
-                } else {
-                    this.loadCSSFiles(response.files, response.requestUid);
-                }
-                break;
-        }
+    private async init() {
+        await parse(document.documentElement);
+        await this.setup();
+        await this.finalize();
+        this.mountComponents();
     }
 
     private async finalize() {
@@ -75,36 +56,25 @@ class Djinn {
     private async setup() {
         const envModule = await import(`${location.origin}/${djinnjsOutDir}/env.mjs`);
         env = envModule.env;
-
-        const fetchModule = await import(`${location.origin}/${djinnjsOutDir}/fetch.mjs`);
-        fetchCSS = fetchModule.fetchCSS;
     }
 
-    private async loadCSSFiles(data: Array<string>, requestUid: string) {
-        const ticket = env.startLoading();
-        await fetchCSS(data);
+    private async parseCSS(html: string, requestUid: string = null) {
+        const tempDocument: HTMLDocument = document.implementation.createHTMLDocument("djinn-temp-document");
+        tempDocument.documentElement.innerHTML = html;
+        await parse(tempDocument.documentElement);
         const event = new CustomEvent("pjax:continue", {
             detail: {
                 requestUid: requestUid,
             },
         });
         document.dispatchEvent(event);
-        env.stopLoading(ticket);
     }
 
-    public parseCSS(html: string, requestUid: string = null): void {
-        this.worker.postMessage({
-            type: "parse",
-            body: html,
-            requestUid: requestUid,
-        });
-    }
-
-    public mountComponents() {
+    private mountComponents() {
         webComponentManager.collectWebComponents();
     }
 
-    public async mountScripts(selectors) {
+    private async mountScripts(selectors) {
         utils.handleInlineScripts(selectors);
     }
 }
