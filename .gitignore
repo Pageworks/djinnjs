@@ -3,6 +3,7 @@ cli/temp
 dist
 .DS_Store
 /public
+/rust/body-parser/target
 
 env.js
 env.d.ts

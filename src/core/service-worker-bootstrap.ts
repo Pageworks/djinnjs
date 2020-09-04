@@ -1,5 +1,3 @@
-import { message } from "../web_modules/broadcaster";
-
 /** Attempt to register a service worker */
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker
@@ -14,16 +12,10 @@ if ("serviceWorker" in navigator) {
             console.error("Registration failed with " + error);
         })
         .then(() => {
-            message({
-                recipient: "pjax",
-                type: "init",
-                maxAttempts: Infinity,
-            });
+            const event = new CustomEvent("pjax:init");
+            document.dispatchEvent(event);
         });
 } else {
-    message({
-        recipient: "pjax",
-        type: "init",
-        maxAttempts: Infinity,
-    });
+    const event = new CustomEvent("pjax:init");
+    document.dispatchEvent(event);
 }

@@ -1,4 +1,4 @@
-import { djinnjsOutDir, usePercentage } from "./config";
+import { djinnjsOutDir } from "./config";
 
 /**
  * Appends JavaScript resources to the documents head if it hasn't already been loaded.
@@ -65,8 +65,6 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
             resolve();
         }
 
-        const loadingMessage = document.body.querySelector("djinnjs-file-loading-value") || null;
-
         let loaded = 0;
         for (let i = 0; i < resourceList.length; i++) {
             const filename = resourceList[i].replace(/(\.css)$/gi, "");
@@ -85,26 +83,12 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 }
                 el.addEventListener("load", () => {
                     loaded++;
-                    if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
-                        if (usePercentage) {
-                            loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
-                        } else {
-                            loadingMessage.innerHTML = `${loaded}/${resourceList.length}`;
-                        }
-                    }
                     if (loaded === resourceList.length) {
                         resolve();
                     }
                 });
                 el.addEventListener("error", () => {
                     loaded++;
-                    if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
-                        if (usePercentage) {
-                            loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
-                        } else {
-                            loadingMessage.innerHTML = `${loaded}/${resourceList.length}`;
-                        }
-                    }
                     if (loaded === resourceList.length) {
                         resolve();
                     }
@@ -112,13 +96,6 @@ export function fetchCSS(filenames: string | Array<string>): Promise<{}> {
                 document.head.append(el);
             } else {
                 loaded++;
-                if (document.documentElement.getAttribute("state") === "hard-loading" && loadingMessage) {
-                    if (usePercentage) {
-                        loadingMessage.innerHTML = `${Math.round((loaded / resourceList.length) * 100)}%`;
-                    } else {
-                        loadingMessage.innerHTML = `${loaded}/${resourceList.length}`;
-                    }
-                }
                 if (loaded === resourceList.length) {
                     resolve();
                 }

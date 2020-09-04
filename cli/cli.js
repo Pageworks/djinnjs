@@ -52,6 +52,7 @@ if (verifiedConfigPath) {
 
 const rimraf = require("rimraf");
 const ora = require("ora");
+const glob = require("glob");
 
 const scrub = require("./lib/scrubber");
 const minify = require("./lib/minifier");
@@ -90,7 +91,11 @@ class DjinnJS {
             }
             await this.minifyScript();
             await this.relocateServiceWorker();
-            await this.relocateBroadcastWorker();
+
+            if (!this.silent) {
+                spinner.text = "Relocating WebAssembly files";
+            }
+            await this.relocateWASM();
 
             if (!this.silent) {
                 spinner.text = "Relocating CSS files";
@@ -116,6 +121,25 @@ class DjinnJS {
             console.log(error);
             console.log("\n");
             process.exit(1);
+        }
+    }
+
+    async relocateWASM() {
+        const distDir = path.resolve(__dirname, "../dist");
+        const files = glob.sync(`${distDir}/**/*.wasm`);
+        const outDir = path.resolve(cwd, this.config.publicDir, this.config.outDir);
+        let relocated = 0;
+        for (let i = 0; i < files.length; i++) {
+            const filename = files[i].replace(/(.*[\/\\])/g, "");
+            fs.copyFile(files[i], `${outDir}/${filename}`, error => {
+                if (error) {
+                    throw error;
+                }
+                relocated++;
+                if (relocated === files.length) {
+                    return;
+                }
+            });
         }
     }
 
@@ -188,18 +212,6 @@ class DjinnJS {
         });
     }
 
-    relocateBroadcastWorker() {
-        return new Promise((resolve, reject) => {
-            const publicPath = path.resolve(cwd, this.config.publicDir);
-            fs.copyFile(path.resolve(__dirname, "../broadcaster-worker.min.js"), `${publicPath}/broadcaster-worker.min.js`, error => {
-                if (error) {
-                    reject(error);
-                }
-                resolve();
-            });
-        });
-    }
-
     relocateServiceWorker() {
         return new Promise((resolve, reject) => {
             const publicPath = path.resolve(cwd, this.config.publicDir);
@@ -220,6 +232,7 @@ class DjinnJS {
                     data = data.replace("REPLACE_WITH_NO_CACHE_PATTERN", this.config.noCachePattern);
                     data = data.replace("REPLACE_WITH_CACHEBUST_URL", this.config.cachebustURL);
                     data = data.replace("REPLACE_WITH_RESOURCE_PATTERN", this.config.resourcePattern);
+                    data = data.replace("REPLACE_WITH_PRECACHE_URL", this.config.precacheURL);
 
                     fs.writeFile(`${publicPath}/service-worker.js`, data, error => {
                         if (error) {
@@ -250,7 +263,6 @@ class DjinnJS {
                 data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.config.pjax);
                 data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.config.predictivePrefetching);
                 data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.config.followRedirects);
-                data = data.replace('"REPLACE_WITH_USE_PERCENTAGE"', this.config.usePercentage);
                 data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', `${this.config.serviceWorker ? true : false}`);
                 data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.config.pageJumpOffset);
                 data = data.replace("REPLACE_WITH_MINIMUM_CONNECTION", this.config.minimumConnection);

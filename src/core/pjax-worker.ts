@@ -1,10 +1,7 @@
 /** The Pjax Web Worker class. Used to handle page revision checking & navigation requests. */
 class PjaxWorker {
-    private prefetchQueue: Array<string>;
-
     constructor() {
         self.onmessage = this.handleMessage.bind(this);
-        this.prefetchQueue = [];
     }
 
     /**
@@ -21,10 +18,7 @@ class PjaxWorker {
                 this.pjax(e.data.url, e.data.requestId, e.data.currentUrl, e.data.followRedirects);
                 break;
             case "prefetch":
-                this.prefetchQueue = [...this.prefetchQueue, ...e.data.urls];
-                if (!this.prefetchQueue.length) {
-                    this.prefetch();
-                }
+                this.prefetch(e.data.url);
                 break;
             default:
                 console.error(`Unknown Pjax Worker message type: ${type}`);
@@ -34,35 +28,21 @@ class PjaxWorker {
 
     /**
      * Fetches the URL provided by the Pjax class.
-     * The service worker will cache the response.
+     * The service worker or the browser will cache the response.
      */
-    private prefetch() {
-        if (this.prefetchQueue.length === 0) {
-            return;
-        }
-
-        const url = this.prefetchQueue[0];
-        this.prefetchQueue.splice(0, 1);
-
-        /** Prevents prefetching external webpages */
-        if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === false) {
-            this.prefetch();
-            return;
-        }
-
-        fetch(url, {
-            method: "GET",
-            credentials: "include",
-            headers: new Headers({
-                "X-Requested-With": "XMLHttpRequest",
-                "X-Pjax": "true",
-            }),
-        })
-            .then(() => {})
-            .catch(() => {})
-            .finally(() => {
-                this.prefetch();
+    private async prefetch(url: string) {
+        /** Don't prefetch external webpages */
+        if (new RegExp(/(http\:\/\/)|(https\:\/\/)/gi).test(url) && new RegExp(self.location.origin).test(url) === true) {
+            await fetch(url, {
+                method: "GET",
+                credentials: "include",
+                headers: new Headers({
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-Pjax": "true",
+                }),
             });
+        }
+        return;
     }
 
     /**

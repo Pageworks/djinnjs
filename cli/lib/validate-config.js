@@ -141,17 +141,6 @@ module.exports = function valdiateConfig(config, customConfig) {
             process.exit(1);
     }
 
-    switch (typeof customConfig.usePercentage) {
-        case "boolean":
-            config.usePercentage = customConfig.usePercentage;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The usePercentage value must be a boolean.`);
-            process.exit(1);
-    }
-
     switch (typeof customConfig.pageJumpOffset) {
         case "number":
             config.pageJumpOffset = customConfig.pageJumpOffset;
@@ -199,6 +188,17 @@ module.exports = function valdiateConfig(config, customConfig) {
             break;
         default:
             console.log(`Invalid DjinnJS configuration. The minimumConnection value must be a string.`);
+            process.exit(1);
+    }
+
+    switch (typeof customConfig.precacheURL) {
+        case "string":
+            config.precacheURL = customConfig.precacheURL;
+            break;
+        case "undefined":
+            break;
+        default:
+            console.log(`Invalid DjinnJS configuration. The precacheURL value must be a string.`);
             process.exit(1);
     }
 

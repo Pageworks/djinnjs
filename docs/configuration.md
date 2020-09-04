@@ -44,9 +44,9 @@ module.exports = {
     pjax: true,
     predictivePrefetching: true,
     followRedirects: true,
-    usePercentage: false,
     pageJumpOffset: null,
     minimumConnection: "4g",
+    precacheURL: "",
 };
 ```
 
@@ -138,12 +138,6 @@ Default: `true`
 
 A boolean. When set to `false` Pjax will not load.
 
-#### usePercentage
-
-Default: `false`
-
-A boolean. This value is used to determine if the `<file-loading-value>` element should be injected with the X/Y format or the X% format.
-
 #### pageJumpOffset
 
 Default: `null`
@@ -155,3 +149,9 @@ A number. When `null` page jumps scroll the element into the center of the viewp
 Default: `"4g"`
 
 A [Effective Connection Type](https://wicg.github.io/netinfo/#effectiveconnectiontype-enum). This value will be used as the default `required-connection` attribute when loading Web Components.
+
+#### precacheURL
+
+Default: `""`
+
+A string. When an endpoint is provided the service worker will request the URLs of content and resources that need to be cached using the [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll).

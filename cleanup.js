@@ -12,23 +12,6 @@ if (fs.existsSync("./env.d.ts")) {
     fs.unlinkSync("./env.d.ts");
 }
 
-if (fs.existsSync("./actor.js")) {
-    fs.unlinkSync("./actor.js");
-}
-if (fs.existsSync("./actor.d.ts")) {
-    fs.unlinkSync("./actor.d.ts");
-}
-
-if (fs.existsSync("./broadcaster.js")) {
-    fs.unlinkSync("./broadcaster.js");
-}
-if (fs.existsSync("./broadcaster.d.ts")) {
-    fs.unlinkSync("./broadcaster.d.ts");
-}
-if (fs.existsSync("./broadcaster-worker.min.js")) {
-    fs.unlinkSync("./broadcaster-worker.min.js");
-}
-
 if (fs.existsSync("./fetch.js")) {
     fs.unlinkSync("./fetch.js");
 }

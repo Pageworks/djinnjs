@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   `css` attribute [#93](https://github.com/Pageworks/djinnjs/issues/93)
+-   custom event listeners -- attached to the `document` [#95](https://github.com/Pageworks/djinnjs/issues/95)
+    -   `djinn:mount-components`
+    -   `djinn:parse`
+    -   `djinn:use-full`
+    -   `djinn:use-lite`
+    -   `pjax:init`
+    -   `pjax:load`
+    -   `pjax:revision`
+    -   `pjax:continue`
+-   pjax prefetches pages on `mouseenter` event (network & data save mode restrictions still enforced)
+-   `precacheURL` config option [#99](https://github.com/Pageworks/djinnjs/issues/99)
+
+### Removed
+
+-   Broadcaster
+    -   `djinnjs/broadcaster` export
+    -   `pjax` inbox hooks
+    -   `runtime` inbox hooks
+    -   `user-input` inbox hooks
+-   `hard-loading` stage of the DjinnJS runtime -- eager CSS **MUST** be loaded via `<link>` elements or injected into the document using `<style>` elements
+-   support for the `hard-loading` animation & elements
+-   pjax no longer queues and prefetches navigation links
+-   djinnjs web worker -- replaced regex with query selector
+-   `eager-css` attribute
+-   `lazy-css` attribute
+
 ## [0.1.3] - 2020-08-28
 
 ### Added

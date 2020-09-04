@@ -8,6 +8,6 @@
         "declaration": true,
         "moduleResolution": "Node"
     },
-    "include": ["src", "web_modules"],
+    "include": ["src"],
     "exclude": ["node_modules"]
 }

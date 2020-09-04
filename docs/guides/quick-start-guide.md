@@ -30,11 +30,11 @@ The `<main>` element is required for [Pjax](/core/pjax). Any content that will b
 
 ### 4. Load CSS Files
 
-Tell DjinnJS what and when to load CSS files using the `eager-css` and `lazy-css` attributes. The attributes can be used on any element within the documents body. [Learn more about requesting CSS](/core/requesting-css).
+Tell DjinnJS what CSS files need to be lazy loaded using the `css` attribute. The attribute can be used on any element within the document element. [Learn more about requesting CSS](/core/requesting-css).
 
 ```html
-<main eager-css="normalize layout buttons headings">
-    <div lazy-css="content"></div>
+<main css="normalize layout buttons headings">
+    <div css="content"></div>
 </main>
 ```
 
@@ -43,14 +43,13 @@ Tell DjinnJS what and when to load CSS files using the `eager-css` and `lazy-css
 Tell DjinnJS that a [Custom Elements](https://html.spec.whatwg.org/multipage/custom-elements.html) can be upgraded into [Web Components](https://www.webcomponents.org/introduction) by adding the `web-component` attribute. [Lean more about Web Components](/core/web-components).
 
 ```html
-<custom-element lazy-css="custom-element" web-component>
+<custom-element css="custom-element" web-component>
     ...snip...
 </custom-element>
 ```
 
 #### Next Steps
 
--   [Learn about the messaging system](/core/messaging)
 -   [Learn about progressivg enhancements](/core/progressivg-enhancements)
 -   [Learn about importing NPM packages](/guides/adding-npm-packages)
 -   [Learn about utilizing UI Frameworks](/guides/frameworks)

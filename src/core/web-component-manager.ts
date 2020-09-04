@@ -1,7 +1,6 @@
 import { env } from "./env";
 import { fetchJS } from "./fetch";
 import { WebComponentLoad } from "./types";
-import { message } from "../web_modules/broadcaster";
 import { minimumConnection } from "./config";
 
 export class WebComponentManager {
@@ -90,7 +89,7 @@ export class WebComponentManager {
      * If the custom element is tagged with `loading="eager"` upgrade the custom element otherwise track the
      * custom element with the `IntersectionObserver` API.
      */
-    public handleWebComponents(inboxUid: string = null): void {
+    public handleWebComponents(): void {
         const customElements = Array.from(document.body.querySelectorAll("[web-component]:not([component-state])"));
         for (let i = 0; i < customElements.length; i++) {
             const element = customElements[i];
@@ -104,15 +103,11 @@ export class WebComponentManager {
                 this.io.observe(customElements[i]);
             }
         }
-        if (inboxUid) {
-            if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+        if (env.connection === "2g" || env.connection === "slow-2g" || env.connection === "3g") {
+            if (sessionStorage.getItem("connection-choice") === null) {
                 if (!env.dataSaver) {
-                    message({
-                        recipient: "user-input",
-                        type: "lightweight-check",
-                        senderId: inboxUid,
-                        maxAttempts: Infinity,
-                    });
+                    const event = new CustomEvent("djinn:lightweight-check");
+                    document.dispatchEvent(event);
                 } else {
                     sessionStorage.setItem("connection-choice", "lite");
                     this.removePurgeableComponents();
