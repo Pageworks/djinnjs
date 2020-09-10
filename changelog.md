@@ -15,11 +15,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `djinn:parse`
     -   `djinn:use-full`
     -   `djinn:use-lite`
-    -   `pjax:init`
-    -   `pjax:load`
-    -   `pjax:revision`
-    -   `pjax:continue`
--   pjax prefetches pages on `mouseenter` event (network & data save mode restrictions still enforced)
 -   `precacheURL` config option [#99](https://github.com/Pageworks/djinnjs/issues/99)
 
 ### Removed
@@ -31,12 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `user-input` inbox hooks
 -   `hard-loading` stage of the DjinnJS runtime -- eager CSS **MUST** be loaded via `<link>` elements or injected into the document using `<style>` elements
 -   support for the `hard-loading` animation & elements
--   pjax no longer queues and prefetches navigation links
 -   djinnjs web worker -- replaced regex with query selector
 -   `eager-css` attribute
 -   `lazy-css` attribute
 -   old Edge support -- EOL for old Edge is April 2021
 -   `fetchJS` functionality -- developers can just dynamically append their own `<script>` elements and wait for a `load` callback
+-   removed Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax)
 
 ## [0.1.3] - 2020-08-28
 
