@@ -2,7 +2,7 @@
 
 DjinnJS is an ES Module framework designed to assist developers in building performance-focused websites and web applications. Check out the project on [GitHub](https://github.com/Pageworks/djinnjs) or [NPM](https://www.npmjs.com/package/djinnjs).
 
-Out of the box, DjinnJS converts traditional websites into a Single Page Application (SPA) by implementing [Pjax Navigation](/pjax) alongside an offline first content strategy.
+Out of the box, DjinnJS converts traditional websites into a Single Page Application (SPA) by implementing [Pjax Navigation](https://pjax.djinnjs.com) alongside an offline first content strategy.
 
 ## What Is DjinnJS
 

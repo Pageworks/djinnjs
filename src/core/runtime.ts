@@ -1,4 +1,4 @@
-import { usePjax, useServiceWorker, djinnjsOutDir } from "./config";
+import { djinnjsOutDir } from "./config";
 import { parse } from "./body-parser";
 
 let env = null;
@@ -40,16 +40,9 @@ class Djinn {
         utils = await import(`${location.origin}/${djinnjsOutDir}/djinn-utils.mjs`);
         utils.scrollOrResetPage();
 
-        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax && !env.dataSaver) {
-            await import(`${location.origin}/${djinnjsOutDir}/pjax.mjs`);
-        }
+        "REPLACE_WITH_PJAX_INJECTION";
 
-        if (useServiceWorker && env.threadPool !== 0) {
-            await import(`${location.origin}/${djinnjsOutDir}/service-worker-bootstrap.mjs`);
-        } else {
-            const event = new CustomEvent("pjax:init");
-            document.dispatchEvent(event);
-        }
+        "REPLACE_WITH_SERVICE_WORKER_INJECTION";
     }
 
     private async setup() {

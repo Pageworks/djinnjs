@@ -12,7 +12,7 @@ If your project requires different settings than the [default configuration](/gu
 
 ### 3. Prepare the HTML Document
 
-The `<main>` element is required for [Pjax](/core/pjax). Any content that will be swapped as the page transitions will need to be within the `<main>` element.
+The `<main>` element is required for [Pjax](https://pjax.djinnjs.com/). Any content that will be swapped as the page transitions will need to be within the `<main>` element.
 
 ```html
 <!DOCTYPE html>
