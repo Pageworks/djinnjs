@@ -29,9 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   djinnjs web worker -- replaced regex with query selector
 -   `eager-css` attribute
 -   `lazy-css` attribute
--   old Edge support -- EOL for old Edge is April 2021
+-   old Edge support -- EOL for old Edge is April 2021 [#102](https://github.com/Pageworks/djinnjs/issues/102)
 -   `fetchJS` functionality -- developers can just dynamically append their own `<script>` elements and wait for a `load` callback
--   removed Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax)
+-   removed Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax) [#98](https://github.com/Pageworks/djinnjs/issues/98) & [#103](https://github.com/Pageworks/djinnjs/issues/103)
 
 ## [0.1.3] - 2020-08-28
 
