@@ -41,7 +41,7 @@ module.exports = {
     silent: true,
     env: "production",
     gtagId: "",
-    pjax: true,
+    pjax: false,
     predictivePrefetching: true,
     followRedirects: true,
     pageJumpOffset: null,
@@ -134,9 +134,9 @@ A boolean. When set to `false` Pjax will not follow redirects and will resort to
 
 #### pjax
 
-Default: `true`
+Default: `false`
 
-A boolean. When set to `false` Pjax will not load.
+A boolean. When set to `true` Pjax will be injected into the output directory. This feature requires that the `djinnjax` NPM package is installed.
 
 #### pageJumpOffset
 

@@ -287,14 +287,14 @@ class DjinnJS {
                 let data = buffer.toString();
 
                 if (this.config.pjax) {
-                    const pjaxScript = fs.readFileSync(path.join(__dirname, "injections", "pjax.js")).toString();
+                    const pjaxScript = fs.readFileSync(path.join(__dirname, "static-injections", "pjax.js")).toString();
                     data = data.replace('"REPLACE_WITH_PJAX_INJECTION";', pjaxScript);
                 } else {
                     data = data.replace('"REPLACE_WITH_PJAX_INJECTION";', "");
                 }
 
                 if (this.config.serviceWorker) {
-                    const swScript = fs.readFileSync(path.join(__dirname, "injections", "service-worker.js")).toString();
+                    const swScript = fs.readFileSync(path.join(__dirname, "static-injections", "service-worker.js")).toString();
                     data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', swScript);
                 } else {
                     data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', "");
