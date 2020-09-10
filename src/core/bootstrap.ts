@@ -14,10 +14,13 @@ import { djinnjsOutDir } from "./config";
         document.head.appendChild(script);
     }
     try {
-        import(`${location.origin}/${djinnjsOutDir}/dynamic-runtime.mjs`);
+        import(`${location.origin}/${djinnjsOutDir}/runtime.mjs`);
     } catch (error) {
-        const script = document.createElement("script");
-        script.src = `${location.origin}/${djinnjsOutDir}/runtime.mjs`;
-        document.head.appendChild(script);
+        console.error(error);
+        alert("You are using an outdated version of this browser and parts of this website will not work as intended.");
+        const link = document.createElement("link");
+        link.href = `${location.origin}/${djinnjsOutDir}/noscript.css`;
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
     }
 })();

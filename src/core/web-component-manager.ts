@@ -1,7 +1,6 @@
 import { env } from "./env";
-import { fetchJS } from "./fetch";
 import { WebComponentLoad } from "./types";
-import { minimumConnection } from "./config";
+import { minimumConnection, djinnjsOutDir } from "./config";
 
 export class WebComponentManager {
     private io: IntersectionObserver;
@@ -70,13 +69,12 @@ export class WebComponentManager {
      * Upgrades a custom element into a web component using the dynamic import syntax.
      * @param customElementTagName - the JavaScript filename
      * @param customElement - the `Element` that has been upgraded
-     * @todo Switch to dynamic importing once Edge becomes chromium
-     * @see https://v8.dev/features/dynamic-import
      */
     private async upgradeToWebComponent(customElementTagName: string, customElement: Element) {
         if (customElements.get(customElementTagName) === undefined) {
             const ticket = env.startLoading();
-            await fetchJS(customElementTagName);
+            const module = await import(`${location.origin}/${djinnjsOutDir}/${customElementTagName}.mjs`);
+            customElements.define(customElementTagName, module.default);
             customElement.setAttribute("component-state", "mounted");
             env.stopLoading(ticket);
         } else {

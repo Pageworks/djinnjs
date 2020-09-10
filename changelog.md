@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   djinnjs web worker -- replaced regex with query selector
 -   `eager-css` attribute
 -   `lazy-css` attribute
+-   old Edge support -- EOL is April 2021
+-   `fetchJS` functionality -- developers can just dynamically append their own `<script>` elements and wait for a `load` callback
 
 ## [0.1.3] - 2020-08-28
 
