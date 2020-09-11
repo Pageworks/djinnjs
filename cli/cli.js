@@ -267,6 +267,7 @@ class DjinnJS {
                 data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.config.followRedirects);
                 data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.config.pageJumpOffset);
                 data = data.replace("REPLACE_WITH_MINIMUM_CONNECTION", this.config.minimumConnection);
+                data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.config.serviceWorker ? true : false);
                 fs.writeFile(configFile, data, error => {
                     if (error) {
                         reject(error);
@@ -395,8 +396,14 @@ class DjinnJS {
 
     cleanup() {
         return new Promise(resolve => {
-            rimraf.sync(path.join(__dirname, "temp"));
-            rimraf.sync(path.join(__dirname, "injections"));
+            const tempPath = path.join(__dirname, "temp");
+            const injectionsPath = path.join(__dirname, "injections");
+            if (fs.existsSync(tempPath)) {
+                rimraf.sync(tempPath);
+            }
+            if (fs.existsSync(injectionsPath)) {
+                rimraf.sync(injectionsPath);
+            }
             resolve();
         });
     }
@@ -423,13 +430,8 @@ class DjinnJS {
         });
     }
 
-    preflightCheck() {
-        return new Promise(resolve => {
-            if (fs.existsSync(path.join(__dirname, "temp"))) {
-                rimraf.sync(path.join(__dirname, "temp"));
-            }
-            resolve();
-        });
+    async preflightCheck() {
+        await this.cleanup();
     }
 }
 new DjinnJS(customConfig);
