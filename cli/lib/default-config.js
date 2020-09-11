@@ -10,7 +10,7 @@ module.exports = {
     env: "production",
     gtagId: "",
     pjax: false,
-    predictivePrefetching: true,
+    prefetching: "opt-out",
     followRedirects: true,
     pageJumpOffset: null,
     minimumConnection: "4g",
