@@ -77,14 +77,17 @@ class DjinnJS {
             /** TODO: Add chalk */
             await this.preflightCheck();
             await this.createTempDirectory();
+            await this.createInjectionsDirectory();
             await this.resetOutputDirectories();
             await this.createOutputDirectories();
 
             if (!this.silent) {
                 spinner.text = "Scrubbing JavaScript imports";
             }
+            await this.dependencyInjection();
             await this.scrubScripts();
-            await this.injectConfigScriptVariables();
+            await this.injectConfig();
+            await this.injectRuntime();
 
             if (!this.silent) {
                 spinner.text = "Minifying JavaScript";
@@ -250,22 +253,54 @@ class DjinnJS {
         });
     }
 
-    injectConfigScriptVariables() {
+    injectConfig() {
         return new Promise((resolve, reject) => {
-            const runtimeFile = path.join(__dirname, "temp", "config.js");
-            fs.readFile(runtimeFile, (error, buffer) => {
+            const configFile = path.join(__dirname, "temp", "config.js");
+            fs.readFile(configFile, (error, buffer) => {
                 if (error) {
                     reject(error);
                 }
                 let data = buffer.toString();
                 data = data.replace("REPLACE_WITH_OUTPUT_DIR_NAME", this.config.outDir);
                 data = data.replace("REPLACE_WITH_GTAG_ID", this.config.gtagId);
-                data = data.replace('"REPLACE_WITH_PJAX_STATUS"', this.config.pjax);
                 data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.config.predictivePrefetching);
                 data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.config.followRedirects);
-                data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', `${this.config.serviceWorker ? true : false}`);
                 data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.config.pageJumpOffset);
                 data = data.replace("REPLACE_WITH_MINIMUM_CONNECTION", this.config.minimumConnection);
+                data = data.replace('"REPLACE_WITH_USE_SERVICE_WORKER"', this.config.serviceWorker ? true : false);
+                fs.writeFile(configFile, data, error => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve();
+                });
+            });
+        });
+    }
+
+    injectRuntime() {
+        return new Promise((resolve, reject) => {
+            const runtimeFile = path.join(__dirname, "temp", "runtime.js");
+            fs.readFile(runtimeFile, (error, buffer) => {
+                if (error) {
+                    reject(error);
+                }
+                let data = buffer.toString();
+
+                if (this.config.pjax) {
+                    const pjaxScript = fs.readFileSync(path.join(__dirname, "static-injections", "pjax.js")).toString();
+                    data = data.replace('"REPLACE_WITH_PJAX_INJECTION";', pjaxScript);
+                } else {
+                    data = data.replace('"REPLACE_WITH_PJAX_INJECTION";', "");
+                }
+
+                if (this.config.serviceWorker) {
+                    const swScript = fs.readFileSync(path.join(__dirname, "static-injections", "service-worker.js")).toString();
+                    data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', swScript);
+                } else {
+                    data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', "");
+                }
+
                 fs.writeFile(runtimeFile, data, error => {
                     if (error) {
                         reject(error);
@@ -274,6 +309,45 @@ class DjinnJS {
                 });
             });
         });
+    }
+
+    injectDjinnjax() {
+        return new Promise((resolve, reject) => {
+            const djinnjax = path.resolve(cwd, "./node_modules/djinnjax/dist/djinnjax.js");
+            if (!fs.existsSync(djinnjax)) {
+                reject("The djinnjax package is not installed. Disable pjax or run 'npm i -S djinnjax'");
+            } else {
+                glob(`${path.resolve(djinnjax, "../")}/*.js`, (error, files) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    const tempDir = path.join(__dirname, "injections");
+                    let count = 0;
+                    for (let i = 0; i < files.length; i++) {
+                        const filename = files[i].replace(/(.*[\/\\])/g, "");
+                        fs.copyFile(files[i], `${tempDir}/${filename}`, error => {
+                            if (error) {
+                                reject(error);
+                            }
+                            count++;
+                            if (count === files.length) {
+                                resolve();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    async dependencyInjection() {
+        try {
+            if (this.config.pjax) {
+                await this.injectDjinnjax();
+            }
+        } catch (error) {
+            throw error;
+        }
     }
 
     scrubScripts() {
@@ -322,8 +396,26 @@ class DjinnJS {
 
     cleanup() {
         return new Promise(resolve => {
-            rimraf.sync(path.join(__dirname, "temp"));
+            const tempPath = path.join(__dirname, "temp");
+            const injectionsPath = path.join(__dirname, "injections");
+            if (fs.existsSync(tempPath)) {
+                rimraf.sync(tempPath);
+            }
+            if (fs.existsSync(injectionsPath)) {
+                rimraf.sync(injectionsPath);
+            }
             resolve();
+        });
+    }
+
+    createInjectionsDirectory() {
+        return new Promise((resolve, reject) => {
+            fs.mkdir(path.join(__dirname, "injections"), error => {
+                if (error) {
+                    reject(error);
+                }
+                resolve();
+            });
         });
     }
 
@@ -338,13 +430,8 @@ class DjinnJS {
         });
     }
 
-    preflightCheck() {
-        return new Promise(resolve => {
-            if (fs.existsSync(path.join(__dirname, "temp"))) {
-                rimraf.sync(path.join(__dirname, "temp"));
-            }
-            resolve();
-        });
+    async preflightCheck() {
+        await this.cleanup();
     }
 }
 new DjinnJS(customConfig);

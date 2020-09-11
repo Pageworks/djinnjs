@@ -9,7 +9,7 @@ module.exports = {
     silent: true,
     env: "production",
     gtagId: "",
-    pjax: true,
+    pjax: false,
     predictivePrefetching: true,
     followRedirects: true,
     pageJumpOffset: null,

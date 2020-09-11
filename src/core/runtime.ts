@@ -1,16 +1,13 @@
-import { env, dataSaver } from "./env";
-import { fetchJS } from "./fetch";
-import { usePjax, useServiceWorker } from "./config";
-import { WebComponentManager } from "./web-component-manager";
-import { handleInlineScripts } from "./djinn-utils";
+import { djinnjsOutDir } from "./config";
 import { parse } from "./body-parser";
 
-const webComponentManager = new WebComponentManager();
+let env = null;
+let webComponentManager = null;
+let utils = null;
 
 class Djinn {
     constructor() {
         this.init();
-
         document.addEventListener("djinn:use-full", () => {
             sessionStorage.setItem("connection-choice", "full");
             webComponentManager.collectWebComponents();
@@ -26,24 +23,31 @@ class Djinn {
         document.addEventListener("djinn:parse", (e: CustomEvent) => {
             this.parseCSS(e.detail.body, e.detail.requestUid);
         });
-
-        if (env.connection !== "2g" && env.connection !== "slow-2g" && usePjax && !dataSaver) {
-            fetchJS("pjax").then(() => {
-                const event = new CustomEvent("pjax:init");
-                document.dispatchEvent(event);
-            });
-        }
-        if (useServiceWorker && env.threadPool !== 0) {
-            fetchJS("service-worker-bootstrap");
-        } else {
-            const event = new CustomEvent("pjax:init");
-            document.dispatchEvent(event);
-        }
     }
 
     private async init() {
         await parse(document.documentElement);
+        await this.setup();
+        await this.finalize();
         this.mountComponents();
+    }
+
+    private async finalize() {
+        const wcmModule = await import(`${location.origin}/${djinnjsOutDir}/web-component-manager.mjs`);
+        webComponentManager = new wcmModule.WebComponentManager();
+        env.setDOMState("idling");
+
+        utils = await import(`${location.origin}/${djinnjsOutDir}/djinn-utils.mjs`);
+        utils.scrollOrResetPage();
+
+        "REPLACE_WITH_PJAX_INJECTION";
+
+        "REPLACE_WITH_SERVICE_WORKER_INJECTION";
+    }
+
+    private async setup() {
+        const envModule = await import(`${location.origin}/${djinnjsOutDir}/env.mjs`);
+        env = envModule.env;
     }
 
     private async parseCSS(html: string, requestUid: string = null) {
@@ -62,8 +66,8 @@ class Djinn {
         webComponentManager.collectWebComponents();
     }
 
-    private mountScripts(selectors) {
-        handleInlineScripts(selectors);
+    private async mountScripts(selectors) {
+        utils.handleInlineScripts(selectors);
     }
 }
 new Djinn();

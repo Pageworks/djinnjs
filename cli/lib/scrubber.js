@@ -6,7 +6,8 @@ async function scrubber(sources) {
     try {
         const projectFiles = await getProjectFiles(sources);
         const coreFiles = await getCoreFiles();
-        const files = [...projectFiles, ...coreFiles];
+        const tempFiles = await getTempFiles();
+        const files = [...projectFiles, ...coreFiles, ...tempFiles];
         await scrubFiles(files);
         return;
     } catch (error) {
@@ -59,6 +60,18 @@ function scrubFiles(files) {
                 break;
             }
         }
+    });
+}
+
+function getTempFiles() {
+    return new Promise((resolve, reject) => {
+        const distDir = path.resolve(__dirname, "../injections");
+        glob(`${distDir}/*.js`, (error, files) => {
+            if (error) {
+                reject(error);
+            }
+            resolve(files);
+        });
     });
 }
 
