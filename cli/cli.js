@@ -263,7 +263,7 @@ class DjinnJS {
                 let data = buffer.toString();
                 data = data.replace("REPLACE_WITH_OUTPUT_DIR_NAME", this.config.outDir);
                 data = data.replace("REPLACE_WITH_GTAG_ID", this.config.gtagId);
-                data = data.replace('"REPLACE_WITH_PREFETCH_STATUS"', this.config.prefetching);
+                data = data.replace("REPLACE_WITH_PREFETCH_STATUS", this.config.prefetching);
                 data = data.replace('"REPLACE_WITH_FOLLOW_REDIRECT_STATUS"', this.config.followRedirects);
                 data = data.replace('"REPLACE_WITH_PAGE_JUMP_OFFSET"', this.config.pageJumpOffset);
                 data = data.replace("REPLACE_WITH_MINIMUM_CONNECTION", this.config.minimumConnection);
