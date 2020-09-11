@@ -297,6 +297,9 @@ class DjinnJS {
                 if (this.config.serviceWorker) {
                     const swScript = fs.readFileSync(path.join(__dirname, "static-injections", "service-worker.js")).toString();
                     data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', swScript);
+                } else if (this.config.pjax) {
+                    const noServiceWorkerScript = fs.readFileSync(path.join(__dirname, "static-injections", "no-service-worker.js")).toString();
+                    data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', noServiceWorkerScript);
                 } else {
                     data = data.replace('"REPLACE_WITH_SERVICE_WORKER_INJECTION";', "");
                 }
