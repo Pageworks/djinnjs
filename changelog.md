@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2020-09-23
+
+### Removed
+
+-   `credentials` value from the Service Worker `fetch` event.
+
 ## [0.1.3] - 2020-08-28
 
 ### Added
