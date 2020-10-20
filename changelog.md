@@ -37,6 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax) [#98](https://github.com/Pageworks/djinnjs/issues/98) & [#103](https://github.com/Pageworks/djinnjs/issues/103)
 -   `predictivePrefetching` config value
 
+## [0.1.4] - 2020-09-23
+
+### Removed
+
+-   `credentials` value from the Service Worker `fetch` event.
+
 ## [0.1.3] - 2020-08-28
 
 ### Added

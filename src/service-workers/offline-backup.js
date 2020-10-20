@@ -32,7 +32,6 @@ self.addEventListener("fetch", event => {
         event.respondWith(
             fetch(event.request, {
                 redirect: "follow",
-                credentials: "include",
             })
                 .then(response => {
                     if (!response || response.status !== 200 || response.type !== "basic" || response.headers.get("PWA-Cache") === "no-cache" || response.redirected) {
