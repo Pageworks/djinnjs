@@ -41,12 +41,12 @@ module.exports = {
     silent: true,
     env: "production",
     gtagId: "",
-    pjax: true,
+    pjax: false,
     predictivePrefetching: true,
     followRedirects: true,
-    usePercentage: false,
     pageJumpOffset: null,
     minimumConnection: "4g",
+    precacheURL: "",
 };
 ```
 
@@ -120,11 +120,11 @@ A string. This value is used to determine if the JavaScript should be minified a
 
 A string. This is the ID used for Googles [gtag.js](https://developers.google.com/analytics/devguides/collection/gtagjs).
 
-#### predictivePrefetching
+#### prefetching
 
-Default: `true`
+Default: `"opt-out"`
 
-A boolean. When set to `true` Pjax will prefetch and cache links based on the user's device metrics & active connection.
+A string. When set to `"opt-out"` Pjax will prefetch and cache links based on the user's device metrics & active connection. When set to `"opt-in"` Pjax will only prefetch links tagged with the `[prefetch]` attribute. To learn more about enabling/disabling Pjax prefetching read the [Djinnjax documentation](https://pjax.djinnjs.com/).
 
 #### followRedirects
 
@@ -134,15 +134,9 @@ A boolean. When set to `false` Pjax will not follow redirects and will resort to
 
 #### pjax
 
-Default: `true`
-
-A boolean. When set to `false` Pjax will not load.
-
-#### usePercentage
-
 Default: `false`
 
-A boolean. This value is used to determine if the `<file-loading-value>` element should be injected with the X/Y format or the X% format.
+A boolean. When set to `true` Pjax will be injected into the output directory. This feature requires that the `djinnjax` NPM package is installed.
 
 #### pageJumpOffset
 
@@ -155,3 +149,9 @@ A number. When `null` page jumps scroll the element into the center of the viewp
 Default: `"4g"`
 
 A [Effective Connection Type](https://wicg.github.io/netinfo/#effectiveconnectiontype-enum). This value will be used as the default `required-connection` attribute when loading Web Components.
+
+#### precacheURL
+
+Default: `""`
+
+A string. When an endpoint is provided the service worker will request the URLs of content and resources that need to be cached using the [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll).

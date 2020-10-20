@@ -9,10 +9,10 @@ module.exports = {
     silent: true,
     env: "production",
     gtagId: "",
-    pjax: true,
-    predictivePrefetching: true,
+    pjax: false,
+    prefetching: "opt-out",
     followRedirects: true,
-    usePercentage: false,
     pageJumpOffset: null,
     minimumConnection: "4g",
+    precacheURL: "",
 };

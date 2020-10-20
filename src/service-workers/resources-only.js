@@ -56,14 +56,42 @@ async function cachebust() {
     if (request.ok) {
         const response = await request.json();
         resourcesCacheId = `resources-${response.cacheTimestamp}`;
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== resourcesCacheId) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
+        caches
+            .keys()
+            .then(cacheNames => {
+                return Promise.all(
+                    cacheNames.map(cacheName => {
+                        if (cacheName !== resourcesCacheId) {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
+            })
+            .then(() => {
+                warmTheCache();
+            });
+    }
+}
+
+async function warmTheCache() {
+    const precacheURL = "REPLACE_WITH_PRECACHE_URL";
+    if (precacheURL.length) {
+        const request = await fetch(precacheURL, {
+            cache: "no-cache",
+            credentials: "include",
+            headers: new Headers({
+                Accept: "application/json",
+            }),
         });
+        const response = await request.json();
+        if (request.ok) {
+            if (response?.resources) {
+                event.waitUntil(
+                    caches.open(resourcesCacheId).then(cache => {
+                        return cache.addAll(response.resources);
+                    })
+                );
+            }
+        }
     }
 }

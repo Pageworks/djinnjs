@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2020-10-20
+
+### Added
+
+-   `css` attribute [#93](https://github.com/Pageworks/djinnjs/issues/93)
+-   custom event listeners -- attached to the `document` [#95](https://github.com/Pageworks/djinnjs/issues/95)
+    -   `djinn:mount-components`
+    -   `djinn:parse`
+    -   `djinn:use-full`
+    -   `djinn:use-lite`
+-   `precacheURL` config option [#99](https://github.com/Pageworks/djinnjs/issues/99)
+-   `prefetching` config option [#104](https://github.com/Pageworks/djinnjs/issues/104)
+    -   `"opt-in"`
+    -   `"opt-out"`
+
+### Removed
+
+-   Broadcaster
+    -   `djinnjs/broadcaster` export
+    -   `pjax` inbox hooks
+    -   `runtime` inbox hooks
+    -   `user-input` inbox hooks
+-   `hard-loading` stage of the DjinnJS runtime -- eager CSS **MUST** be loaded via `<link>` elements or injected into the document using `<style>` elements
+-   support for the `hard-loading` animation & elements
+-   djinnjs web worker -- replaced regex with query selector
+-   `eager-css` attribute
+-   `lazy-css` attribute
+-   old Edge support -- EOL for old Edge is April 2021 [#102](https://github.com/Pageworks/djinnjs/issues/102)
+-   `fetchJS` functionality -- developers can just dynamically append their own `<script>` elements and wait for a `load` callback
+-   Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax) [#98](https://github.com/Pageworks/djinnjs/issues/98) & [#103](https://github.com/Pageworks/djinnjs/issues/103)
+-   `predictivePrefetching` config value
+
 ## [0.1.4] - 2020-09-23
 
 ### Removed
@@ -463,6 +495,11 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Intial DjinnJS compiler scripts
 
 [unreleased]: https://github.com/pageworks/djinnjs/compare/master...develop
+[0.2.0]: https://github.com/pageworks/djinnjs/compare/v0.1.4...v0.2.0
+[0.1.4]: https://github.com/pageworks/djinnjs/compare/v0.1.3...v0.1.4
+[0.1.3]: https://github.com/pageworks/djinnjs/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/pageworks/djinnjs/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/pageworks/djinnjs/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/pageworks/djinnjs/compare/v0.0.28...v0.1.0
 [0.0.28]: https://github.com/pageworks/djinnjs/compare/v0.0.27...v0.0.28
 [0.0.27]: https://github.com/pageworks/djinnjs/compare/v0.0.26...v0.0.27
