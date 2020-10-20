@@ -120,11 +120,11 @@ A string. This value is used to determine if the JavaScript should be minified a
 
 A string. This is the ID used for Googles [gtag.js](https://developers.google.com/analytics/devguides/collection/gtagjs).
 
-#### predictivePrefetching
+#### prefetching
 
-Default: `true`
+Default: `"opt-out"`
 
-A boolean. When set to `true` Pjax will prefetch and cache links based on the user's device metrics & active connection.
+A string. When set to `"opt-out"` Pjax will prefetch and cache links based on the user's device metrics & active connection. When set to `"opt-in"` Pjax will only prefetch links tagged with the `[prefetch]` attribute. To learn more about enabling/disabling Pjax prefetching read the [Djinnjax documentation](https://pjax.djinnjs.com/).
 
 #### followRedirects
 

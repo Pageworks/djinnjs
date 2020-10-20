@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   `djinn:use-full`
     -   `djinn:use-lite`
 -   `precacheURL` config option [#99](https://github.com/Pageworks/djinnjs/issues/99)
+-   `prefetching` config option [#104](https://github.com/Pageworks/djinnjs/issues/104)
+    -   `"opt-in"`
+    -   `"opt-out"`
 
 ### Removed
 
@@ -31,7 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   `lazy-css` attribute
 -   old Edge support -- EOL for old Edge is April 2021 [#102](https://github.com/Pageworks/djinnjs/issues/102)
 -   `fetchJS` functionality -- developers can just dynamically append their own `<script>` elements and wait for a `load` callback
--   removed Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax) [#98](https://github.com/Pageworks/djinnjs/issues/98) & [#103](https://github.com/Pageworks/djinnjs/issues/103)
+-   Pjax -- moved to [Djinnjax](https://github.com/Pageworks/djinnjax) [#98](https://github.com/Pageworks/djinnjs/issues/98) & [#103](https://github.com/Pageworks/djinnjs/issues/103)
+-   `predictivePrefetching` config value
 
 ## [0.1.3] - 2020-08-28
 

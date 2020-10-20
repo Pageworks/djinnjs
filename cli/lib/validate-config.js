@@ -130,9 +130,19 @@ module.exports = function valdiateConfig(config, customConfig) {
             process.exit(1);
     }
 
-    switch (typeof customConfig.predictivePrefetching) {
-        case "boolean":
-            config.predictivePrefetching = customConfig.predictivePrefetching;
+    switch (typeof customConfig.prefetching) {
+        case "string":
+            switch (customConfig.prefetching) {
+                case "opt-out":
+                    config.prefetching = customConfig.prefetching;
+                    break;
+                case "opt-in":
+                    config.prefetching = customConfig.prefetching;
+                    break;
+                default:
+                    console.log(`Invalid DjinnJS configuration. The prefetching value must be "opt-in" or "opt-out".`);
+                    process.exit(1);
+            }
             break;
         case "undefined":
             break;
