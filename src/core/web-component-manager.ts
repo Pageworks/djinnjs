@@ -74,7 +74,9 @@ export class WebComponentManager {
         if (customElements.get(customElementTagName) === undefined) {
             const ticket = env.startLoading();
             const module = await import(`${location.origin}/${djinnjsOutDir}/${customElementTagName}.mjs`);
-            customElements.define(customElementTagName, module.default);
+            if (customElements.get(customElementTagName) === undefined) {
+                customElements.define(customElementTagName, module.default);
+            }
             customElement.setAttribute("component-state", "mounted");
             env.stopLoading(ticket);
         } else {
