@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2020-11-12
+
+### Fixed
+
+- Djinn no longer scrubs URL imports
+
 ## [0.2.1] - 2020-10-20
 
 ### Fixed
@@ -501,6 +507,8 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Intial DjinnJS compiler scripts
 
 [unreleased]: https://github.com/pageworks/djinnjs/compare/master...develop
+[0.2.2]: https://github.com/pageworks/djinnjs/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/pageworks/djinnjs/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/pageworks/djinnjs/compare/v0.1.4...v0.2.0
 [0.1.4]: https://github.com/pageworks/djinnjs/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/pageworks/djinnjs/compare/v0.1.2...v0.1.3
