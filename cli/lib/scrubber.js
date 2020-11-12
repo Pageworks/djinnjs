@@ -38,9 +38,11 @@ function scrubFiles(files) {
 
                     if (importFilePaths) {
                         importFilePaths.map(path => {
-                            /** Remove everything in the path except the file name */
-                            let pathFileName = path.replace(/.*[\/\\]/g, "").replace(/(\.ts)|(\.js)$/g, "");
-                            data = data.replace(`"${path}"`, `"./${pathFileName}.mjs"`).replace(`'${path}'`, `"./${pathFileName}.mjs"`);
+                            if (new RegExp(/^(http[s]\:\/\/)/).test(path) === false){
+                                /** Remove everything in the path except the file name */
+                                let pathFileName = path.replace(/.*[\/\\]/g, "").replace(/(\.ts)|(\.js)$/g, "");
+                                data = data.replace(`"${path}"`, `"./${pathFileName}.mjs"`).replace(`'${path}'`, `"./${pathFileName}.mjs"`);
+                            }
                         });
                     }
 
