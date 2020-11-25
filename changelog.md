@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- CSS fetch logic accpets any head element with a `[file]` attribute ([#112](https://github.com/Pageworks/djinnjs/issues/112))
+- CSS fetch logic accepts any head element with a `[file]` attribute ([#112](https://github.com/Pageworks/djinnjs/issues/112))
 
 ## [0.2.3] - 2020-11-12
 
