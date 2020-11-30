@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- extendable Component class export ([#101](https://github.com/Pageworks/djinnjs/issues/101))
+
 ## [0.2.4] - 2020-11-25
 
 ### Fixed

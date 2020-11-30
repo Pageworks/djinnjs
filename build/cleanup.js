@@ -18,3 +18,10 @@ if (fs.existsSync("./fetch.js")) {
 if (fs.existsSync("./fetch.d.ts")) {
     fs.unlinkSync("./fetch.d.ts");
 }
+
+if (fs.existsSync("./component.js")) {
+    fs.unlinkSync("./component.js");
+}
+if (fs.existsSync("./component.d.ts")) {
+    fs.unlinkSync("./component.d.ts");
+}
