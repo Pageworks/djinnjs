@@ -1,17 +1,57 @@
 # Overview
 
-DjinnJS is an ES Module framework designed to assist developers in building performance-focused websites and web applications. Check out the project on [GitHub](https://github.com/Pageworks/djinnjs) or [NPM](https://www.npmjs.com/package/djinnjs).
+DjinnJS is a lightweight JavaScript & CSS bootstraper built on ES Modules and Web Components.
 
-Out of the box, DjinnJS converts traditional websites into a Single Page Application (SPA) by implementing [Pjax Navigation](https://pjax.djinnjs.com) alongside an offline first content strategy.
-
-## What Is DjinnJS
+## Features
 
 -   Just In Time Resouce Fetching
--   Offline First Content Strategy
--   Pjax Navigation
 -   ES Module Imports
--   Persistent State with Server Side Rendering
 -   Context-Specific Progressive Enhancements
+
+## Installation
+
+Download from NPM:
+
+```sh
+npm i -D djinnjs
+```
+
+## Usage
+
+Setup the DjinnJS config file. [View the configuration documentation](https://djinnjs.com/configuration).
+
+```javascript
+module.exports = {
+    src: "./src",
+};
+```
+
+Include the runtime JavaScript:
+
+```html
+<script type="module" src="/assets/bootstrap.mjs"></script>
+```
+
+Inlcude the noscript CSS file:
+
+```html
+<noscript>
+    <link rel="stylesheet" href="/assets/noscript.css" />
+</noscript>
+```
+
+Run the DjinnJS command:
+
+```sh
+djinnjs
+```
+
+## CLI
+
+```bash
+    -c, --config        Path to the config file
+    -e, --env           The enviroment settings (env | production)
+```
 
 ## Supported Environments
 

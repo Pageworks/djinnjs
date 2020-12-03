@@ -25,16 +25,3 @@ When using the `onload` attribute add a fallback style for users that have JavaS
 ```
 
 [Click here](https://web.dev/native-lazy-loading/) to learn more about native lazy loading.
-
-## Lazy CSS
-
-When lazy loading CSS from a CDN load the file asynchronously.
-
-```html
-<link rel="preload" href="https://fonts.googleapis.com/css?family=Roboto:100,400,700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,400,700&display=swap">
-</noscript>
-```
-
-[Click here](https://web.dev/defer-non-critical-css/) to learn more about deferring non-critical CSS.

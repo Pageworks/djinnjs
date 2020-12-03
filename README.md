@@ -50,7 +50,6 @@ djinnjs
 
 ```bash
     -c, --config        Path to the config file
-    -h, --handle        The site handle that will be compiled
     -e, --env           The enviroment settings (env | production)
 ```
 

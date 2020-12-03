@@ -30,11 +30,18 @@ The `<main>` element is required for [Pjax](https://pjax.djinnjs.com/). Any cont
 
 ### 4. Load CSS Files
 
-Tell DjinnJS what CSS files need to be lazy loaded using the `css` attribute. The attribute can be used on any element within the document element. [Learn more about requesting CSS](/core/requesting-css).
+Tell DjinnJS what CSS files need to be lazy loaded using the `css` attribute. The attribute can be used on any element within the document element. [Learn more about requesting CSS](/core/requesting-css). **NOTE:** for optimal performance critical CSS should be loaded using `<link>` elements OR injected directly into the documents `<head>` using `<style>` elements.
 
 ```html
-<main css="normalize layout buttons headings">
-    <div css="content"></div>
+<head>
+    <link href="./assets/normalize.css" rel="stylesheet" />
+    <link href="./assets/layout.css" rel="stylesheet" />
+    <link href="./assets/buttons.css" rel="stylesheet" />
+    <link href="./assets/headings.css" rel="stylesheet" />
+</head>
+<main>
+    <div>Above the fold content</div>
+    <div css="content">Below the fold content</div>
 </main>
 ```
 
@@ -43,7 +50,7 @@ Tell DjinnJS what CSS files need to be lazy loaded using the `css` attribute. Th
 Tell DjinnJS that a [Custom Elements](https://html.spec.whatwg.org/multipage/custom-elements.html) can be upgraded into [Web Components](https://www.webcomponents.org/introduction) by adding the `web-component` attribute. [Lean more about Web Components](/core/web-components).
 
 ```html
-<custom-element css="custom-element" web-component>
+<custom-element web-component>
     ...snip...
 </custom-element>
 ```
