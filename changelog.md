@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - extendable Component class export ([#101](https://github.com/Pageworks/djinnjs/issues/101))
 
+### Removed
+
+- default service workers
+- automated `resource-cachebust.json` file
+- Pjax/Djinnjax configuration settings
+
 ## [0.2.4] - 2020-11-25
 
 ### Fixed

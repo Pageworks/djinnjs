@@ -1,31 +1,6 @@
 const yargs = require("yargs").argv;
 
 module.exports = function valdiateConfig(config, customConfig) {
-    if (customConfig.noCachePattern instanceof RegExp) {
-        config.noCachePattern = customConfig.noCachePattern;
-    } else if (typeof customConfig.noCachePattern !== "undefined") {
-        console.log(`Invalid DjinnJS configuration. The noCachePattern value must be a regular expression pattern.`);
-        process.exit(1);
-    }
-
-    if (customConfig.resourcePattern instanceof RegExp) {
-        config.resourcePattern = customConfig.resourcePattern;
-    } else if (typeof customConfig.resourcePattern !== "undefined") {
-        console.log(`Invalid DjinnJS configuration. The resourcePattern value must be a regular expression pattern.`);
-        process.exit(1);
-    }
-
-    switch (typeof customConfig.cachebustURL) {
-        case "string":
-            config.cachebustURL = customConfig.cachebustURL;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The cachebustURL value must be a string.`);
-            process.exit(1);
-    }
-
     if (typeof customConfig.src !== "undefined") {
         if (Array.isArray(customConfig.src)) {
             for (let i = 0; i < customConfig.src.length; i++) {
@@ -65,103 +40,6 @@ module.exports = function valdiateConfig(config, customConfig) {
             process.exit(1);
     }
 
-    if (typeof customConfig.serviceWorker !== "undefined") {
-        if (customConfig.serviceWorker === null) {
-            config.serviceWorker = false;
-        } else if (typeof customConfig.serviceWorker === "boolean") {
-            if (customConfig.serviceWorker === true) {
-                config.serviceWorker = "offline-first";
-            } else {
-                config.serviceWorker = false;
-            }
-        } else if (typeof customConfig.serviceWorker === "string") {
-            switch (customConfig.serviceWorker) {
-                case "offline-first":
-                    config.serviceWorker = "offline-first";
-                    break;
-                case "offline-backup":
-                    config.serviceWorker = "offline-backup";
-                    break;
-                case "resources-only":
-                    config.serviceWorker = "resources-only";
-                    break;
-                default:
-                    config.serviceWorker = "offline-first";
-                    break;
-            }
-        } else {
-            console.log(`Invalid DjinnJS configuration. The serviceWorker value must be a boolean, null, or a string: 'offline-first', 'offline-backup', 'resources-only'`);
-            process.exit(1);
-        }
-    } else {
-        config.serviceWorker = "offline-first";
-    }
-
-    switch (typeof customConfig.gtagId) {
-        case "string":
-            config.gtagId = customConfig.gtagId;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The gtagId value must be a string.`);
-            process.exit(1);
-    }
-
-    switch (typeof customConfig.pjax) {
-        case "boolean":
-            config.pjax = customConfig.pjax;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The pjax value must be a boolean.`);
-            process.exit(1);
-    }
-
-    switch (typeof customConfig.followRedirects) {
-        case "boolean":
-            config.followRedirects = customConfig.followRedirects;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The followRedirects value must be a boolean.`);
-            process.exit(1);
-    }
-
-    switch (typeof customConfig.prefetching) {
-        case "string":
-            switch (customConfig.prefetching) {
-                case "opt-out":
-                    config.prefetching = customConfig.prefetching;
-                    break;
-                case "opt-in":
-                    config.prefetching = customConfig.prefetching;
-                    break;
-                default:
-                    console.log(`Invalid DjinnJS configuration. The prefetching value must be "opt-in" or "opt-out".`);
-                    process.exit(1);
-            }
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The predictivePrefetching value must be a boolean.`);
-            process.exit(1);
-    }
-
-    switch (typeof customConfig.pageJumpOffset) {
-        case "number":
-            config.pageJumpOffset = customConfig.pageJumpOffset;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The pageJumpOffset value must be a number.`);
-            process.exit(1);
-    }
-
     switch (typeof customConfig.silent) {
         case "boolean":
             config.silent = customConfig.silent;
@@ -198,17 +76,6 @@ module.exports = function valdiateConfig(config, customConfig) {
             break;
         default:
             console.log(`Invalid DjinnJS configuration. The minimumConnection value must be a string.`);
-            process.exit(1);
-    }
-
-    switch (typeof customConfig.precacheURL) {
-        case "string":
-            config.precacheURL = customConfig.precacheURL;
-            break;
-        case "undefined":
-            break;
-        default:
-            console.log(`Invalid DjinnJS configuration. The precacheURL value must be a string.`);
             process.exit(1);
     }
 
