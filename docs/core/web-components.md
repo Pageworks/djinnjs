@@ -4,6 +4,8 @@
 
 In the example below the `<custom-element>` will be upgraded into a Web Component. By default Web Components are lazy-loaded and the JavaScript is only requested when the Custom Element enters the viewport. If a web component needs to be loaded immediately the `loading` attribute can be set to `eager` as seen in the example below.
 
+**NOTE:** Djinn uses the elements tag name (`el.tagName.toLowerCase()`) to create the JavaScript file url. In the example below the `custom-element.mjs` file will be dynamically imported.
+
 ```html
 <custom-element web-component loading="eager">
     ...snip...
