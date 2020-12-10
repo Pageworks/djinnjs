@@ -1,6 +1,6 @@
 {
     "name": "djinnjs",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "DjinnJS is a lightweight JavaScript & CSS bootstraper built on ES Modules and Web Components.",
     "author": "Pageworks",
     "license": "GPL-3.0",
@@ -30,7 +30,9 @@
         "env.js",
         "env.d.ts",
         "fetch.js",
-        "fetch.d.ts"
+        "fetch.d.ts",
+        "component.js",
+        "component.d.ts"
     ],
     "scripts": {
         "prettier": "prettier --write \"src/**/*.ts\"",
