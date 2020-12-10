@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>Frameworks</title>
+        <title>Lazy Images</title>
 
         <link href="/normalize.css" rel="stylesheet" />
         <link href="/reset.css" rel="stylesheet" />
@@ -22,22 +22,23 @@
     <body>
         <main>
             <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/loading-animation" data-slug="/core/loading-animation"><span>loading animation</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/stateful-components" data-slug="/core/stateful-components"><span>stateful components</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-images" data-slug="/guides/lazy-images"><span>lazy images</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a></nav></aside>
-            <article><h1 id="workingwithuiframeworks">Working With UI Frameworks</h1>
-<p>UI Frameworks such as <a href="https://vuejs.org/">Vue</a>, <a href="https://reactjs.org/">React</a>, and <a href="https://preactjs.com/">Preact</a> can be used within pages to build components. If you are using a UI Framework to build an interactive component simply include the <code>&lt;script&gt;</code> on the page. Script elements are appended to the documents head every time the page loads.</p>
-<p>In the example below a <a href="https://reactjs.org/">React</a> component is used within a page.</p>
-<pre><code class="html language-html">&lt;div id="mounting-point"&gt;&lt;/div&gt;
-&lt;script src="/react/example.js"&gt;&lt;/script&gt;
+            <article><h2 id="lazyloadingimages">Lazy Loading Images</h2>
+<p>Lazy load images using the loading attribute.</p>
+<pre><code class="html language-html">&lt;img src="image.png" loading="lazy" alt="…" width="200"&gt;
 </code></pre>
-<pre><code class="javascript language-javascript">import React, { Component } from "react";
-import { render } from "react-dom";
-
-class ExampleComponent extends Component&lt;&gt; {
-    render() {
-        return &lt;div&gt;Hello world!&lt;/div&gt;;
-    }
-}
-render(&lt;ExampleComponent /&gt;, document.body.querySelector("#mounting-point"));
-</code></pre></article>
+<p>For a better user experience add a simple fade transition:</p>
+<pre><code class="html language-html">&lt;img src="image.png" loading="lazy" alt="…" width="200" style="opacity:0;transition:opacity 150ms ease-in;" onload="this.style.opacity = '1';"&gt;
+</code></pre>
+<p>When using the <code>onload</code> attribute add a fallback style for users that have JavaScript disabled:</p>
+<pre><code class="html language-html">&lt;noscript&gt;
+    &lt;style&gt;
+        img{
+            opacity: 1 !important;
+        }
+    &lt;/style&gt;
+&lt;/noscript&gt;
+</code></pre>
+<p><a href="https://web.dev/native-lazy-loading/">Click here</a> to learn more about native lazy loading.</p></article>
         </main>
     </body>
 </html>

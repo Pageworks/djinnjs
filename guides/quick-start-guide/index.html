@@ -21,7 +21,7 @@
     </head>
     <body>
         <main>
-            <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/inline-scripts" data-slug="/core/inline-scripts"><span>inline scripts</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-loading" data-slug="/guides/lazy-loading"><span>lazy loading</span></a><a href="/guides/precaching" data-slug="/guides/precaching"><span>precaching</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a><header>loading states</header><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a></nav></aside>
+            <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/loading-animation" data-slug="/core/loading-animation"><span>loading animation</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/stateful-components" data-slug="/core/stateful-components"><span>stateful components</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-images" data-slug="/guides/lazy-images"><span>lazy images</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a></nav></aside>
             <article><h1 id="quickstartguide">Quick Start Guide</h1>
 <p>Get up and running with DjinnJS in <strong>less than 5 minutes</strong>. Before continuning make sure <a href="https://nodejs.org/en/">Node.js</a> is installed on your machine.</p>
 <h3 id="1installdjinnjs">1. Install DjinnJS</h3>
@@ -43,14 +43,21 @@
 &lt;/html&gt;
 </code></pre>
 <h3 id="4loadcssfiles">4. Load CSS Files</h3>
-<p>Tell DjinnJS what CSS files need to be lazy loaded using the <code>css</code> attribute. The attribute can be used on any element within the document element. <a href="/core/requesting-css">Learn more about requesting CSS</a>.</p>
-<pre><code class="html language-html">&lt;main css="normalize layout buttons headings"&gt;
-    &lt;div css="content"&gt;&lt;/div&gt;
+<p>Tell DjinnJS what CSS files need to be lazy loaded using the <code>css</code> attribute. The attribute can be used on any element within the document element. <a href="/core/requesting-css">Learn more about requesting CSS</a>. <strong>NOTE:</strong> for optimal performance critical CSS should be loaded using <code>&lt;link&gt;</code> elements OR injected directly into the documents <code>&lt;head&gt;</code> using <code>&lt;style&gt;</code> elements.</p>
+<pre><code class="html language-html">&lt;head&gt;
+    &lt;link href="./assets/normalize.css" rel="stylesheet" /&gt;
+    &lt;link href="./assets/layout.css" rel="stylesheet" /&gt;
+    &lt;link href="./assets/buttons.css" rel="stylesheet" /&gt;
+    &lt;link href="./assets/headings.css" rel="stylesheet" /&gt;
+&lt;/head&gt;
+&lt;main&gt;
+    &lt;div&gt;Above the fold content&lt;/div&gt;
+    &lt;div css="content"&gt;Below the fold content&lt;/div&gt;
 &lt;/main&gt;
 </code></pre>
 <h3 id="5createwebcomponents">5. Create Web Components</h3>
 <p>Tell DjinnJS that a <a href="https://html.spec.whatwg.org/multipage/custom-elements.html">Custom Elements</a> can be upgraded into <a href="https://www.webcomponents.org/introduction">Web Components</a> by adding the <code>web-component</code> attribute. <a href="/core/web-components">Lean more about Web Components</a>.</p>
-<pre><code class="html language-html">&lt;custom-element css="custom-element" web-component&gt;
+<pre><code class="html language-html">&lt;custom-element web-component&gt;
     ...snip...
 &lt;/custom-element&gt;
 </code></pre>

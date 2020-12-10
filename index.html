@@ -21,19 +21,40 @@
     </head>
     <body>
         <main>
-            <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/inline-scripts" data-slug="/core/inline-scripts"><span>inline scripts</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-loading" data-slug="/guides/lazy-loading"><span>lazy loading</span></a><a href="/guides/precaching" data-slug="/guides/precaching"><span>precaching</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a><header>loading states</header><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a></nav></aside>
+            <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/loading-animation" data-slug="/core/loading-animation"><span>loading animation</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/stateful-components" data-slug="/core/stateful-components"><span>stateful components</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-images" data-slug="/guides/lazy-images"><span>lazy images</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a></nav></aside>
             <article><h1 id="overview">Overview</h1>
-<p>DjinnJS is an ES Module framework designed to assist developers in building performance-focused websites and web applications. Check out the project on <a href="https://github.com/Pageworks/djinnjs">GitHub</a> or <a href="https://www.npmjs.com/package/djinnjs">NPM</a>.</p>
-<p>Out of the box, DjinnJS converts traditional websites into a Single Page Application (SPA) by implementing <a href="https://pjax.djinnjs.com">Pjax Navigation</a> alongside an offline first content strategy.</p>
-<h2 id="whatisdjinnjs">What Is DjinnJS</h2>
+<p>DjinnJS is a lightweight JavaScript &amp; CSS bootstraper built on ES Modules and Web Components.</p>
+<h2 id="features">Features</h2>
 <ul>
 <li>Just In Time Resouce Fetching</li>
-<li>Offline First Content Strategy</li>
-<li>Pjax Navigation</li>
 <li>ES Module Imports</li>
-<li>Persistent State with Server Side Rendering</li>
 <li>Context-Specific Progressive Enhancements</li>
 </ul>
+<h2 id="installation">Installation</h2>
+<p>Download from NPM:</p>
+<pre><code class="sh language-sh">npm i -D djinnjs
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>Setup the DjinnJS config file. <a href="https://djinnjs.com/configuration">View the configuration documentation</a>.</p>
+<pre><code class="javascript language-javascript">module.exports = {
+    src: "./src",
+};
+</code></pre>
+<p>Include the runtime JavaScript:</p>
+<pre><code class="html language-html">&lt;script type="module" src="/assets/bootstrap.mjs"&gt;&lt;/script&gt;
+</code></pre>
+<p>Inlcude the noscript CSS file:</p>
+<pre><code class="html language-html">&lt;noscript&gt;
+    &lt;link rel="stylesheet" href="/assets/noscript.css" /&gt;
+&lt;/noscript&gt;
+</code></pre>
+<p>Run the DjinnJS command:</p>
+<pre><code class="sh language-sh">djinnjs
+</code></pre>
+<h2 id="cli">CLI</h2>
+<pre><code class="bash language-bash">    -c, --config        Path to the config file
+    -e, --env           The enviroment settings (env | production)
+</code></pre>
 <h2 id="supportedenvironments">Supported Environments</h2>
 <ul>
 <li>Modern browsers</li>

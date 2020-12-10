@@ -21,16 +21,11 @@
     </head>
     <body>
         <main>
-            <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/inline-scripts" data-slug="/core/inline-scripts"><span>inline scripts</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-loading" data-slug="/guides/lazy-loading"><span>lazy loading</span></a><a href="/guides/precaching" data-slug="/guides/precaching"><span>precaching</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a><header>loading states</header><a href="/loading-states/page" data-slug="/loading-states/page"><span>page</span></a><a href="/loading-states/soft" data-slug="/loading-states/soft"><span>soft</span></a></nav></aside>
+            <aside><nav><a href="/" class="project-name">DjinnJS</a><a href="https://github.com/Pageworks/djinnjs"><span>GitHub</span></a><a href="https://www.npmjs.com/package/djinnjs"><span>NPM</span></a><header>Documents</header><a href="/code-of-conduct" data-slug="/code-of-conduct"><span>code of conduct</span></a><a href="/configuration" data-slug="/configuration"><span>configuration</span></a><a href="/contributing" data-slug="/contributing"><span>contributing</span></a><a href="/developers" data-slug="/developers"><span>developers</span></a><a href="/readme" data-slug="/readme"><span>readme</span></a><header>core</header><a href="/core/loading-animation" data-slug="/core/loading-animation"><span>loading animation</span></a><a href="/core/loading-css" data-slug="/core/loading-css"><span>loading css</span></a><a href="/core/progressive-enhancements" data-slug="/core/progressive-enhancements"><span>progressive enhancements</span></a><a href="/core/stateful-components" data-slug="/core/stateful-components"><span>stateful components</span></a><a href="/core/web-components" data-slug="/core/web-components"><span>web components</span></a><header>guides</header><a href="/guides/adding-npm-packages" data-slug="/guides/adding-npm-packages"><span>adding npm packages</span></a><a href="/guides/frameworks" data-slug="/guides/frameworks"><span>frameworks</span></a><a href="/guides/installation" data-slug="/guides/installation"><span>installation</span></a><a href="/guides/lazy-images" data-slug="/guides/lazy-images"><span>lazy images</span></a><a href="/guides/quick-start-guide" data-slug="/guides/quick-start-guide"><span>quick start guide</span></a></nav></aside>
             <article><h1 id="configuration">Configuration</h1>
 <p>Out of the box, DjinnJS does not require a config file. It assumes your source code lives at <code>./src</code>, your public directory is <code>./public</code>, and the <code>./public/assets</code> directory can be deleted and rebuilt by DjinnJS automatically. If the default values do not work for your project proceed with creating a custom configuration file.</p>
 <h2 id="configfile">Config File</h2>
 <p>DjinnJS will look for a <code>djinn.js</code> or a <code>djinnjs.config.js</code> config file in the project's root directory. You can use a different config file using the <code>-c</code> flag.</p>
-<h4 id="packagejson">package.json</h4>
-<pre><code class="json language-json">"scripts": {
-    "build": "djinnjs --config ./some-directory/custom-config.js"
-}
-</code></pre>
 <h2 id="cli">CLI</h2>
 <pre><code class="bash language-bash">    -c  # Path to the config file
     -e  # The environment context (dev | production)
@@ -45,19 +40,9 @@
     src: "./src",
     publicDir: "./public",
     outDir: "assets",
-    noCachePattern: /(\.json)$|(cachebust\.js)/gi,
-    cachebustURL: "/cachebust.json",
-    resourcePattern: /(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi,
-    serviceWorker: true,
     silent: true,
     env: "production",
-    gtagId: "",
-    pjax: false,
-    predictivePrefetching: true,
-    followRedirects: true,
-    pageJumpOffset: null,
     minimumConnection: "4g",
-    precacheURL: "",
 };
 </code></pre>
 <h4 id="src">src</h4>
@@ -69,52 +54,15 @@
 <h4 id="outdir">outDir</h4>
 <p>Default: <code>"assets"</code></p>
 <p>A path string. This is the directory name in the public directory that will be removed and recreated every time the DjinnJS runs. All CSS and JS will be placed here.</p>
-<h4 id="nocachepattern">noCachePattern</h4>
-<p>Default: <code>/(\.json)$|(cachebust\.js)/gi</code></p>
-<p>A RegExp pattern. This RegExp pattern is used to prevent the Service Worker from caching responses. This pattern is tested against all requested URLs and prevents caching when the test returns successfully.</p>
-<h4 id="cachebusturl">cachebustURL</h4>
-<p>Default: <code>"/cachebust.json"</code></p>
-<p>A URL pathname string. This is the location of the cache bust file used to cache bust the content cache. The cache bust file should have these values:</p>
-<pre><code class="json language-json">{
-    "cacheTimestamp": "1234567890",
-    "maximumContentPrompts": "4",
-    "contentCacheDuration": "30"
-}
-</code></pre>
-<p><code>maximumContentPrompts</code> is the number of times a user will be prompted with an update message before the Service Worker clears the entire content cache.</p>
-<p><code>contentCacheDuration</code> is the number of days the offline content cache will be used before the Service Worker clears the entire content cache.</p>
-<h4 id="resourcepattern">resourcePattern</h4>
-<p>Default: <code>/(\.js)$|(\.css)$|(\.mjs)$|(\.cjs)$|(\.png)$|(\.jpg)$|(\.gif)$|(\.webp)$|(\.jpeg)$|(\.svg)$/gi</code></p>
-<p>A RegExp pattern. This RegExp pattern is used to determine if the requested file should be stored within the resources cache.</p>
-<h4 id="serviceworker">serviceWorker</h4>
-<p>Default: <code>true</code></p>
-<p>A boolean. When <code>false</code> the Service Worker will not be placed in the public directory.</p>
 <h4 id="silent">silent</h4>
 <p>Default: <code>true</code></p>
 <p>A boolean. When disabled DjinnJS will log additional console logs.</p>
 <h4 id="env">env</h4>
 <p>Default: <code>"production"</code></p>
 <p>A string. This value is used to determine if the JavaScript should be minified and is used by the <code>Env</code> class when setting <code>env.isProduction</code>.</p>
-<h4 id="gtagid">gtagId</h4>
-<p>A string. This is the ID used for Googles <a href="https://developers.google.com/analytics/devguides/collection/gtagjs">gtag.js</a>.</p>
-<h4 id="prefetching">prefetching</h4>
-<p>Default: <code>"opt-out"</code></p>
-<p>A string. When set to <code>"opt-out"</code> Pjax will prefetch and cache links based on the user's device metrics &amp; active connection. When set to <code>"opt-in"</code> Pjax will only prefetch links tagged with the <code>[prefetch]</code> attribute. To learn more about enabling/disabling Pjax prefetching read the <a href="https://pjax.djinnjs.com/">Djinnjax documentation</a>.</p>
-<h4 id="followredirects">followRedirects</h4>
-<p>Default: <code>true</code></p>
-<p>A boolean. When set to <code>false</code> Pjax will not follow redirects and will resort to native browser navigation.</p>
-<h4 id="pjax">pjax</h4>
-<p>Default: <code>false</code></p>
-<p>A boolean. When set to <code>true</code> Pjax will be injected into the output directory. This feature requires that the <code>djinnjax</code> NPM package is installed.</p>
-<h4 id="pagejumpoffset">pageJumpOffset</h4>
-<p>Default: <code>null</code></p>
-<p>A number. When <code>null</code> page jumps scroll the element into the center of the viewport. When a number is provided the element is scrolled to the top of the viewport then the offset is added. Positive numbers move the element up, negative numbers move the element down.</p>
 <h4 id="minimumconnection">minimumConnection</h4>
 <p>Default: <code>"4g"</code></p>
-<p>A <a href="https://wicg.github.io/netinfo/#effectiveconnectiontype-enum">Effective Connection Type</a>. This value will be used as the default <code>required-connection</code> attribute when loading Web Components.</p>
-<h4 id="precacheurl">precacheURL</h4>
-<p>Default: <code>""</code></p>
-<p>A string. When an endpoint is provided the service worker will request the URLs of content and resources that need to be cached using the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Cache/addAll">Cache API</a>.</p></article>
+<p>A <a href="https://wicg.github.io/netinfo/#effectiveconnectiontype-enum">Effective Connection Type</a>. This value will be used as the default <code>required-connection</code> attribute when loading Web Components.</p></article>
         </main>
     </body>
 </html>
