@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2020-12-07
+
+### Added
+
+- extendable Component class export ([#101](https://github.com/Pageworks/djinnjs/issues/101))
+
+### Removed
+
+- default service workers
+- automated `resource-cachebust.json` file
+- Pjax/Djinnjax configuration settings
+
 ## [0.2.4] - 2020-11-25
 
 ### Fixed
@@ -513,6 +525,7 @@ import { hookup, disconnect, message } from "djinnjs/broadcaster";
     -   Intial DjinnJS compiler scripts
 
 [unreleased]: https://github.com/pageworks/djinnjs/compare/master...develop
+[0.3.0]: https://github.com/pageworks/djinnjs/compare/v0.2.4...v0.3.0
 [0.2.4]: https://github.com/pageworks/djinnjs/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/pageworks/djinnjs/compare/v0.2.1...v0.2.3
 [0.2.1]: https://github.com/pageworks/djinnjs/compare/v0.2.0...v0.2.1

@@ -8,17 +8,7 @@ dist
 
 env.js
 env.d.ts
-actor.js
-actor.d.ts
-broadcaster.js
-!/src/web_modules/broadcaster.js
-broadcaster.d.ts
-broadcaster-worker.min.js
-fetch-css.js
-fetch-css.d.ts
-fetch-js.js
-fetch-js.d.ts
 fetch.js
 fetch.d.ts
-notify.js
-notify.d.ts
+component.js
+component.d.ts

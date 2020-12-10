@@ -39,10 +39,6 @@ class Djinn {
 
         utils = await import(`${location.origin}/${djinnjsOutDir}/djinn-utils.mjs`);
         utils.scrollOrResetPage();
-
-        "REPLACE_WITH_PJAX_INJECTION";
-
-        "REPLACE_WITH_SERVICE_WORKER_INJECTION";
     }
 
     private async setup() {

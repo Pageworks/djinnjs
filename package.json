@@ -1,15 +1,13 @@
 {
     "name": "djinnjs",
-    "version": "0.2.4",
-    "description": "DjinnJS is an ES Module based JavaScript framework using JIT resource fetching, offline first content strategy, context-specific progressive enhancements, and Pjax navigation.",
+    "version": "0.3.0",
+    "description": "DjinnJS is a lightweight JavaScript & CSS bootstraper built on ES Modules and Web Components.",
     "author": "Pageworks",
     "license": "GPL-3.0",
     "keywords": [
-        "offline-first",
         "progressive-enhancement",
-        "pjax",
         "es-modules",
-        "javascript-framework"
+        "web-components"
     ],
     "bugs": {
         "url": "https://github.com/Pageworks/djinnjs/issues"
@@ -29,11 +27,6 @@
     "files": [
         "cli",
         "dist",
-        "actor.js",
-        "actor.d.ts",
-        "broadcaster.js",
-        "boradcaster.d.ts",
-        "broadcaster-worker.min.js",
         "env.js",
         "env.d.ts",
         "fetch.js",
@@ -43,15 +36,15 @@
         "prettier": "prettier --write \"src/**/*.ts\"",
         "eslint": "eslint -c .eslintrc.js src/**/*.ts",
         "lint": "npm run prettier && npm run eslint",
-        "cleanup": "node ./cleanup.js",
-        "relocate": "node ./relocate.js",
+        "cleanup": "node ./build/cleanup.js",
+        "relocate": "node ./build/relocate.js",
         "compile": "npm run cleanup && tsc && npm run relocate",
         "prerelease": "npm run cleanup && npm run prettier && npm run eslint && tsc && npm run relocate",
         "unpack": "snowpack",
         "tsc": "tsc",
         "docs": "docs",
         "predeploy": "docs -o ./public -c ./CNAME",
-        "deploy": "node ./deploy.js"
+        "deploy": "node ./build/deploy.js"
     },
     "devDependencies": {
         "@codewithkyle/dev-docs": "^0.1.13",
