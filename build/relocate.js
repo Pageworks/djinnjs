@@ -32,3 +32,14 @@ fs.copyFile("./dist/component.d.ts", "./component.d.ts", error => {
         console.log(error);
     }
 });
+
+fs.copyFile("./dist/utilities.js", "./utilities.js", error => {
+    if (error) {
+        console.log(error);
+    }
+});
+fs.copyFile("./dist/utilities.d.ts", "./utilities.d.ts", error => {
+    if (error) {
+        console.log(error);
+    }
+});

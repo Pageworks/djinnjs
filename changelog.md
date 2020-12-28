@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `mount` function ([#119](https://github.com/Pageworks/djinnjs/issues/119))
+- `djinnjs/utilities` import
+
+### Deprecated
+
+- `fetchCSS` function (moved into `djinnjs/utilities`) ([#118](https://github.com/Pageworks/djinnjs/issues/118))
+- `djinnjs/fetch` import
+
 ## [0.3.0] - 2020-12-10
 
 ### Added
