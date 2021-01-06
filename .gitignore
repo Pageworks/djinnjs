@@ -12,3 +12,5 @@ fetch.js
 fetch.d.ts
 component.js
 component.d.ts
+utilities.js
+utilities.d.ts

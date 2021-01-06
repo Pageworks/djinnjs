@@ -25,3 +25,10 @@ if (fs.existsSync("./component.js")) {
 if (fs.existsSync("./component.d.ts")) {
     fs.unlinkSync("./component.d.ts");
 }
+
+if (fs.existsSync("./utilities.js")) {
+    fs.unlinkSync("./utilities.js");
+}
+if (fs.existsSync("./utilities.d.ts")) {
+    fs.unlinkSync("./utilities.d.ts");
+}
