@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - debounce utility function ([#123](https://github.com/Pageworks/djinnjs/issues/123))
+- ability to control [terser](https://terser.org/) options
 
 ### Fixed
 

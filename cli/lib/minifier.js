@@ -5,37 +5,17 @@ const path = require("path");
 
 const cwd = process.cwd();
 
-const options = {
-    ecma: 2019,
-    compress: {
-        drop_console: true,
-        keep_infinity: true,
-        module: true,
-        dead_code: false,
-        keep_fnames: true,
-        unused: false,
-        keep_classnames: true,
-        collapse_vars: false,
-        reduce_funcs: false,
-        reduce_vars: false,
-        unused: false,
-    },
-    mangle: false,
-    keep_classnames: true,
-    keep_fnames: true,
-};
-
-async function minify(publicDir, outDir) {
+async function minify(publicDir, outDir, options) {
     try {
         const files = await getFiles();
-        await minifyFiles(files, publicDir, outDir);
+        await minifyFiles(files, publicDir, outDir, options);
         return;
     } catch (error) {
         throw error;
     }
 }
 
-function minifyFiles(files, publicDir, relativeOutDir) {
+function minifyFiles(files, publicDir, relativeOutDir, options) {
     return new Promise((resolve, reject) => {
         if (files.length === 0) {
             resolve();

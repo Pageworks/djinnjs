@@ -79,6 +79,17 @@ module.exports = function valdiateConfig(config, customConfig) {
             process.exit(1);
     }
 
+    switch (typeof customConfig.terser) {
+        case "object":
+            config.terser = customConfig.terser;
+            break;
+        case "undefined":
+            break;
+        default:
+            console.log(`Invalid DjinnJS configuration. The terser value must be an object.`);
+            process.exit(1);
+    }
+
     let env;
     if (typeof customConfig.env === "string") {
         env = customConfig.env;

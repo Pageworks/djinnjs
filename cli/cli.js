@@ -168,7 +168,7 @@ class DjinnJS {
     minifyScript() {
         return new Promise((resolve, reject) => {
             if (this.config.env === "production") {
-                minify(this.config.publicDir, this.config.outDir)
+                minify(this.config.publicDir, this.config.outDir, this.config.terser)
                     .then(() => {
                         resolve();
                     })

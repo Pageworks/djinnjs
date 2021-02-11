@@ -5,4 +5,23 @@ module.exports = {
     silent: true,
     env: "production",
     minimumConnection: "4g",
+    terser: {
+        ecma: 2019,
+        compress: {
+            drop_console: true,
+            keep_infinity: true,
+            module: true,
+            dead_code: false,
+            keep_fnames: true,
+            unused: false,
+            keep_classnames: true,
+            collapse_vars: false,
+            reduce_funcs: false,
+            reduce_vars: false,
+            unused: false,
+        },
+        mangle: false,
+        keep_classnames: true,
+        keep_fnames: true,
+    },
 };
