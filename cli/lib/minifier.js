@@ -5,6 +5,26 @@ const path = require("path");
 
 const cwd = process.cwd();
 
+const options = {
+    ecma: 2019,
+    compress: {
+        drop_console: true,
+        keep_infinity: true,
+        module: true,
+        dead_code: false,
+        keep_fnames: true,
+        unused: false,
+        keep_classnames: true,
+        collapse_vars: false,
+        reduce_funcs: false,
+        reduce_vars: false,
+        unused: false,
+    },
+    mangle: false,
+    keep_classnames: true,
+    keep_fnames: true,
+};
+
 async function minify(publicDir, outDir) {
     try {
         const files = await getFiles();
@@ -28,17 +48,7 @@ function minifyFiles(files, publicDir, relativeOutDir) {
                 if (error) {
                     reject(error);
                 }
-                const result = mini.minify(buffer.toString(), {
-                    ecma: 2017,
-                    compress: {
-                        drop_console: true,
-                        keep_infinity: true,
-                        module: true,
-                    },
-                    mangle: {
-                        module: true,
-                    },
-                });
+                const result = mini.minify(buffer.toString(), options);
                 if (result.error) {
                     reject(`Terser Error: ${result.error.message} occured in ${filename}`);
                 }
