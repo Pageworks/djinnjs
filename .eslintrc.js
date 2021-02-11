@@ -10,5 +10,7 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',
         '@typescript-eslint/triple-slash-reference': 'off',
+        '@typescript-eslint/no-this-alias': 'off',
+        'prefer-rest-params': 'off'
     },
 };
